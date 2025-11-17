@@ -120,20 +120,20 @@ Nov 02, 25|Orange Juice|2||
 Nov 02, 25|Pancake Mix|2||
 
 Attendance
-month|year|num_at_meeting|staff_at_breakfast|tickets_claimed
-1|2024|||
-2|2024|||99
-3|2024|21|12|70
-4|2024|12|9|42
-10|2024|||
-11|2024|8|11|44
-12|2024|9|11|48
-1|2025|12|13|54
-2|2025|12|10|64
-3|2025|9|10|59
-4|2025|8|11|37
-10|2025|5||
-11|2025|14|14|61
+month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed
+1|2024||||||
+2|2024||||||99
+3|2024||||21|12|70
+4|2024||||12|9|42
+10|2024||||||
+11|2024||||8|11|44
+12|2024||||9|11|48
+1|2025||||12|13|54
+2|2025||||12|10|64
+3|2025||||9|10|59
+4|2025||||8|11|37
+10|2025||||5||
+11|2025||||14|14|61
 
 Categories
 event|category|type|ticket_price

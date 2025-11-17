@@ -228,17 +228,26 @@ class Orders(Product_child):
 class Attendance(row):
     # month=integer(),
     # year=integer(),
+    # min_order=integer(null=True),
+    # max_perishable=integer(null=True),
+    # max_non_perishable=integer(null=True),
     # num_at_meeting=integer(null=True),
     # staff_at_breakfast=integer(null=True),
     # tickets_claimed=integer(null=True),
     types = dict(
         month=int,
         year=int,
+        min_order=int,
+        max_perishable=int,
+        max_non_perishable=int,
         num_at_meeting=int,
         staff_at_breakfast=int,
         tickets_claimed=int,
     )
 
+    min_order = None
+    max_perishable = None
+    max_non_perishable = None
     num_at_meeting = None
     staff_at_breakfast = None
     tickets_claimed = None

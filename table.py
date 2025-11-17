@@ -2,6 +2,7 @@
 
 import os.path
 import csv
+from statistics import mean
 
 from row import *
 
@@ -83,6 +84,32 @@ class table_unique(base_table, dict):
         assert key not in self, f"{self.name}.insert: Duplicate {key=}"
         self[key] = row
 
+class Attendance(table_unique):
+    def by_month(self, month):
+        r'''Generates all rows with this month.
+        '''
+        for row in self.values():
+            if row.month == month:
+                yield row
+
+    def avg(self, month, attr):
+        rows = [row for row in self.by_month(month) if getattr(row, attr) is not None]
+        if not rows:
+            return None
+        return round(mean(getattr(row, attr) for row in rows))
+
+    def avg_num_at_meeting(self, month):
+        return self.avg(month, 'num_at_meeting')
+
+    def avg_staff_at_breakfast(self, month):
+        return self.avg(month, 'staff_at_breakfast')
+
+    def avg_tickets_claimed(self, month):
+        return self.avg(month, 'tickets_claimed')
+
+    def avg_meals_served(self, month):
+        return self.avg(month, 'meals_served')
+
 class table_by_date(base_table, list):
     def __init__(self, row_class):
         base_table.__init__(self, row_class)
@@ -120,10 +147,14 @@ class table_by_date(base_table, list):
     def values(self):
         return self
 
+def table_for_row(row_class):
+    if row_class.table_name == "Attendance":
+        return Attendance(row_class)
+    if row_class.primary_key is not None or row_class.primary_keys is not None:
+        return table_unique(row_class)
+    return table_by_date(row_class)
 
-Tables = {row_class.table_name: (table_by_date(row_class) if row_class.primary_key is None and row_class.primary_keys is None
-                                                          else table_unique(row_class))
-          for row_class in Rows}
+Tables = {row_class.table_name: table_for_row(row_class) for row_class in Rows}
 
 
 __all__ = "Decimal date Tables load_database save_database load_all clear_all".split()
