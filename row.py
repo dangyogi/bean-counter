@@ -14,7 +14,15 @@ def parse_date(s):
 
 
 class row:
-    r'''Also represents a table.
+    r'''One row in a database table.
+
+    These have normal object attributes that can be set.  When the database is saved, these new value will be written to
+    the database file.
+
+    Default values are done with class attributes.  Any missing columns in an imported csv file are not set as attributes
+    and default to the class attribute.
+
+    Additional non-stored attributes (similar to relational view) are simply done with a standard python @property.
     '''
     primary_key = None
     primary_keys = None
@@ -34,16 +42,24 @@ class row:
         return cls.__name__
 
     @classmethod
-    def from_csv(cls, header, row):
+    def from_csv(cls, header, row, ignore_unknown_cols=False):
         r'''strips both the names in header and the values in row.
 
         names in header are converted to lowercase as key for cls.types.
 
         attrs with an empty value are not loaded, so that they have their default values.
         '''
-        return cls(**{name.strip(): cls.types[name.strip().lower()](value.strip())
-                      for name, value in zip(header, row)
-                       if value.strip() != ''})
+        attrs = {}
+        assert len(header) == len(row), f"{cls.table_name}.from_csv: len(header)={len(header)} != len(row)={len(row)}"
+        for name, value in zip(header, row):
+            name = name.strip().lower()
+            value = value.strip()
+            if name not in cls.types:
+                if not ignore_unknown_cols:
+                    raise AssertionError(f"{cls.table_name}.from_csv: unknown attr={name}")
+            elif value != '':
+                attrs[name] = cls.types[name](value)
+        return cls(**attrs)
 
     @classmethod
     def csv_header(cls):
@@ -205,7 +221,7 @@ class Orders(Product_child):
 
     supplier = None
     supplier_id = None
-    primary_keys = "date", "item"
+   #primary_keys = "date", "item"
     required = frozenset(("date", "item", "qty"))
     foreign_keys = "Items", "Products"
 
@@ -255,7 +271,6 @@ class Reconcile(row):
     # date=date_col(),
     # event=varchar(50),
     # category=varchar(50),
-    # line_num=integer(),
     # detail=varchar(50),
     # coin=decimal(default=0),
     # b1=integer(default=0),
@@ -269,7 +284,6 @@ class Reconcile(row):
         date=parse_date,
         event=str,
         category=str,
-        line_num=int,
         detail=str,
         coin=Decimal,
         b1=int,
@@ -289,7 +303,6 @@ class Reconcile(row):
     b50 = 0
     b100 = 0
     donations = 0
-    primary_keys = "date", "event", "category", "line_num"
     required = frozenset(("date", "event", "category", "detail"))
     foreign_keys = "Categories",
 
