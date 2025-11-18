@@ -1,0 +1,52 @@
+Inventory codes:
+    - count
+    - purchased (exact count)
+    - used (exact count)
+    - consumed (estimate)
+    - estimate (includes uncertainty)
+
+set_min_max
+    - create next Month, with start_date == prior month end_date + 1, set min_order, max_perishable, max_non_perishable
+    - min_order = 1.35 (to 1.40) * new month's.avg_meals_served
+    - max_perishable = 0.90 * (new month's.avg_meals_served + next month's.avg_meals_served)
+    - max_non_perishable = 0.80 * (sum of new month and next 2 months.avg_meals.served)
+    - verify numbers
+    - write to Months
+write_inv_checklist
+    - update Inventory table by writing new  "estimate" rows.
+    - calc orders
+    - exp_count = cur_count + order
+    - uncertainty = 0.10 * sum of consumed since last count
+    - write all items that have exp_count - uncertainty < min or if perishable, exp_count + uncertainty > max_perishable
+<do inventory>
+    - manual step
+    - write counts into checklist file
+read_inv
+    - write "count"s from checklist file to Inventory table.
+write_orders
+    - calc orders
+    - write to csv file
+<update orders>
+    - manual step
+read_orders
+    - read csv file into Orders table
+write_POs
+    - write POs pdf
+    - pencil in changes at meeting
+set_meeting_attendance
+    - num_at_meeting
+set_breakfast_attendance
+    - staff_at_breakfast
+    - tickets_claimed
+<update purchases>
+    - manual step looking at shopping receipts
+read_purchases
+    - add "purchased" rows to Inventory table
+    - write receipt slips (computer figures out bills?)
+update_reconciles
+    - read rows into Reconcile table
+    - print out final bill counts and total
+write_treasurer_report (wait until Oct for Apr)
+    - as pdf file.
+    - set end_date of current Month
+    - do set_min_max for next month

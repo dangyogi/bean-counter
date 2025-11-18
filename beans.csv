@@ -105,7 +105,34 @@ Tea                 |Walmart |          1 |Great Value Black Tea Bags, 8 oz, 100
 To-Go Containers    |Sams    |          1 |Hefty Supreme Foam Hinged Lid Container, 3-Compartment (125 ct.)                                                                                                                                     |971233   |G19-7    | 16.98 |     125 |           |                                                                           
 
 Inventory
-date |item|num_pkgs |supplier|supplier_id 
+       date |item             |code    |num_pkgs |num_units |uncertainty 
+ Nov 18, 25 |Bacon            |estimate|       0 |      144 |         14 
+ Nov 18, 25 |Bowls            |estimate|       0 |      325 |         33 
+ Nov 18, 25 |Butter           |estimate|       0 |        6 |          1 
+ Nov 18, 25 |Coffee, ground   |estimate|       0 |       77 |          8 
+ Nov 18, 25 |Coffee cups, 8oz |estimate|       0 |        0 |          0 
+ Nov 18, 25 |Coffee Stirrer 5"|estimate|       0 |      495 |         50 
+ Nov 18, 25 |Cutlery Packets  |estimate|       0 |        0 |          0 
+ Nov 18, 25 |Eggs             |estimate|       0 |        0 |          0 
+ Nov 18, 25 |Gloves           |estimate|       0 |     1463 |        146 
+ Nov 18, 25 |Half & Half      |estimate|       0 |      170 |         17 
+ Nov 18, 25 |Milk             |estimate|       0 |        0 |          0 
+ Nov 18, 25 |Nonstick Spray   |estimate|       0 |       10 |          1 
+ Nov 18, 25 |OJ cups          |estimate|       0 |      350 |         35 
+ Nov 18, 25 |Orange Juice     |estimate|       0 |       11 |          1 
+ Nov 18, 25 |Pancake Mix      |estimate|       0 |       80 |          8 
+ Nov 18, 25 |Paper Towels     |estimate|       0 |        3 |          0 
+ Nov 18, 25 |Place Mats       |estimate|       0 |      428 |         43 
+ Nov 18, 25 |Raffle Tickets   |estimate|       0 |     1966 |        197 
+ Nov 18, 25 |Scrubbers        |estimate|       0 |        5 |          1 
+ Nov 18, 25 |Serving Plates   |estimate|       0 |       80 |          8 
+ Nov 18, 25 |Splenda          |estimate|       0 |     1600 |        160 
+ Nov 18, 25 |Sugar            |estimate|       0 |      100 |         10 
+ Nov 18, 25 |Sweet'N Low      |estimate|       0 |     1650 |        165 
+ Nov 18, 25 |Syrup, reg       |estimate|       0 |      237 |         24 
+ Nov 18, 25 |Syrup, sugar free|estimate|       0 |      237 |         24 
+ Nov 18, 25 |Tea              |estimate|       0 |       84 |          8 
+ Nov 18, 25 |To-Go Containers |estimate|       0 |      160 |         16 
 
 Orders
        date |item             |qty |supplier|supplier_id 

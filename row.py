@@ -2,6 +2,7 @@
 
 from decimal import Decimal, InvalidOperation
 from datetime import date, datetime
+from calendar import TUESDAY, SATURDAY, monthrange
 
 
 
@@ -185,22 +186,30 @@ class Product_child(row):
 class Inventory(Product_child):
     # date=date_col(),
     # item=varchar(30),
-    # num_pkgs=double(),
-    # supplier=varchar(50, null=True),
-    # supplier_id=integer(null=True),
+    # code=varchar(20),
+    #   - count
+    #   - purchased (exact count)
+    #   - used (exact count)
+    #   - consumed (estimate)
+    #   - estimate (includes uncertainty)
+    # num_pkgs=double(null=True),
+    # num_units=integer(null=True),
+    # uncertainty=integer(null=True),
     types = dict(
         date=parse_date,
         item=str,
+        code=str,
         num_pkgs=float,
-        supplier=str,
-        supplier_id=int,
+        num_units=int,
+        uncertainty=int,
     )
 
-    supplier = None
-    supplier_id = None
-    primary_keys = "data item supplier supplier_id".split()
-    required = frozenset(("date", "item", "num_pkgs"))
-    foreign_keys = "Items", "Products"
+    num_pkgs = 0
+    num_units = 0
+    uncertainty = 0
+    primary_keys = "date item code".split()
+    required = frozenset(("date", "item", "code"))
+    foreign_keys = "Items",
 
 class Orders(Product_child):
     # date=date_col(),
@@ -265,6 +274,21 @@ class Months(row):
         if self.staff_at_breakfast is None or self.tickets_claimed is None:
             return None
         return self.staff_at_breakfast + self.tickets_claimed
+
+    @property
+    def meeting_date(self):
+        return self.nth_day(1, TUESDAY)
+
+    @property
+    def breakfast_date(self):
+        return self.nth_day(2, SATURDAY)
+
+    def nth_day(self, n, day):
+        firstday = monthrange(self.year, self.month)[0]
+        days_to_day = day - firstday
+        if days_to_day >= 0:
+            return date(self.year, self.month, days_to_day + 1 + 7 * (n - 1))
+        return date(self.year, self.month, days_to_day + 8 + 7 * (n - 1))
 
 class Categories(row):
     # event=varchar(50),     # e.g., "meeting dinner", "breakfast"
