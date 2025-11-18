@@ -1,10 +1,11 @@
-Date|Item|Qty|Supplier|Supplier_id
-2025-11-02|Bacon|1||
-2025-11-02|Butter|1||
-2025-11-02|Coffee, ground|1||
-2025-11-02|Coffee cups, 8 oz|1||
-2025-11-02|Cutlery Packets|1||
-2025-11-02|Eggs|9||
-2025-11-02|Milk|1||
-2025-11-02|Orange Juice|2||
-2025-11-02|Pancake Mix|2||
+Orders
+       date |item             |qty |supplier|supplier_id 
+ Nov 02, 25 |Bacon            |  1 |        |            
+ Nov 02, 25 |Butter           |  1 |        |            
+ Nov 02, 25 |Coffee, ground   |  1 |        |            
+ Nov 02, 25 |Coffee cups, 8 oz|  1 |        |            
+ Nov 02, 25 |Cutlery Packets  |  1 |        |            
+ Nov 02, 25 |Eggs             |  9 |        |            
+ Nov 02, 25 |Milk             |  1 |        |            
+ Nov 02, 25 |Orange Juice     |  2 |        |            
+ Nov 02, 25 |Pancake Mix      |  2 |        |            

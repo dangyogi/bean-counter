@@ -13,7 +13,7 @@ Inventory = Tables['Inventory']
 
 Orders = Tables['Orders']
 
-Attendance = Tables['Attendance']
+Months = Tables['Months']
 
 Categories = Tables['Categories']
 

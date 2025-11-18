@@ -13,6 +13,12 @@ CSV_dialect = 'excel'  # 'excel', 'excel-tab' or 'unix'
 CSV_format = dict(delimiter='|', quoting=csv.QUOTE_NONE, skipinitialspace=True, strict=True)
 
 
+def align(value, width, alignment):
+    if alignment == 'right':
+        value += ' '
+        return ' ' * (width - len(value)) + value
+    return value + ' ' * (width - len(value))
+
 class base_table:
     def __init__(self, row_class):
         self.row_class = row_class
@@ -60,9 +66,38 @@ class base_table:
         r'''Writes itself in database csv format to file.
         '''
         print(self.name, file=file)                     # first line is name of table (only one column)
-        print(self.row_class.csv_header(), file=file)   # header line with attr names.
+        widths = {}
+        alignments = {}
+        headers = tuple(self.row_class.types.keys())
+        header_row = []
+        for name in headers:
+            name = name.lower()
+            max_width = len(name)
+            if self.row_class.types[name] != str:
+                max_width += 1
+                alignment = 'right'
+            else:
+                alignment = 'left'
+            alignments[name] = alignment
+            for row in self.values():
+                if getattr(row, name) is not None:
+                    width = len(row.csv_value(name))
+                    if alignment == 'right':
+                        width += 2
+                    if width > max_width:
+                        max_width = width
+            widths[name] = max_width
+            header_row.append(align(name, max_width, alignment))
+        print('|'.join(header_row), file=file)
         for row in self.values():
-            print(row.to_csv(), file=file)              # data line.
+            values = []
+            for name in headers:
+                value = row.csv_value(name)
+                if value is None:
+                    values.append(' ' * widths[name])
+                else:
+                    values.append(align(value, widths[name], alignments[name]))
+            print('|'.join(values), file=file)          # data line.
         if add_empty_row:
             print(file=file)                            # empty row terminator
 
@@ -84,7 +119,7 @@ class table_unique(base_table, dict):
         assert key not in self, f"{self.name}.insert: Duplicate {key=}"
         self[key] = row
 
-class Attendance(table_unique):
+class Months(table_unique):
     def by_month(self, month):
         r'''Generates all rows with this month.
         '''
@@ -148,8 +183,8 @@ class table_by_date(base_table, list):
         return self
 
 def table_for_row(row_class):
-    if row_class.table_name == "Attendance":
-        return Attendance(row_class)
+    if row_class.table_name == "Months":
+        return Months(row_class)
     if row_class.primary_key is not None or row_class.primary_keys is not None:
         return table_unique(row_class)
     return table_by_date(row_class)
@@ -198,14 +233,14 @@ def run():
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--init", "-i", action="store_true", default=False)
+    parser.add_argument("--init", "-i", action="store_true", default=False, help="init database to all empty tables")
     parser.add_argument("--ignore-unknown-cols", "-u", action="store_true", default=False)
-    parser.add_argument("--load", "-l", default=None)
-    parser.add_argument("--save", "-s", default=None)
-    parser.add_argument("--load-all", "-a", action="store_true", default=False)
+    parser.add_argument("--load", "-l", default=None, help="load one separate csv table")
+    parser.add_argument("--save", "-s", default=None, help="save one separate csv table")
+    parser.add_argument("--load-all", "-a", action="store_true", default=False, help="load all separate csv tables")
+    parser.add_argument("--no-save", "-n", action="store_true", default=False, help="skip final database save")
 
     args = parser.parse_args()
-
 
     if args.init:
         # create empty database csv file.
@@ -215,12 +250,15 @@ def run():
     if args.load_all:
         load_all(from_scratch=True, ignore_unknown_cols=args.ignore_unknown_cols)
     elif args.load is not None:
+        print("loading:", args.load + '.csv')
         Tables[args.load].load_csv(from_scratch=True, ignore_unknown_cols=args.ignore_unknown_cols)
     if args.save is not None:
         with open(f"{args.save}.csv", "w") as f:
+            print("saving:", args.save + '.csv')
             Tables[args.save].to_csv(f)
 
-    save_database()
+    if not args.no_save:
+        save_database()
 
 
 

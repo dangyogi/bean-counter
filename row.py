@@ -12,6 +12,8 @@ def parse_date(s):
         pass
     return datetime.strptime(s, "%b %d, %y").date()
 
+def parse_set(s):
+    return set(x.strip() for x in s.split(','))
 
 class row:
     r'''One row in a database table.
@@ -61,22 +63,17 @@ class row:
                 attrs[name] = cls.types[name](value)
         return cls(**attrs)
 
-    @classmethod
-    def csv_header(cls):
-        return '|'.join(cls.types.keys())
-
-    def to_csv(self):
-        fields = []
-        for name in self.types.keys():
-            value = getattr(self, name)
-            if value is None:
-                value = ''
-            elif isinstance(value, date):
-                value = value.strftime("%b %d, %y")
-            else:
-                value = str(value)
-            fields.append(value)
-        return '|'.join(fields)
+    def csv_value(self, name):
+        value = getattr(self, name)
+        if value is None:
+            return ''
+        if isinstance(value, date):
+            return value.strftime("%b %d, %y")
+        if isinstance(value, set):
+            return ','.join(sorted(value))
+        if isinstance(value, float) and value.is_integer():
+            value = int(value)
+        return str(value)
 
     def key(self):
         if self.primary_key is not None:
@@ -225,7 +222,7 @@ class Orders(Product_child):
     required = frozenset(("date", "item", "qty"))
     foreign_keys = "Items", "Products"
 
-class Attendance(row):
+class Months(row):
     # month=integer(),
     # year=integer(),
     # min_order=integer(null=True),
@@ -234,6 +231,9 @@ class Attendance(row):
     # num_at_meeting=integer(null=True),
     # staff_at_breakfast=integer(null=True),
     # tickets_claimed=integer(null=True),
+    # start_date=date(null=True),
+    # end_date=date(null=True),
+    # steps_completed=set(null=True),
     types = dict(
         month=int,
         year=int,
@@ -243,6 +243,9 @@ class Attendance(row):
         num_at_meeting=int,
         staff_at_breakfast=int,
         tickets_claimed=int,
+        start_date=parse_date,
+        end_date=parse_date,
+        steps_completed=parse_set,
     )
 
     min_order = None
@@ -251,6 +254,9 @@ class Attendance(row):
     num_at_meeting = None
     staff_at_breakfast = None
     tickets_claimed = None
+    start_date = None
+    end_date = None
+    steps_completed = None
     primary_keys = "year", "month"
     required = frozenset(("month", "year"))
 
@@ -359,7 +365,7 @@ def convert(s):
 
 # These must be in logical order based on what has to be defined first
 Rows = (Items, Products,
-        Inventory, Orders, Attendance,
+        Inventory, Orders, Months,
         Categories, Reconcile,
        )
 
