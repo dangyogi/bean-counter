@@ -135,16 +135,16 @@ Nov 18, 25|Tea              |estimate|       0|       84|          8
 Nov 18, 25|To-Go Containers |estimate|       0|      160|         16
 
 Orders
-date      |item             |qty|supplier|supplier_id
-Nov 02, 25|Bacon            |  1|        |           
-Nov 02, 25|Butter           |  1|        |           
-Nov 02, 25|Coffee, ground   |  1|        |           
-Nov 02, 25|Coffee cups, 8 oz|  1|        |           
-Nov 02, 25|Cutlery Packets  |  1|        |           
-Nov 02, 25|Eggs             |  9|        |           
-Nov 02, 25|Milk             |  1|        |           
-Nov 02, 25|Orange Juice     |  2|        |           
-Nov 02, 25|Pancake Mix      |  2|        |           
+date      |item             |qty|supplier|supplier_id|purchased_pkgs|purchased_units
+Nov 02, 25|Bacon            |  1|        |           |              |               
+Nov 02, 25|Butter           |  1|        |           |              |               
+Nov 02, 25|Coffee, ground   |  1|        |           |              |               
+Nov 02, 25|Coffee cups, 8 oz|  1|        |           |              |               
+Nov 02, 25|Cutlery Packets  |  1|        |           |              |               
+Nov 02, 25|Eggs             |  9|        |           |              |               
+Nov 02, 25|Milk             |  1|        |           |              |               
+Nov 02, 25|Orange Juice     |  2|        |           |              |               
+Nov 02, 25|Pancake Mix      |  2|        |           |              |               
 
 Months
 month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date|steps_completed                                                                                                           

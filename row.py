@@ -120,6 +120,14 @@ class Items(row):
     required = frozenset(("item", "unit"))
     foreign_keys = "Products",
 
+    @property
+    def pkg_size(self):
+        return Database.Products[self.item, self.supplier, self.supplier_id].pkg_size
+
+    @property
+    def pkg_weight(self):
+        return Database.Products[self.item, self.supplier, self.supplier_id].pkg_weight
+
 class Products(row):
     # item=varchar(30, references=foreign_key("Items", on_delete="cascade", on_update="cascade")),
     # supplier=varchar(50),
@@ -217,19 +225,37 @@ class Orders(Product_child):
     # qty=integer(),
     # supplier=varchar(50, null=True),
     # supplier_id=integer(null=True),
+    # purchased_pkgs=integer(null=True),
+    # purchased_units=integer(null=True),
     types = dict(
         date=parse_date,
         item=str,
         qty=int,
         supplier=str,
         supplier_id=int,
+        purchased_pkgs=int,
+        purchased_units=int,
     )
 
     supplier = None
     supplier_id = None
+    purchased_pkgs = None
+    purchased_units = None
    #primary_keys = "date", "item"
     required = frozenset(("date", "item", "qty"))
     foreign_keys = "Items", "Products"
+
+    @property
+    def unit(self):
+        return Database.Items[self.item].unit
+
+    @property
+    def pkg_size(self):
+        return Database.Products[self.item, self.supplier_used, self.supplier_id_used].pkg_size
+
+    @property
+    def pkg_weight(self):
+        return Database.Products[self.item, self.supplier_used, self.supplier_id_used].pkg_weight
 
 class Months(row):
     # month=integer(),
