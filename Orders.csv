@@ -1,10 +1,11 @@
-date      |item             |qty|supplier|supplier_id|purchased_pkgs|purchased_units
-Nov 02, 25|Bacon            |  1|        |           |              |               
-Nov 02, 25|Butter           |  1|        |           |              |               
-Nov 02, 25|Coffee, ground   |  1|        |           |              |               
-Nov 02, 25|Coffee cups, 8 oz|  1|        |           |              |               
-Nov 02, 25|Cutlery Packets  |  1|        |           |              |               
-Nov 02, 25|Eggs             |  9|        |           |              |               
-Nov 02, 25|Milk             |  1|        |           |              |               
-Nov 02, 25|Orange Juice     |  2|        |           |              |               
-Nov 02, 25|Pancake Mix      |  2|        |           |              |               
+Orders
+item             |qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|price
+Bacon            |  1|        |           |              |               |        |     
+Butter           |  1|        |           |              |               |        |     
+Coffee, ground   |  1|        |           |              |               |        |     
+Coffee cups, 8 oz|  1|        |           |              |               |        |     
+Cutlery Packets  |  1|        |           |              |               |        |     
+Eggs             |  9|        |           |              |               |        |     
+Milk             |  1|        |           |              |               |        |     
+Orange Juice     |  2|        |           |              |               |        |     
+Pancake Mix      |  2|        |           |              |               |        |     

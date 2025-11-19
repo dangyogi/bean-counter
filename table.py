@@ -29,20 +29,6 @@ class base_table:
     def insert(self, **attrs):
         self.add_row(self.row_class(**attrs))
 
-    def load_csv(self, csv_filename=None, from_scratch=True, ignore_unknown_cols=False):
-        r'''Loads table from csv_filename.
-
-        clears current contents of table if from_scratch is True, otherwise, rows are appended.
-
-        csv_filename defaults to f"{self.name}.csv".
-        '''
-        if csv_filename is None:
-            csv_filename = f"{self.name}.csv"
-        with open(csv_filename, 'r') as f:
-            self.from_csv(csv.reader(f, CSV_dialect, **CSV_format),
-                          from_scratch=from_scratch,
-                          ignore_unknown_cols=ignore_unknown_cols)
-
     def from_csv(self, csv_reader, from_scratch=True, ignore_unknown_cols=False):
         r'''Loads rows from csv_reader.  First row is header row that identifies the attrs.
 
@@ -61,7 +47,7 @@ class base_table:
         except StopIteration:
             pass
 
-    def to_csv(self, file, add_table_name=False, add_empty_row=False):
+    def to_csv(self, file, add_table_name=True, add_empty_row=False):
         r'''Writes itself in database csv format to file.
         '''
         if add_table_name:
@@ -172,9 +158,12 @@ class table_by_date(base_table, list):
         return first
 
     def add_row(self, row):
-        i = self.last_date(row.date)
-       #print(f"{self.name}.add_row(date={row.date}), inserted at {i=}")
-        list.insert(self, i, row)
+        if hasattr(row, 'data'):
+            i = self.last_date(row.date)
+           #print(f"{self.name}.add_row(date={row.date}), inserted at {i=}")
+            list.insert(self, i, row)
+        else:
+            self.append(row)
     
     def values(self):
         return self
@@ -211,13 +200,30 @@ def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):
 def save_database(csv_filename=Database_filename):
     with open(csv_filename, 'w') as f:
         for table in Tables.values():
-            table.to_csv(f, add_table_name=True, add_empty_row=True)
+            if table.row_class.in_database:
+                table.to_csv(f, add_empty_row=True)
+
+def load_csv(csv_filename, from_scratch=True, ignore_unknown_cols=False):
+    r'''Loads table from csv_filename.
+
+    clears current contents of table if from_scratch is True, otherwise, rows are appended.
+
+    If csv_filename has no .csv suffix, one is added.
+    '''
+    if not csv_filename.endswith(".csv"):
+        csv_filename += ".csv"
+    with open(csv_filename, 'r') as f:
+        csv_reader = iter(csv.reader(f, CSV_dialect, **CSV_format))
+        row1 = next(csv_reader)
+        assert len(row1) == 1, f"load_csv: Expected table name, got {row1=}"
+        table_name = row1[0].strip()
+        Tables[table_name].from_csv(csv_reader, from_scratch=from_scratch, ignore_unknown_cols=ignore_unknown_cols)
 
 def load_all(from_scratch=True, ignore_unknown_cols=False):
     for table in Tables.values():
         if os.path.exists(f"{table.name}.csv"):
             print("loading:", table.name)
-            table.load_csv(from_scratch=from_scratch, ignore_unknown_cols=ignore_unknown_cols)
+            load_csv(table.name, from_scratch=from_scratch, ignore_unknown_cols=ignore_unknown_cols)
         else:
             print("load_all: skipping", table.name)
 
@@ -248,7 +254,7 @@ def run():
         load_all(from_scratch=True, ignore_unknown_cols=args.ignore_unknown_cols)
     elif args.load is not None:
         print("loading:", args.load + '.csv')
-        Tables[args.load].load_csv(from_scratch=True, ignore_unknown_cols=args.ignore_unknown_cols)
+        load_csv(args.load, ignore_unknown_cols=args.ignore_unknown_cols)
     if args.save is not None:
         with open(f"{args.save}.csv", "w") as f:
             print("saving:", args.save + '.csv')

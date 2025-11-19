@@ -29,6 +29,7 @@ class row:
     '''
     primary_key = None
     primary_keys = None
+    in_database = True
 
     def __init__(self, **attrs):
         attrs_in = frozenset(name.lower() for name in attrs.keys())
@@ -228,21 +229,28 @@ class Orders(Product_child):
     # purchased_pkgs=integer(null=True),
     # purchased_units=integer(null=True),
     types = dict(
-        date=parse_date,
+      # date=parse_date,
         item=str,
         qty=int,
         supplier=str,
         supplier_id=int,
         purchased_pkgs=int,
         purchased_units=int,
+        location=str,
+        price=Decimal,
     )
+
+    in_database = False
 
     supplier = None
     supplier_id = None
     purchased_pkgs = None
     purchased_units = None
+    location = None
+    price = None
    #primary_keys = "date", "item"
-    required = frozenset(("date", "item", "qty"))
+   #required = frozenset(("date", "item", "qty"))
+    required = frozenset(("item", "qty"))
     foreign_keys = "Items", "Products"
 
     @property
