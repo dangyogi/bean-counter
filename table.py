@@ -15,7 +15,6 @@ CSV_format = dict(delimiter='|', quoting=csv.QUOTE_NONE, skipinitialspace=True, 
 
 def align(value, width, alignment):
     if alignment == 'right':
-        value += ' '
         return ' ' * (width - len(value)) + value
     return value + ' ' * (width - len(value))
 
@@ -62,10 +61,11 @@ class base_table:
         except StopIteration:
             pass
 
-    def to_csv(self, file, add_empty_row=False):
+    def to_csv(self, file, add_table_name=False, add_empty_row=False):
         r'''Writes itself in database csv format to file.
         '''
-        print(self.name, file=file)                     # first line is name of table (only one column)
+        if add_table_name:
+            print(self.name, file=file)                 # first line is name of table (only one column)
         widths = {}
         alignments = {}
         headers = tuple(self.row_class.types.keys())
@@ -73,8 +73,7 @@ class base_table:
         for name in headers:
             name = name.lower()
             max_width = len(name)
-            if self.row_class.types[name] != str:
-                max_width += 1
+            if self.row_class.types[name] in (int, float, Decimal):
                 alignment = 'right'
             else:
                 alignment = 'left'
@@ -82,8 +81,6 @@ class base_table:
             for row in self.values():
                 if getattr(row, name) is not None:
                     width = len(row.csv_value(name))
-                    if alignment == 'right':
-                        width += 2
                     if width > max_width:
                         max_width = width
             widths[name] = max_width
@@ -214,7 +211,7 @@ def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):
 def save_database(csv_filename=Database_filename):
     with open(csv_filename, 'w') as f:
         for table in Tables.values():
-            table.to_csv(f, add_empty_row=True)
+            table.to_csv(f, add_table_name=True, add_empty_row=True)
 
 def load_all(from_scratch=True, ignore_unknown_cols=False):
     for table in Tables.values():
