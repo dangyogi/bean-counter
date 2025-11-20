@@ -1,5 +1,6 @@
 # table.py
 
+import os
 import os.path
 import csv
 from statistics import mean
@@ -177,8 +178,17 @@ def table_for_row(row_class):
 
 Tables = {row_class.table_name: table_for_row(row_class) for row_class in Rows}
 
+class DB:
+    def __init__(self, tables):
+        for name, table in tables.items():
+            setattr(self, name, table)
 
-__all__ = "Decimal date Tables load_database save_database load_all clear_all".split()
+Database = DB(Tables)
+
+set_database(Database)
+
+
+__all__ = "Decimal date Tables Database load_database save_database load_all clear_all".split()
 
 
 def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):
@@ -198,10 +208,14 @@ def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):
     return ans
 
 def save_database(csv_filename=Database_filename):
-    with open(csv_filename, 'w') as f:
+    temp_filename = csv_filename[:-4] + '-new.csv'
+    with open(temp_filename, 'w') as f:
         for table in Tables.values():
             if table.row_class.in_database:
                 table.to_csv(f, add_empty_row=True)
+    save_filename = csv_filename[:-4] + '-save.csv'
+    os.replace(csv_filename, save_filename)
+    os.rename(temp_filename, csv_filename)
 
 def load_csv(csv_filename, from_scratch=True, ignore_unknown_cols=False):
     r'''Loads table from csv_filename.

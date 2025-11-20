@@ -2,9 +2,15 @@
 
 from decimal import Decimal, InvalidOperation
 from datetime import date, datetime
-from calendar import TUESDAY, SATURDAY, monthrange
 
 
+TUESDAY  = 1
+SATURDAY = 5
+
+
+def set_database(database):
+    global Database
+    Database = database
 
 def parse_date(s):
     try:
@@ -318,7 +324,7 @@ class Months(row):
         return self.nth_day(2, SATURDAY)
 
     def nth_day(self, n, day):
-        firstday = monthrange(self.year, self.month)[0]
+        firstday = date(self.year, self.month, 1).weekday()
         days_to_day = day - firstday
         if days_to_day >= 0:
             return date(self.year, self.month, days_to_day + 1 + 7 * (n - 1))
@@ -428,7 +434,7 @@ Rows = (Items, Products,
        )
 
 
-__all__ = "Decimal date Rows".split()
+__all__ = "Decimal date set_database Rows".split()
 
 
 
