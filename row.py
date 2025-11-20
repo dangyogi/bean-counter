@@ -128,12 +128,16 @@ class Items(row):
     foreign_keys = "Products",
 
     @property
+    def product(self):
+        return Database.Products[self.item, self.supplier, self.supplier_id]
+
+    @property
     def pkg_size(self):
-        return Database.Products[self.item, self.supplier, self.supplier_id].pkg_size
+        return self.product.pkg_size
 
     @property
     def pkg_weight(self):
-        return Database.Products[self.item, self.supplier, self.supplier_id].pkg_weight
+        return self.product.pkg_weight
 
 class Products(row):
     # item=varchar(30, references=foreign_key("Items", on_delete="cascade", on_update="cascade")),
@@ -185,20 +189,7 @@ class Products(row):
             return None
         return self.pkg_weight / self.pkg_size
 
-class Product_child(row):
-    @property
-    def supplier_used(self):
-        if self.supplier is None or self.supplier_id is None:
-            return Database.Items[self.item].supplier
-        return self.supplier
-
-    @property
-    def supplier_id_used(self):
-        if self.supplier is None or self.supplier_id is None:
-            return Database.Items[self.item].supplier_id
-        return self.supplier_id
-
-class Inventory(Product_child):
+class Inventory(row):
     # date=date_col(),
     # item=varchar(30),
     # code=varchar(20),
@@ -226,28 +217,29 @@ class Inventory(Product_child):
     required = frozenset(("date", "item", "code"))
     foreign_keys = "Items",
 
-class Orders(Product_child):
-    # date=date_col(),
+class Orders(row):
     # item=varchar(30),
-    # qty=integer(),
+    # qty=integer(null=True),             # None if no P.O. was created, and purchased_units used.
     # supplier=varchar(50, null=True),
     # supplier_id=integer(null=True),
     # purchased_pkgs=integer(null=True),
     # purchased_units=integer(null=True),
+    # location=varchar(20, null=True),
+    # price=Decimal(null=True),
     types = dict(
-      # date=parse_date,
         item=str,
         qty=int,
         supplier=str,
         supplier_id=int,
-        purchased_pkgs=int,
-        purchased_units=int,
-        location=str,
-        price=Decimal,
+        purchased_pkgs=int,   # if None, defaults to qty
+        purchased_units=int,  # added to purchased_pkgs
+        location=str,         # updates Products if not None
+        price=Decimal,        # updates Products if not None
     )
 
     in_database = False
 
+    qty = None
     supplier = None
     supplier_id = None
     purchased_pkgs = None
@@ -255,21 +247,30 @@ class Orders(Product_child):
     location = None
     price = None
    #primary_keys = "date", "item"
-   #required = frozenset(("date", "item", "qty"))
-    required = frozenset(("item", "qty"))
+    required = frozenset(("item",))
     foreign_keys = "Items", "Products"
 
     @property
+    def item_row(self):
+        return Database.Items[self.item]
+
+    @property
+    def product(self):
+        if self.supplier is None or self.supplier_id is None:
+            return self.item_row.product
+        return Database.Products[self.item, self.supplier, self.supplier_id]
+
+    @property
     def unit(self):
-        return Database.Items[self.item].unit
+        return self.item_row.unit
 
     @property
     def pkg_size(self):
-        return Database.Products[self.item, self.supplier_used, self.supplier_id_used].pkg_size
+        return self.product.pkg_size
 
     @property
     def pkg_weight(self):
-        return Database.Products[self.item, self.supplier_used, self.supplier_id_used].pkg_weight
+        return self.product.pkg_weight
 
 class Months(row):
     # month=integer(),
