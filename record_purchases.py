@@ -15,12 +15,13 @@ def run():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("order_csv_file")
+    parser.add_argument("--trial-run", "-t", action="store_true", default=False)
+    parser.add_argument("orders_csv_file")
 
     args = parser.parse_args()
 
     load_database()
-    load_csv(args.order_csv_file)
+    load_csv(args.orders_csv_file)
     today = date.today()
     for order in Orders.values():
         if order.item in Items:
@@ -36,7 +37,8 @@ def run():
                 order.product.location = order.location
             if order.price is not None:
                 order.product.price = order.price
-    save_database()
+    if not args.trail_run:
+        save_database()
 
 
 if __name__ == "__main__":

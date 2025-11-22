@@ -40,7 +40,7 @@ set_breakfast_attendance
     - tickets_claimed
 <update purchases>
     - manual step looking at shopping receipts
-read_purchases
+record_purchases
     - add "purchased" rows to Inventory table
     - write receipt slips (computer figures out bills?)
 update_reconciles

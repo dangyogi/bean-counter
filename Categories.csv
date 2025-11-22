@@ -2,8 +2,11 @@ Categories
 Event|Category|Type|Ticket_price
 meeting dinner|reimbursement|expense|
 breakfast|adv tickets|income|5
+start|door tickets|subtract|
 breakfast|door tickets|income|6
+start|50/50|subtract|
 breakfast|50/50|income|
+breakfast|50/50 payout|subtract|
 breakfast|reimbursement|expense|
 120 Club|donation|income|
 annual|donation|expense|

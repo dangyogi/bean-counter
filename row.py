@@ -25,11 +25,11 @@ def parse_set(s):
 class row:
     r'''One row in a database table.
 
-    These have normal object attributes that can be set.  When the database is saved, these new value will be written to
-    the database file.
+    These have normal object attributes that can be set.  When the database is saved, these new values will
+    be written to the database file.
 
-    Default values are done with class attributes.  Any missing columns in an imported csv file are not set as attributes
-    and default to the class attribute.
+    Default values are done with class attributes.  Any missing columns in an imported csv file are not set as
+    attributes and default to the class attribute.
 
     Additional non-stored attributes (similar to relational view) are simply done with a standard python @property.
     '''
@@ -332,9 +332,9 @@ class Months(row):
         return date(self.year, self.month, days_to_day + 8 + 7 * (n - 1))
 
 class Categories(row):
-    # event=varchar(50),     # e.g., "meeting dinner", "breakfast"
-    # category=varchar(50),  # e.g., "adv tickets", "door tickets", "50/50", "P.O. Reimbursement"
-    # type=varchar(10),      # rev/exp
+    # event=varchar(50),                # e.g., "meeting dinner", "breakfast"
+    # category=varchar(50),             # e.g., "adv tickets", "door tickets", "50/50", "P.O. Reimbursement"
+    # type=varchar(10, null=True),      # rev/exp
     # ticket_price=decimal(null=True),
     types = dict(
         event=str,
@@ -343,28 +343,13 @@ class Categories(row):
         ticket_price=Decimal,
     )
 
+    type = None
     ticket_price = None
     primary_keys = "event", "category"
-    required = frozenset(("event", "category", "type"))
+    required = frozenset(("event", "category"))
 
-class Reconcile(row):
-    # date=date_col(),
-    # event=varchar(50),
-    # category=varchar(50),
-    # detail=varchar(50),
-    # coin=decimal(default=0),
-    # b1=integer(default=0),
-    # b5=integer(default=0),
-    # b10=integer(default=0),
-    # b20=integer(default=0),
-    # b50=integer(default=0),
-    # b100=integer(default=0),
-    # donations=decimal(default=0),
+class bills:
     types = dict(
-        date=parse_date,
-        event=str,
-        category=str,
-        detail=str,
         coin=Decimal,
         b1=int,
         b5=int,
@@ -372,9 +357,7 @@ class Reconcile(row):
         b20=int,
         b50=int,
         b100=int,
-        donations=Decimal,
     )
-
     coin = 0
     b1 = 0
     b5 = 0
@@ -382,17 +365,120 @@ class Reconcile(row):
     b20 = 0
     b50 = 0
     b100 = 0
-    donations = 0
-    required = frozenset(("date", "event", "category", "detail"))
-    foreign_keys = "Categories",
+
+    def __init__(self, coin=0, b1=0, b5=0, b10=0, b20=0, b50=0, b100=0):
+        self.coin = coin
+        self.b1 = b1
+        self.b5 = b5
+        self.b10 = b10
+        self.b20 = b20
+        self.b50 = b50
+        self.b100 = b100
+
+    @classmethod
+    def value(cls, attr):
+        r'''The monetary value of `attr`.
+        '''
+        if attr == 'coin':
+            return 1
+        assert attr[0] == 'b', f"expected attr starting with 'b', got {attr=}"
+        return int(attr[1:])
+
+    def copy(self):
+        return bills(**self.as_attrs())
+
+    def as_attrs(self):
+        return {key: getattr(self, key) for key in bills.types.keys()}
+
+    def __add__(self, bill2):
+        r'''Returns new bills object.
+        '''
+        return bills(**{key: getattr(self, key) + getattr(bill2, key) for key in bills.types.keys()})
+
+    def __sub__(self, bill2):
+        r'''Returns new bills object.
+        '''
+        return bills(**{key: getattr(self, key) - getattr(bill2, key) for key in bills.types.keys()})
+
+    def __iadd__(self, bill2):
+        r'''Adds bill2 to self.
+        '''
+        for key in bills.types.keys():
+            self.add_to_attr(key, bill2)
+        return self
+
+    def __isub__(self, bill2):
+        r'''Subtracts bill2 from self.
+        '''
+        for key in bills.types.keys():
+            self.sub_from_attr(key, bill2)
+        return self
+
+    def add_to_attr(self, attr, inc):
+        r'''If inc is bills, gets attr from inc; else inc must be the number to add.
+        '''
+        if isinstance(inc, bills):
+            inc = getattr(inc, attr)
+        setattr(self, attr, getattr(self, attr) + inc)
+
+    def sub_from_attr(self, attr, dec):
+        r'''If dec is bills, gets attr from dec; else dec must be the number to subtract.
+        '''
+        if isinstance(dec, bills):
+            dec = getattr(dec, attr)
+        setattr(self, attr, getattr(self, attr) - dec)
 
     @property
     def total(self):
-        return coin + b1 + 5*b5 + 10*b10 + 20*b20 + 50*b50 + 100*b100
+        return sum(self.value(key) * getattr(self, key) for key in bills.types.keys())
+
+    def print(self, file):
+        r'''Appends bill columns to end of current print line.
+
+        Terminates the line.
+        '''
+        print(f"|{self.coin:5.02f}", end='', file=file)
+        print(f"|{self.b1:3d}", end='', file=file)
+        print(f"|{self.b5:3d}", end='', file=file)
+        print(f"|{self.b10:3d}", end='', file=file)
+        print(f"|{self.b20:3d}", end='', file=file)
+        print(f"|{self.b50:3d}", end='', file=file)
+        print(f"|{self.b100:4d}", end='', file=file)
+        print(f"|{self.total:8.02f}", file=file)
+
+class Starts(row, bills):  # row first, so it's __init__ is used.
+    # event=varchar(50),
+    # category=varchar(50),
+    # detail=varchar(50, null=True),
+    # ... bills
+    types = dict(
+        event=str,
+        category=str,
+        detail=str,
+    )
+    types.update(bills.types)
+    detail = None
+    required = frozenset(("event", "category", "detail"))
+    primary_keys = "event", "category", "detail"
+    foreign_keys = "Categories",
 
     @property
     def type(self):
         return Database.Categories[self.event, self.category].type
+
+class Reconcile(Starts):
+    # date=date_col(),
+    # ... Starts
+    # donations=decimal(null=True),
+    types = dict(
+        date=parse_date,
+    )
+    types.update(Starts.types)
+    types["donations"]=Decimal
+
+    donations = 0
+    required = frozenset(("date", "event", "category"))
+    primary_keys = None
 
     @property
     def ticket_price(self):
@@ -431,11 +517,11 @@ def convert(s):
 # These must be in logical order based on what has to be defined first
 Rows = (Items, Products,
         Inventory, Orders, Months,
-        Categories, Reconcile,
+        Categories, Starts, Reconcile,
        )
 
 
-__all__ = "Decimal date set_database Rows".split()
+__all__ = "Decimal date set_database bills Rows".split()
 
 
 
