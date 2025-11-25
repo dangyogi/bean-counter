@@ -2,6 +2,7 @@
 
 from decimal import Decimal, InvalidOperation
 from datetime import date, datetime
+import math
 
 
 TUESDAY  = 1
@@ -272,6 +273,10 @@ class Orders(row):
     def pkg_weight(self):
         return self.product.pkg_weight
 
+Months_abbreviated = (None,
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+)
+
 class Months(row):
     # month=integer(),
     # year=integer(),
@@ -283,6 +288,8 @@ class Months(row):
     # tickets_claimed=integer(null=True),
     # start_date=date(null=True),
     # end_date=date(null=True),
+    # end_bank_bal=Decimal(null=True),
+    # end_cash_bal=Decimal(null=True),
     # steps_completed=set(null=True),
     types = dict(
         month=int,
@@ -295,6 +302,8 @@ class Months(row):
         tickets_claimed=int,
         start_date=parse_date,
         end_date=parse_date,
+        end_bank_bal=Decimal,
+        end_cash_bal=Decimal,
         steps_completed=parse_set,
     )
 
@@ -306,9 +315,15 @@ class Months(row):
     tickets_claimed = None
     start_date = None
     end_date = None
+    end_bank_bal = None
+    end_cash_bal = None
     steps_completed = None
     primary_keys = "year", "month"
     required = frozenset(("month", "year"))
+
+    @property
+    def month_str(self):
+        return f"{Months_abbreviated[self.month]}, {str(self.year)[2:]}"
 
     @property
     def meals_served(self):
@@ -331,20 +346,32 @@ class Months(row):
             return date(self.year, self.month, days_to_day + 1 + 7 * (n - 1))
         return date(self.year, self.month, days_to_day + 8 + 7 * (n - 1))
 
+class Globals(row):
+    # name=varchar(50),                # e.g., "meeting dinner", "breakfast"
+    # int=Decimal(null=True)
+    # decimal=Decimal(null=True)
+    types = dict(
+        name=str,
+        int=int,
+        decimal=Decimal,
+    )
+
+    int = None
+    decimal = None
+    primary_key = "name"
+    required = frozenset(("name",))
+
 class Categories(row):
     # event=varchar(50),                # e.g., "meeting dinner", "breakfast"
     # category=varchar(50),             # e.g., "adv tickets", "door tickets", "50/50", "P.O. Reimbursement"
     # type=varchar(10, null=True),      # rev/exp
-    # ticket_price=decimal(null=True),
     types = dict(
         event=str,
         category=str,
         type=str,
-        ticket_price=Decimal,
     )
 
     type = None
-    ticket_price = None
     primary_keys = "event", "category"
     required = frozenset(("event", "category"))
 
@@ -481,8 +508,21 @@ class Reconcile(Starts):
     primary_keys = None
 
     @property
+    def total(self):
+        return super().total() - self.donations
+
+    @property
     def ticket_price(self):
-        return Database.Categories[self.event, self.category].ticket_price
+        if self.event == "breakfast" and self.category.endswith(" tickets"):
+            return Database.Globals[self.category[-1] + " price"].int
+        return None
+
+    @property
+    def tickets_sold(self):
+        price = self.ticket_price
+        if price is None:
+            return None
+        return int(math.ceil(self.total / price))
 
 def convert(s):
     s = s.strip()
@@ -517,7 +557,7 @@ def convert(s):
 # These must be in logical order based on what has to be defined first
 Rows = (Items, Products,
         Inventory, Orders, Months,
-        Categories, Starts, Reconcile,
+        Globals, Categories, Starts, Reconcile,
        )
 
 

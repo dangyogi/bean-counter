@@ -160,21 +160,28 @@ month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_b
    10|2025|         |              |                  |             5|                  |               |          |        |                                                                                                                          
    11|2025|       60|            80|               120|            14|                14|             61|Nov 02, 25|        |read_inv,read_order,set_breakfast_attendance,set_meeting_attendance,set_min_max,write_POs,write_inv_checklist,write_orders
 
+Globals
+name             |int|decimal
+adv ticket price |  5|       
+door ticket price|  6|       
+
 Categories
-event         |category       |type   |ticket_price
-meeting dinner|reimbursement  |expense|            
-breakfast     |adv tickets    |income |           5
-breakfast     |door tickets   |income |           6
-breakfast     |50/50          |income |            
-breakfast     |reimbursement  |expense|            
-120 Club      |donation       |income |            
-annual        |donation       |expense|            
-one-time      |income         |income |            
-one-time      |expense        |expense|            
-monthly       |initial balance|       |            
-monthly       |cash out       |       |            
-monthly       |cash in        |       |            
-monthly       |final balance  |       |            
+event         |category       |type   
+meeting dinner|reimbursement  |expense
+breakfast     |adv tickets    |income 
+breakfast     |door tickets   |income 
+breakfast     |50/50          |income 
+breakfast     |donations      |income 
+breakfast     |reimbursement  |expense
+120 Club      |donation       |income 
+annual        |donation       |expense
+one-time      |income         |income 
+one-time      |expense        |expense
+petty cash    |expense        |expense
+monthly       |initial balance|       
+monthly       |cash out       |       
+monthly       |cash in        |       
+monthly       |final balance  |       
 
 Starts
 event    |category     |detail         |coin|b1|b5|b10|b20|b50|b100
@@ -185,7 +192,7 @@ monthly  |final balance|petty cash     |   0|10| 4|  2|  0|  0|   0
 
 Reconcile
 date      |event         |category     |detail             |coin|b1|b5|b10|b20|b50|b100|donations
-Nov 01, 25|monthly       |final balance|excl $50 petty cash|4.81|34| 9| 14| 12| 10|  18|        0
+Nov 01, 25|monthly       |final balance|w/starts&petty cash|4.81|44|13| 16| 12| 10|  18|        0
 Nov 03, 25|breakfast     |reimbursement|Bruce, Sam's Card  |   0| 0| 3|  0|  0|  0|   0|        0
 Nov 04, 25|meeting dinner|reimbursement|Bruce, pizza       | 0.5| 2| 0|  4|  0|  0|   0|        0
 Nov 04, 25|meeting dinner|reimbursement|Bruce, beer        |0.25|22| 0|  0|  0|  0|   0|        0
