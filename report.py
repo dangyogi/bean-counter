@@ -17,7 +17,7 @@ Steps:
 
     2. Create a row.  These will be output in the order created:
 
-        title_row = report.new_row("title")
+        title_row = report.new_row("title")        # can also provide the values to the first N rows as additional args
     
     3. Add text to columns.  This may be done after other rows are created.
 
@@ -59,6 +59,13 @@ Steps:
 #   stringWidth("l")           143.856 =  22.2%
 #   stringWidth(" ")           180.144 =  27.8%
 
+# canvas.setPageSize(pair)
+# canvas.transform(a,b,c,d,e,f):
+# canvas.translate(dx, dy)
+# canvas.scale(x, y)
+# canvas.rotate(theta)
+# canvas.skew(alpha, beta)
+
 from pathlib import Path
 import sys
 
@@ -82,27 +89,41 @@ class Report:
         self.name = name
         path = (Path("~/storage/downloads") / (name + ".pdf")).expanduser()
         print(f"Report({name=}): {path=}")
-        self.canvas = canvas.Canvas(str(path), pagesize=portrait(letter))
-        self.page_width, self.page_height = portrait(letter)
+        self.pagesize = portrait(letter)
+        self.canvas = canvas.Canvas(str(path), pagesize=self.pagesize)
+        self.page_width, self.page_height = self.pagesize
 
         # Column_layouts
         self.columns = {}
         self.name_suffixes = {}   # {col_name: next_suffix}
-        self.col_x_starts = [0] * (len(row_layout_cols) + 1)
-        self.col_x_char_starts = [0] * (len(row_layout_cols) + 1)
+        self.col_x_starts = None
+        self.col_x_char_starts = None
 
         # Row_layouts
         self.row_layouts = {}     # {row_name: row_layout}
+        last_right_index = None
         for rl_name, cols in row_layout_cols.items():
-            for col_index, col in enumerate(cols):
+            col_index = 0
+            for col in cols:
                 col.set_report(self, col_index)
+                col_index = col.right_index
+            assert last_right_index is None or last_right_index == col_index, \
+                   f"{last_right_index=}, {col_index=}"
+            if self.col_x_starts is None:
+                self.col_x_starts = [0] * (col_index + 1)
+                self.col_x_char_starts = [0] * (col_index + 1)
             self.row_layouts[rl_name] = Row_layout(self, rl_name, *cols)
 
         # Rows
         self.rows = []
 
-    def new_row(self, row_layout):
-        return self.row_layouts[row_layout].new_row()
+    def set_landscape(self):
+        self.pagesize = landscape(self.pagesize)
+        self.canvas.setPageSize(self.pagesize)
+        self.page_width, self.page_height = self.pagesize
+
+    def new_row(self, row_layout, *values):
+        return self.row_layouts[row_layout].new_row(values)
 
     def init(self):
         self.set_sizes()
@@ -111,7 +132,13 @@ class Report:
 
     def draw_init(self):
         self.init()
-        print("Report width", self.report_width(), "height", self.report_height())
+        width = self.report_width()
+        height = self.report_height()
+        if width > self.page_width and width > height:
+            print("Report width", width, "height", height, "setting landscape")
+            self.set_landscape()
+        else:
+            print("Report width", width, "height", height)
 
     def draw(self, x_offset=0, y_offset=0):
         for row in self.rows:
@@ -250,10 +277,10 @@ class Cell:
                                               str(self.text))
 
     def print(self, file):
-        text = self.text
+        text = str(self.text)
         if self.text2 is not None:
             text += ' ' * self.col.report.gap_width_chars
-            text += self.text2
+            text += str(self.text2)
         left, right = self.col.get_padding(len(text))
         print(' ' * left, text, ' ' * right, sep='', end='')
 
@@ -335,7 +362,7 @@ class Right(Column_layout):
     aligning on decimal point.
     '''
     def get_x_offset(self, text_width):
-        return self.x_start + self.col.width() - self.indent - text_width
+        return self.x_start + self.width() - self.indent - text_width
 
     def get_padding(self, text_width):
         r'''Returns num spaces to print to the left and right of text.
@@ -353,8 +380,12 @@ class Row_layout:
         self.name = name
         self.columns = columns
 
-    def new_row(self):
-        return Row(self)
+    def new_row(self, values):
+        new_row = Row(self)
+        for value in values:
+            new_row.next_cell(value)
+        return new_row
+  
 
 
 class BM:
@@ -410,6 +441,7 @@ class Row(BM):
 
 def dump_table():
     import argparse
+    from itertools import chain
     import database
 
     parser = argparse.ArgumentParser()
@@ -426,7 +458,7 @@ def dump_table():
     header_cols = []
     data_cols = []
     header_names = []
-    for name, type in table.row_class.types.items():
+    for name, type in chain(table.row_class.types.items(), table.row_class.calculated.items()):
         header_names.append(name)
         if type in (int, float, database.Decimal):
             header_cols.append(Right(bold=True))
@@ -434,22 +466,24 @@ def dump_table():
         else:
             header_cols.append(Left(bold=True))
             data_cols.append(Left())
+    assert len(header_cols) == len(data_cols) == len(header_names), \
+           f"ERROR: {len(header_cols)=}, {len(data_cols)=}, {len(header_names)=}"
 
     report = Report(table_name,
            title=(Centered(span=len(header_names), size='title', bold=True),),
            headers=header_cols,
            data=data_cols,
           )
-    report.new_row('title').next_cell(table_name)
-    headers = report.new_row('headers')
-    for name in header_names:
-        headers.next_cell(name)
+    report.new_row('title', table_name)
+    report.new_row('headers', *header_names)
     for row in table.values():
         data = report.new_row('data')
         for name in header_names:
             value = getattr(row, name)
             if value is None:
                 data.next_cell()
+            elif isinstance(value, database.date):
+                data.next_cell(value.strftime("%b %d, %y"))
             else:
                 data.next_cell(value)
 

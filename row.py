@@ -127,17 +127,27 @@ class Items(row):
     primary_key = 'item'
     required = frozenset(("item", "unit"))
     foreign_keys = "Products",
+    calculated = dict(
+        pkg_size=int,
+        pkg_weight=float,
+    )
 
     @property
     def product(self):
+        if self.supplier is None or self.supplier_id is None:
+            return None
         return Database.Products[self.item, self.supplier, self.supplier_id]
 
     @property
     def pkg_size(self):
+        if self.product is None:
+            return None
         return self.product.pkg_size
 
     @property
     def pkg_weight(self):
+        if self.product is None:
+            return None
         return self.product.pkg_weight
 
 class Products(row):
@@ -173,6 +183,11 @@ class Products(row):
     primary_keys = "item", "supplier", "supplier_id"
     required = frozenset(("item", "supplier", "name", "price"))
     foreign_keys = "Items",
+    calculated = dict(
+        unit=str,
+        price_per_unit=float,
+        oz_per_unit=float,
+    )
 
     @property
     def unit(self):
@@ -217,6 +232,7 @@ class Inventory(row):
     primary_keys = "date item code".split()
     required = frozenset(("date", "item", "code"))
     foreign_keys = "Items",
+    calculated = dict()
 
 class Orders(row):
     # item=varchar(30),
@@ -250,6 +266,11 @@ class Orders(row):
    #primary_keys = "date", "item"
     required = frozenset(("item",))
     foreign_keys = "Items", "Products"
+    calculated = dict(
+        unit=str,
+        pkg_size=int,
+        pkg_weight=float,
+    )
 
     @property
     def item_row(self):
@@ -320,6 +341,12 @@ class Months(row):
     steps_completed = None
     primary_keys = "year", "month"
     required = frozenset(("month", "year"))
+    calculated = dict(
+        month_str=str,
+        meals_served=int,
+        meeting_date=date,
+        breakfast_date=date,
+    )
 
     @property
     def month_str(self):
@@ -360,6 +387,7 @@ class Globals(row):
     decimal = None
     primary_key = "name"
     required = frozenset(("name",))
+    calculated = dict()
 
 class Categories(row):
     # event=varchar(50),                # e.g., "meeting dinner", "breakfast"
@@ -374,6 +402,7 @@ class Categories(row):
     type = None
     primary_keys = "event", "category"
     required = frozenset(("event", "category"))
+    calculated = dict()
 
 class bills:
     types = dict(
@@ -392,6 +421,9 @@ class bills:
     b20 = 0
     b50 = 0
     b100 = 0
+    calculated = dict(
+        total=Decimal,
+    )
 
     def __init__(self, coin=0, b1=0, b5=0, b10=0, b20=0, b50=0, b100=0):
         self.coin = coin
@@ -488,6 +520,8 @@ class Starts(row, bills):  # row first, so it's __init__ is used.
     required = frozenset(("event", "category", "detail"))
     primary_keys = "event", "category", "detail"
     foreign_keys = "Categories",
+    calculated = bills.calculated.copy()
+    calculated["type"] = str
 
     @property
     def type(self):
@@ -506,6 +540,12 @@ class Reconcile(Starts):
     donations = 0
     required = frozenset(("date", "event", "category"))
     primary_keys = None
+    calculated = Starts.calculated.copy()
+    calculated.update(dict(
+        total=Decimal,
+        ticket_price=int,
+        tickets_sold=int,
+    ))
 
     @property
     def total(self):

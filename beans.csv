@@ -1,40 +1,40 @@
 Items
-item                |unit                         |supplier|supplier_id|num_per_meal|num_per_table|num_per_serving
-Bacon               |slice                        |Sams    |          1|            |             |           2.63
-Bowls               |ea                           |Sams    |          1|            |            3|              0
-Butter              |chip                         |Gordon  |          1|            |           12|            1.5
-Coffee, ground      |cup of coffee                |Sams    |          1|            |             |              0
-Coffee cups, 12 oz  |ea                           |Sams    |          1|            |             |               
-Coffee cups, 10 oz  |ea                           |Sams    |          1|            |             |               
-Coffee cups, 8 oz   |ea                           |Sams    |          1|            |           10|              1
-Coffee Stirrer 5"   |ea                           |Gordon  |          1|            |           10|              1
-Coffee Stirrer 7"   |ea                           |Walmart |          1|            |             |               
-Cutlery Packets     |ea                           |Sams    |          1|            |           10|              1
-Eggs                |ea                           |Sams    |          1|            |             |            2.9
-Gloves              |pair                         |Walmart |          1|          10|             |               
-Grill Cleaning Brick|ea                           |Walmart |          1|         0.1|             |               
-Half & Half         |ea                           |Sams    |          1|            |           10|              1
-Milk                |oz                           |Walmart |          1|            |             |           0.63
-Nonstick Spray      |can                          |Sams    |          1|           1|             |           0.01
-OJ cups             |ea                           |Sams    |          1|            |           10|              1
-Orange Juice        |oz                           |Sams    |          1|            |             |            4.5
-Pancake Mix         |6" pancake (4 oz ea, was 1.8)|Sams    |          1|            |             |           1.67
-Paper Towels        |roll                         |Walmart |          1|            |             |           0.01
-Place Mats          |ea                           |Gordon  |          1|            |           10|              1
-Raffle Tickets      |ea                           |Walmart |          1|            |             |           2.27
-Rubber Bands        |ea                           |Walmart |          1|            |             |               
-Scrubbers           |ea                           |Sams    |          1|            |             |           0.01
-Serving Plates      |ea                           |Sams    |          1|            |             |              1
-Small Plates        |ea                           |Sams    |          1|            |             |               
-Splenda             |ea                           |Sams    |          1|            |            5|           0.33
-Sugar               |ea                           |Sams    |          1|            |            5|           0.33
-Sweet'N Low         |ea                           |Sams    |          1|            |            5|           0.33
-Syrup bottle, reg   |bottle                       |        |           |            |            1|               
-Syrup bottle, SF    |bottle                       |        |           |            |            1|               
-Syrup, reg          |oz                           |Walmart |          1|            |             |           1.67
-Syrup, sugar free   |oz                           |Walmart |          1|            |             |           1.67
-Tea                 |bag                          |Sams    |          1|            |             |            0.1
-To-Go Containers    |ea                           |Sams    |          1|            |             |           0.08
+item                |unit         |supplier|supplier_id|num_per_meal|num_per_table|num_per_serving
+Bacon               |slice        |Sams    |          1|            |             |           2.63
+Bowls               |ea           |Sams    |          1|            |            3|              0
+Butter              |chip         |Gordon  |          1|            |           12|            1.5
+Coffee, ground      |cup of coffee|Sams    |          1|            |             |              0
+Coffee cups, 12 oz  |ea           |Sams    |          1|            |             |               
+Coffee cups, 10 oz  |ea           |Sams    |          1|            |             |               
+Coffee cups, 8 oz   |ea           |Sams    |          1|            |           10|              1
+Coffee Stirrer 5"   |ea           |Gordon  |          1|            |           10|              1
+Coffee Stirrer 7"   |ea           |Walmart |          1|            |             |               
+Cutlery Packets     |ea           |Sams    |          1|            |           10|              1
+Eggs                |ea           |Sams    |          1|            |             |            2.9
+Gloves              |pair         |Walmart |          1|          10|             |               
+Grill Cleaning Brick|ea           |Amazon  |          1|         0.1|             |               
+Half & Half         |ea           |Sams    |          1|            |           10|              1
+Milk                |oz           |Walmart |          1|            |             |           0.63
+Nonstick Spray      |can          |Sams    |          1|           1|             |           0.01
+OJ cups             |ea           |Sams    |          1|            |           10|              1
+Orange Juice        |oz           |Sams    |          1|            |             |            4.5
+Pancake Mix         |6" (4 oz ea) |Sams    |          1|            |             |           1.67
+Paper Towels        |roll         |Walmart |          1|            |             |           0.01
+Place Mats          |ea           |Gordon  |          1|            |           10|              1
+Raffle Tickets      |ea           |Walmart |          1|            |             |           2.27
+Rubber Bands        |ea           |Walmart |          1|            |             |               
+Scrubbers           |ea           |Sams    |          1|            |             |           0.01
+Serving Plates      |ea           |Sams    |          1|            |             |              1
+Small Plates        |ea           |Sams    |          1|            |             |               
+Splenda             |ea           |Sams    |          1|            |            5|           0.33
+Sugar               |ea           |Sams    |          1|            |            5|           0.33
+Sweet'N Low         |ea           |Sams    |          1|            |            5|           0.33
+Syrup bottle, reg   |bottle       |        |           |            |            1|               
+Syrup bottle, SF    |bottle       |        |           |            |            1|               
+Syrup, reg          |oz           |Walmart |          1|            |             |           1.67
+Syrup, sugar free   |oz           |Walmart |          1|            |             |           1.67
+Tea                 |bag          |Sams    |          1|            |             |            0.1
+To-Go Containers    |ea           |Sams    |          1|            |             |           0.08
 
 Products
 item                |supplier|supplier_id|name                                                                                                                                                                                                 |item_num |location |price|pkg_size|pkg_weight|note                                                                       
@@ -145,20 +145,20 @@ Nov 20, 25|Pancake Mix      |purchased|       2|        0|          0
 Nov 20, 25|Serving Plates   |purchased|       0|      200|          0
 
 Months
-month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date|steps_completed                                                                                                           
-    1|2024|         |              |                  |              |                  |               |          |        |                                                                                                                          
-    2|2024|         |              |                  |              |                  |             99|          |        |                                                                                                                          
-    3|2024|         |              |                  |            21|                12|             70|          |        |                                                                                                                          
-    4|2024|         |              |                  |            12|                 9|             42|          |        |                                                                                                                          
-   10|2024|         |              |                  |              |                  |               |          |        |                                                                                                                          
-   11|2024|         |              |                  |             8|                11|             44|          |        |                                                                                                                          
-   12|2024|         |              |                  |             9|                11|             48|          |        |                                                                                                                          
-    1|2025|         |              |                  |            12|                13|             54|          |        |                                                                                                                          
-    2|2025|         |              |                  |            12|                10|             64|          |        |                                                                                                                          
-    3|2025|         |              |                  |             9|                10|             59|          |        |                                                                                                                          
-    4|2025|         |              |                  |             8|                11|             37|          |        |                                                                                                                          
-   10|2025|         |              |                  |             5|                  |               |          |        |                                                                                                                          
-   11|2025|       60|            80|               120|            14|                14|             61|Nov 02, 25|        |read_inv,read_order,set_breakfast_attendance,set_meeting_attendance,set_min_max,write_POs,write_inv_checklist,write_orders
+month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date|end_bank_bal|end_cash_bal|steps_completed                                                                                                           
+    1|2024|         |              |                  |              |                  |               |          |        |            |            |                                                                                                                          
+    2|2024|         |              |                  |              |                  |             99|          |        |            |            |                                                                                                                          
+    3|2024|         |              |                  |            21|                12|             70|          |        |            |            |                                                                                                                          
+    4|2024|         |              |                  |            12|                 9|             42|          |        |            |            |                                                                                                                          
+   10|2024|         |              |                  |              |                  |               |          |        |            |            |                                                                                                                          
+   11|2024|         |              |                  |             8|                11|             44|          |        |            |            |                                                                                                                          
+   12|2024|         |              |                  |             9|                11|             48|          |        |            |            |                                                                                                                          
+    1|2025|         |              |                  |            12|                13|             54|          |        |            |            |                                                                                                                          
+    2|2025|         |              |                  |            12|                10|             64|          |        |            |            |                                                                                                                          
+    3|2025|         |              |                  |             9|                10|             59|          |        |            |            |                                                                                                                          
+    4|2025|         |              |                  |             8|                11|             37|          |        |            |            |                                                                                                                          
+   10|2025|         |              |                  |             5|                  |               |          |        |            |            |                                                                                                                          
+   11|2025|       60|            80|               120|            14|                14|             61|Nov 02, 25|        |            |            |read_inv,read_order,set_breakfast_attendance,set_meeting_attendance,set_min_max,write_POs,write_inv_checklist,write_orders
 
 Globals
 name             |int|decimal
