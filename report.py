@@ -73,6 +73,9 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import landscape, portrait, letter, inch
 
 
+__all__ = "Report Left Centered Right Value Row_template dump_table".split()
+
+
 class Report:
     default_font = 'Helvetica'
     default_bold = 'Helvetica-Bold'
@@ -84,6 +87,8 @@ class Report:
 
     col_gap_chars = 3
     col_gap_points = col_gap_chars * default_size * 0.278
+
+    text2_gap_percent = 0.278
 
     def __init__(self, name, path=Path("~/storage/downloads/"), **row_layout_cols):
         self.name = name
@@ -109,10 +114,12 @@ class Report:
                 col_index = col.right_index
             assert last_right_index is None or last_right_index == col_index, \
                    f"{last_right_index=}, {col_index=}"
+            last_right_index = col_index
             if self.col_x_starts is None:
                 self.col_x_starts = [0] * (col_index + 1)
                 self.col_x_char_starts = [0] * (col_index + 1)
             self.row_layouts[rl_name] = Row_layout(self, rl_name, *cols)
+        print(f"Report({self.name}).__init__: {len(self.col_x_starts)=}")
 
         # Rows
         self.rows = []
@@ -122,8 +129,8 @@ class Report:
         self.canvas.setPageSize(self.pagesize)
         self.page_width, self.page_height = self.pagesize
 
-    def new_row(self, row_layout, *values):
-        return self.row_layouts[row_layout].new_row(values)
+    def new_row(self, row_layout, *values, size=None, bold=None):
+        return self.row_layouts[row_layout].new_row(*values, size=size, bold=bold)
 
     def init(self):
         self.set_sizes()
@@ -187,11 +194,13 @@ class Report:
         for i in range(len(self.col_x_starts)):  # all col_x_starts have been taken care of up to and including i
             for col in self.columns.values():
                 if col.left_index == i:
-                    right_start = self.col_x_starts[col.left_index] + col.my_width + self.col_gap_points
+                    right_start = \
+                      self.col_x_starts[col.left_index] + col.indent + col.my_width + self.col_gap_points
                     if right_start > self.col_x_starts[col.right_index]:
                         self.col_x_starts[col.right_index] = right_start
                     right_char_start = \
-                      self.col_x_char_starts[col.left_index] + col.my_width_chars + self.col_gap_chars
+                      self.col_x_char_starts[col.left_index] + col.indent_chars \
+                      + col.my_width_chars + self.col_gap_chars
                     if right_char_start > self.col_x_char_starts[col.right_index]:
                         self.col_x_char_starts[col.right_index] = right_char_start
 
@@ -209,8 +218,8 @@ class Report:
 
 
 class Cell:
-    def __init__(self, text, col, row, size=None, bold=None):
-        self.text = text or ''
+    def __init__(self, text, col, row, size=None, bold=None, text_format=None, text2_format=None):
+        self.text = text
         self.col = col
         self.row = row
         self.size = size if size is not None else self.col.fontsize
@@ -219,13 +228,23 @@ class Cell:
             self.fontName = self.col.report.default_bold
         else:
             self.fontName = self.col.report.default_font
-        self.width1 = self.col.report.canvas.stringWidth(str(self.text), fontName=self.fontName,
+        self.text_format = text_format or col.text_format
+        self.text2_format = text2_format or col.text2_format
+        self.width1 = self.col.report.canvas.stringWidth(self.format_text(self.text, self.text_format),
+                                                         fontName=self.fontName,
                                                          fontSize=self.size)
         self.text2 = None
         self.bold2 = None
         self.width2 = 0
 
-    def set_text2(self, text2, bold=False):
+    def format_text(self, text, text_format):
+        if text is None:
+            return ""
+        if text_format is None:
+            return str(text)
+        return text_format.format(text)
+
+    def set_text2(self, text2, bold=False, text2_format=None):
         assert self.text2 is None, \
                f"Second call to Cell.set_text2, first text2={self.text2}, this {text2=}"
         self.text2 = text2
@@ -234,8 +253,11 @@ class Cell:
             self.fontName2 = self.col.report.default_bold
         else:
             self.fontName2 = self.col.report.default_font
-        self.width1 += self.col.report.gap_width
-        self.width2 = self.col.report.canvas.stringWidth(str(self.text2), fontName=self.fontName2,
+        if text2_format is not None:
+            self.text2_format = text2_format
+        self.width1 += self.col.report.text2_gap_percent * self.size
+        self.width2 = self.col.report.canvas.stringWidth(self.format_text(self.text2, self.text2_format),
+                                                         fontName=self.fontName2,
                                                          fontSize=self.size)
 
     def set_sizes(self):
@@ -255,12 +277,11 @@ class Cell:
     def my_width_chars(self):
         r'''In characters.
         '''
-        width1 = len(str(self.text))
+        width1 = len(self.format_text(self.text, self.text_format))
         if self.text2 is None:
             width2 = 0
         else:
-            width2 = len(str(self.text2))
-            width2 += self.col.report.gap_width_chars
+            width2 = 1 + len(self.format_text(self.text2, self.text2_format))
         return width1 + width2
 
     def draw(self, x_offset, y_offset):
@@ -268,19 +289,19 @@ class Cell:
         x = self.col.get_x_offset(self.my_width())
         self.col.report.canvas.drawString(x + x_offset,
                                           self.col.report.page_height - (y_offset + self.row.y_end),
-                                          str(self.text))
+                                          self.format_text(self.text, self.text_format))
 
         if self.text2 is not None:
             self.col.report.canvas.setFont(self.fontName2, self.size)
             self.col.report.canvas.drawString(x + x_offset + self.width1,
                                               self.col.report.page_height - (y_offset + self.row.y_end),
-                                              str(self.text))
+                                              self.format_text(self.text2, self.text2_format))
 
     def print(self, file):
-        text = str(self.text)
+        text = self.format_text(self.text, self.text_format)
         if self.text2 is not None:
-            text += ' ' * self.col.report.gap_width_chars
-            text += str(self.text2)
+            text += ' '
+            text += self.format_text(self.text2, self.text2_format)
         left, right = self.col.get_padding(len(text))
         print(' ' * left, text, ' ' * right, sep='', end='')
 
@@ -290,12 +311,14 @@ class Cell:
 class Column_layout:
     report = None
 
-    def __init__(self, name=None, span=1, indent_level=0, size=None, bold=False):
+    def __init__(self, name=None, span=1, indent=0, size=None, bold=False, text_format=None, text2_format=None):
         self.name = name
         self.span = span
-        self.indent_level = indent_level
+        self.indent_level = indent
         self.fontsize = size
         self.bold = bold
+        self.text_format = text_format
+        self.text2_format = text2_format
 
     def set_report(self, report, col_index):
         self.report = report
@@ -374,16 +397,15 @@ class Right(Column_layout):
 
 class Row_layout:
     def __init__(self, report, name, *columns):
-        r'''columns are either a Column_layout instance, or name.
+        r'''columns are Column_layout instances.
         '''
         self.report = report
         self.name = name
         self.columns = columns
 
-    def new_row(self, values):
+    def new_row(self, *values, size=None, bold=None):
         new_row = Row(self)
-        for value in values:
-            new_row.next_cell(value)
+        new_row.next_cells(*values, size=size, bold=bold)
         return new_row
   
 
@@ -425,34 +447,159 @@ class Row(BM):
     def y_end(self):
         return self.y_start + self.height
 
-    def next_cell(self, text=None, size=None, bold=None):
+    def next_cell(self, text=None, size=None, bold=None, text_format=None, text2_format=None):
         r'''Doesn't return anything.
         '''
         assert self.column_index < len(self.layout.columns), f"Row({self.row_num}).next_cell: too many calls"
-        cell = Cell(text, self.layout.columns[self.column_index], self, size=size, bold=bold)
+        cell = Cell(text, self.layout.columns[self.column_index], self, size=size, bold=bold,
+                    text_format=text_format, text2_format=text2_format)
         self.cells.append(cell)
         self.column_index += 1
 
-    def set_text2(self, text, bold=False):
+    def next_cells(self, *texts, size=None, bold=None):
+        r'''Doesn't return anything.
+        '''
+        for text in texts:
+            self.next_cell(text, size=size, bold=bold)
+
+    def set_text2(self, text, bold=False, text2_format=None):
         r'''Adds text to the end of the last cell.
         '''
-        self.cells[-1].set_text2(text, bold)
+        self.cells[-1].set_text2(text, bold, text2_format)
 
 
-def dump_table():
-    import argparse
+class Value:
+    r'''A numeric value that accepts += and -= and forwards these numbers to all parents.
+    '''
+    def __init__(self, *parents, invert=False):
+        self.parents = []
+        for parent in parents:
+            self.add_parent(parent, invert)
+        self.value = 0
+
+    def add_parent(self, parent, invert=False):
+        self.parents.append((parent, invert))
+
+    def __iadd__(self, n):
+        self.value += n
+        for p, invert in self.parents:
+            if not invert:
+                p += n
+            else:
+                p -= n
+        return self
+
+    def __isub__(self, n):
+        self.value -= n
+        for p, invert in self.parents:
+            if not invert:
+                p -= n
+            else:
+                p += n
+        return self
+
+class Row_template(Value):
+    r'''These are templates for individual rows.
+
+    These are Values, so accept += and -=.  Their parents are generally other Row_templates.  The value is added as
+    another (expected to be the last) cell in the row as it is inserted into the report.
+
+    These are used in 3 steps:
+
+        1. Create the Row_templates the define the structure of your document.
+
+           Save the key rows in python variables for step 2.
+
+           Each Row_template supports adding a text2 to the first cell.  The text2_format parameter
+           is a python format string (e.g., "({})").  The Row_template includes a text2_value that is
+           inserted into the format string as a positional argument (e.g., "{}").  This text2_value
+           is also a Value object, so can be made the parent of any other Row_template.
+
+        2. Run through your data, incrementing(+=)/decrementing(-=) the affected rows through the
+           python variables they were saved in.
+           
+           You can also add new Row_templates with parent_row_template.add_child()
+
+        3. Call insert on the top-level Row_template to insert all of the non-zero rows into the
+           report.
+
+           You can create multiple top-level Row_templates if you have multiple top-level sections 
+           in your report.  Insert these in the desired order.  The Row_templates in each section
+           may refer to Row_templates in other sections (with add_parent).
+    '''
+    text2_format = None
+
+    def __init__(self, layout, first_cell, *children, parent=None, invert_parent=False, first_cells=(),
+                 force=False, text2_format=None):
+        if parent is None:
+            super().__init__()
+        else:
+            super().__init__(parent)
+        self.layout = layout
+        self.children = []
+        for child in children:
+            self.add_child(child)
+        self.invert_parent = invert_parent
+        self.first_cell = first_cell
+        self.first_cells = first_cells
+        self.force = force
+        if text2_format is not None:
+            assert first_cell is not None or first_cells, \
+                   f"Row_template.__init__: must specify first_cell or first_cells with {text2_format=}"
+            self.text2_format = text2_format
+            self.text2_value = Value()
+
+    def inc_text2_value(self, n):
+        self.text2_value += n
+
+    def dec_text2_value(self, n):
+        self.text2_value -= n
+
+    def add_child(self, child):
+        r'''The child becomes the next subordinate section under this Row_template in the resulting
+        report.
+
+        Use add_parent when the two Row_templates are not structurally related.
+        '''
+        self.children.append(child)
+        child.add_parent(self, child.invert_parent)
+
+    def skip(self):
+        r'''Skip if value is 0 and all children are skipped.
+        '''
+        if self.force or self.value:
+            return False
+        for child in self.children:
+            if not child.skip():
+                return False
+        return True
+
+    def insert(self, report):
+        if not self.skip():
+            row = report.new_row(self.layout)
+            if self.first_cell is not None:
+                row.next_cell(self.first_cell)
+                if self.text2_format is not None:
+                    row.set_text2(self.text2_value.value, text2_format=self.text2_format)
+                row.next_cells(*self.first_cells)
+            elif self.first_cells:
+                row.next_cell(self.first_cells[0])
+                if self.text2_format is not None:
+                    row.set_text2(self.text2_value.value, text2_format=self.text2_format)
+                row.next_cells(*self.first_cells[1:])
+            row.next_cell(self.value)
+            for child in self.children:
+                child.insert(report)
+
+
+
+
+def dump_table(table_name, pdf=False):
     from itertools import chain
     import database
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--pdf", "-p", action="store_true", default=False)
-    parser.add_argument("table")
-
-    args = parser.parse_args()
-
     database.load_database()
 
-    table_name = args.table
     table = getattr(database, table_name)
 
     header_cols = []
@@ -487,7 +634,7 @@ def dump_table():
             else:
                 data.next_cell(value)
 
-    if args.pdf:
+    if pdf:
         report.draw_init()
         report.draw()
         report.canvas.showPage()
@@ -497,6 +644,18 @@ def dump_table():
         report.print()
 
 
+def run():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pdf", "-p", action="store_true", default=False)
+    parser.add_argument("table")
+
+    args = parser.parse_args()
+
+    dump_table(args.table, args.pdf)
+
+
 
 if __name__ == "__main__":
-    dump_table()
+    run()

@@ -298,6 +298,9 @@ Months_abbreviated = (None,
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 )
 
+def abbr_month(m):
+    return Months_abbreviated[m]
+
 class Months(row):
     # month=integer(),
     # year=integer(),
@@ -350,7 +353,15 @@ class Months(row):
 
     @property
     def month_str(self):
-        return f"{Months_abbreviated[self.month]}, {str(self.year)[2:]}"
+        return f"{abbr_month(self.month)} '{str(self.year)[2:]}"
+
+    @property
+    def prev_month(self):
+        r'''returns (year, month)
+        '''
+        if self.month == 1:
+            return self.year - 1, 12
+        return self.year, self.month - 1
 
     @property
     def meals_served(self):
@@ -549,12 +560,12 @@ class Reconcile(Starts):
 
     @property
     def total(self):
-        return super().total() - self.donations
+        return super().total - self.donations
 
     @property
     def ticket_price(self):
         if self.event == "breakfast" and self.category.endswith(" tickets"):
-            return Database.Globals[self.category[-1] + " price"].int
+            return Database.Globals[self.category[:-1] + " price"].int
         return None
 
     @property
@@ -601,7 +612,7 @@ Rows = (Items, Products,
        )
 
 
-__all__ = "Decimal date set_database bills Rows".split()
+__all__ = "Decimal date set_database bills Rows abbr_month".split()
 
 
 

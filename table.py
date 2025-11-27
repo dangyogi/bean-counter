@@ -188,7 +188,8 @@ Database = DB(Tables)
 set_database(Database)
 
 
-__all__ = "Decimal date bills Tables Database load_database save_database load_csv load_all clear_all".split()
+__all__ = "Decimal date bills abbr_month Tables Database load_database save_database " \
+          "load_csv load_all clear_all".split()
 
 
 def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):

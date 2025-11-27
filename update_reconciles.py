@@ -18,6 +18,7 @@ import math
 import sys
 
 from database import *
+from report import *
 
 
 def run():
@@ -25,6 +26,7 @@ def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--trial-run", "-t", action="store_true", default=False)
+    parser.add_argument("--pdf", "-p", action="store_true", default=False)
     parser.add_argument("reconcile_csv_file", nargs='?', default=None)
 
     args = parser.parse_args()
@@ -35,73 +37,75 @@ def run():
 
     today = date.today()
 
-    # find final balance from last month
+    # Get the cur_month from Months:
     if (today.year, today.month) in Months:
-        month = Months[today.year, today.month]
+        cur_month = Months[today.year, today.month]
     elif today.day < 15:
-        if today.month == 1:
-            month = Months[today.year - 1, 12]
-        else: 
-            month = Months[today.year, today.month - 1]
-    start_date = month.start_date - timedelta(days=1)
-    start_index = Reconcile.first_date(start_date)
+        # Backup to month before today...
+        year_month = cur_month.prev_month
+        cur_month = Months[year_month]
+
+    # Find our initial_balance in the Reconcile table.
+    start_date = cur_month.start_date - timedelta(days=1)   # backup 1 day from the cur_month.start_date.
+                                                            # this should be the prior month's end_date.
+    start_index = Reconcile.first_date(start_date)          # find the start_index into Reconcile for start_date
     print(f"{start_date=}, {start_index=}")
     error_msg = f"{start_date.strftime('%b %d, %y')}, monthly, final balance not found in Reconcile"
     initial_balance = None
-    bf_revenue = defaultdict(Decimal)
-    bf_expenses = defaultdict(Decimal)
-    other_revenue = defaultdict(Decimal)
-    other_expenses = defaultdict(Decimal)
-    for i in range(start_index, len(Reconcile)):
+    first_transfer = None
+    # This same loop is used to both find the initial_balance, and to process the remaining rows in Reconcile.
+    for i in range(start_index, len(Reconcile)):  # loop from start_index to the end of Reconcile
         recon = Reconcile[i]
-        print(f"{i=} {initial_balance is None=} {recon.date=}, {recon.event=}, {recon.category=}")
         if initial_balance is None:
+            # Still looking for initial_balance...
             assert recon.date == start_date, error_msg
             if recon.event == 'monthly' and recon.category == 'final balance':
                 print("found initial balance")
                 initial_balance = recon.copy()
                 prev_month = initial_balance.copy()
             else:
+                # Don't do anything until we find our initial_balance...
                 continue
-        category_key = recon.event, recon.category
-        recon_amount = None
+
+        if first_transfer is None:
+            first_transfer = i      # for later,  creating the Treasurer's Report
+
+        # OK, We've got our starting initial_balance (copied into prev_month for safe keeping).
+        # We need to update the initial_balance with what went in or out.
+        print(f"{i=} date={recon.date:%m %d, %y} event={recon.event} category={recon.category} type={recon.type} total={recon.total}")
         if recon.type == "income":
             initial_balance += recon
-            recon_amount = recon.total
-            if category_key + ("start",) in Starts:
-                initial_balance -= Starts[category_key + ("start",)]
-                recon_amount -= Starts[category_key + ("start",)].total
+            if (recon.event, recon.category, "start",) in Starts:
+                initial_balance -= Starts[(recon.event, recon.category, "start")]
         elif recon.type == "expense":
             assert recon.donations == 0, \
                    f"unexpected donations={recon.donations} on {recon.event}, {recon.category} expense"
             initial_balance -= recon
-            recon_amount = recon.total
         else:
             assert recon.type is None, f"Reconcile row {i} has unknown type {recon.type}"
-        if recon_amount is not None:
-            if recon.donations:
-                report_categories[category_key] += recon_amount - recon.donations
-                report_categories[recon.event, "donations"] += recon.donations
-            else:
-                report_categories[category_key] += recon_amount
     assert initial_balance is not None, error_msg
 
-    month.end_date = today
+    # Now initial_balance should reflect our current cash, before the cash swap.
+
+    # FIX: Add this step to cur_month
+    cur_month.end_date = today
 
     # insert monthly initial balance
     Reconcile.insert(date=today, event="monthy", category="initial balance", **initial_balance.as_attrs())
 
+    # Figure out the cash exchange:
     starts = bills()
     for start in Starts.values():
         if start.detail in ('start', 'petty cash'):
             starts += start
 
-    target = initial_balance - starts
-
-    cash_out = bills()
-    cash_in = bills()
+    target = initial_balance - starts   # ending_minimums don't include starts...
 
     ending_minimums = Starts["monthly", "final balance", "ending minimums"]
+
+    # Figure out cash_out and cash_in:
+    cash_out = bills()
+    cash_in = bills()
 
     attrs = tuple(target.types.keys())
 
@@ -161,13 +165,19 @@ def run():
             setattr(cash_out, bill, 0)
 
     assert cash_in.total == cash_out.total, f"{cash_in.total=} != {cash_out.total=}"
+
+    # OK, now we have the calculated cash_out and cash_in!
+
     Reconcile.insert(date=today, event="monthly", category="cash out", **cash_out.as_attrs())
     Reconcile.insert(date=today, event="monthly", category="cash in", **cash_in.as_attrs())
 
+    # Figure out what our final_balance is:
     final_balance = initial_balance - cash_out + cash_in
     assert initial_balance.total == final_balance.total, f"{initial_balance.total=} != {final_balance.total=}"
+
     Reconcile.insert(date=today, event="monthly", category="final balance", **final_balance.as_attrs())
 
+    # Give the user the results:
     print("            | coin| b1| b5|b10|b20|b50|b100|   total")
     print("prev month  ", end='')
     prev_month.print(file=sys.stdout)
@@ -179,11 +189,11 @@ def run():
     cash_in.print(file=sys.stdout)
     print("final bal   ", end='')
     final_balance.print(file=sys.stdout)
+    target = final_balance - starts
+    print("w/out starts", end='')
+    target.print(file=sys.stdout)
     print("minimums    ", end='')
     ending_minimums.print(file=sys.stdout)
-    target = final_balance - starts
-    print("after starts", end='')
-    target.print(file=sys.stdout)
 
     print()
     print("starts + petty cash:", starts.total)
@@ -194,95 +204,98 @@ def run():
 
     # print Treasurer's Report
     report = Report("T-Report",
-                    title=(Centered(size="title", bold=True),),
-                    l0=(Left(bold=True), Mark("m"), Right()),
-                    l1=(Left(indent=1, bold=True), "m", Right(indent=1)),
-                    l2=(Left(indent=2, bold=True), "m", Right(indent=2)),
-                    l3=(Left(indent=3), "m", Right(indent=3)),
+                    title=(Centered(span=2, size="title", bold=True),),
+                    l0=(Left(bold=True), Right(text_format="{:.2f}")),
+                    l1=(Left(indent=1, bold=True), Right(indent=1, text_format="{:.2f}")),
+                    l2=(Left(indent=2, bold=True), Right(indent=2, text_format="{:.2f}")),
+                    l3=(Left(indent=3), Right(indent=3, text_format="{:.2f}")),
                    )
 
-    report.new_row("title").next_cell("Treasurer's Report")
-    report.new_row("title").next_cell(f"as of {today.strftime('%b %d, %y')}")
-    cash_flow = report.new_row("l0")
-    cash_flow.next_cell("Cash Flow")
-    total_cash_flow = 0
+    report.new_row("title", "Treasurer's Report")
+    report.new_row("title", f"as of {today.strftime('%b %d, %y')}", size=report.default_size)
 
-    breakfast_categories = []  # [category]
-    other_categories = []      # [(event, category)]
-    for event, category in report_categories.keys():
-        if event == "breakfast":
-            breakfast_categories.append(category)
+    cash_flow_section = Row_template("l0", "Cash Flow",
+                  bf :=     Row_template("l1", "Breakfast",
+              bf_rev :=         Row_template("l2", "Revenue",
+        ticket_sales :=             Row_template("l3", "Breakfast Ticket Sales", text2_format="({})"),
+            bf_50_50 :=             Row_template("l3", "50/50 Income"),
+        bf_donations :=             Row_template("l3", "Donations"),
+                                ),
+              bf_exp :=         Row_template("l2", "Expenses", invert_parent=True),
+                                text2_format="({}) showed up",
+                            ),
+                            Row_template("l1", "Other",
+           other_rev :=         Row_template("l2", "Revenue"),
+           other_exp :=         Row_template("l2", "Expenses", invert_parent=True),
+                            ),
+                        )
+
+    prev_yr, prev_mth = cur_month.prev_month
+    prev_month_str = f"{abbr_month(prev_mth)} '{str(prev_yr)[2:]}"
+
+    balance_section = Row_template("l0", "Balance",
+                            Row_template("l1", "Expected Balance",
+            prev_bal :=         Row_template("l2", "Previous Balance", text2_format=prev_month_str),
+               eb_cf :=         Row_template("l2", "Cash Flow"),
+                            ),
+                            Row_template("l1", "Current Balance",
+                bank :=         Row_template("l2", "Bank", force=True),
+                cash :=         Row_template("l2", "Cash"),
+                            ),
+                        )
+
+    cash_flow_section.add_parent(eb_cf)
+    prev_bal += prev_month.total
+    cash += final_balance.total
+    bf.inc_text2_value(cur_month.tickets_claimed)
+
+    other_revenue = defaultdict(int)   # {event: total}
+    other_expenses = defaultdict(int)  # {event: total}
+    for i in range(first_transfer, len(Reconcile)):  # loop from start_index to the end of Reconcile
+        recon = Reconcile[i]
+        if recon.event == "breakfast":
+            if recon.type == "income":
+                match recon.category:
+                    case "adv tickets" | "door tickets":
+                        ticket_sales += recon.total
+                        if (recon.event, recon.category, "start",) in Starts:
+                            ticket_sales -= Starts[(recon.event, recon.category, "start")].total
+                        ticket_sales.inc_text2_value(recon.tickets_sold)
+                        bf_donations += recon.donations
+                    case "50/50":
+                        bf_50_50 += recon.total
+                        if (recon.event, recon.category, "start",) in Starts:
+                            bf_50_50 -= Starts[(recon.event, recon.category, "start")].total
+                    case "donations":
+                        bf_donations += recon.total
+            elif recon.type == "expense":
+                bf_exp += recon.total
         else:
-            other_categories.append((event, category))
+            if recon.category in ("income",):
+                other_revenue[recon.event] += recon.total
+                other_revenue["donations"] += recon.donations
+            elif recon.category in ("donation", "reimbursement", "expense"):
+                other_expenses[recon.event] += recon.total
 
-    breakfast = report.new_row("l1")
-    breakfast.next_cell("Breakfast")
-    tickets_claimed = Months[today.month(), today.year()].tickets_claimed
-    breakfast.set_text2(f"({tickets_claimed} showed up)")
+    for key, value in other_revenue.items():
+        other_rev.add_child(rt := Row_template("l3", key))
+        rt += value
 
-    revenue = report.new_row("l2")
-    revenue.next_cell("Revenue")
+    for key, value in other_expenses.items():
+        other_exp.add_child(rt := Row_template("l3", key))
+        rt += value
 
-    ticket_sales = report.new_row("l3")
-    ticket_sales.next_cell("Ticket Sales")
+    cash_flow_section.insert(report)
+    balance_section.insert(report)
 
-    fifty_fifty = report.new_row("l3")
-    fifty_fifty.next_cell("50/50 Income")
-
-    print("    revenue:")
-    tickets_amount = 0
-    tickets = 0
-    total_revenue = 0
-    for category in breakfast_categories:
-        if Categories["breakfast", category].type == "income":
-            amount = report_categories["breakfast", category]
-            total_revenue += amount
-            if category.endswith(" tickets"):
-                tickets_amount += amount
-                tickets += int(math.ceil(tickets_amount / Categories["breakfast", category].ticket_price))
-            elif category == "50/50":
-                fifty_fifty.next_cell(amount)
-            else:
-                assert category == "donations", f"Unknown {category=}"
-                row = report.new_row("l3")
-                row.next_cell("Donations")
-                row.next_cell(amount)
-    ticket_sales.set_text2(f"({tickets})")
-    ticket_sales.next_cell(tickets_amount)
-    revenue.next_cell(total_revenue)
-
-    expenses = report.new_row("l2")
-    expenses.next_cell("Expenses")
-
-    total_expenses = 0
-    for category in breakfast_categories:
-        if Categories["breakfast", category].type == "expense":
-            total_expenses += report_categories["breakfast", category]
-    expenses.next_cell(total_expenses)
-
-    breakfast.next_cell(total_revenue - total_expenses)
-    total_cash_flow += total_revenue - total_expenses
-
-    other = None
-    revenue = None
-    expenses = None
-
-    for event, category in other_categories:
-        if Categories[event, category].type == "income":
-            if other is None:
-                other = report.new_row("l1")
-                other.next_cell("Other")
-            if revenue is None:
-                revenue = report.new_row("l2")
-                revenue.next_cell("Revenue")
-            amount = report_categories[event, category]
-            print("     ", event, amount)
-
-    print("    expenses:")
-    for event, category in other_categories:
-        if Categories[event, category].type == "expense":
-            amount = report_categories[event, category]
-            print("     ", event, amount)
+    if args.pdf:
+        report.draw_init()
+        report.draw()
+        report.canvas.showPage()
+        report.canvas.save()
+    else:
+        report.print_init()
+        report.print()
 
 
 
