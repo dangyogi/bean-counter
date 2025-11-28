@@ -111,7 +111,7 @@ class Report:
             col_index = 0
             for col in cols:
                 col.set_report(self, col_index)
-                col_index = col.right_index
+                col_index = col.right_index + col.skip
             assert last_right_index is None or last_right_index == col_index, \
                    f"{last_right_index=}, {col_index=}"
             last_right_index = col_index
@@ -129,8 +129,8 @@ class Report:
         self.canvas.setPageSize(self.pagesize)
         self.page_width, self.page_height = self.pagesize
 
-    def new_row(self, row_layout, *values, size=None, bold=None):
-        return self.row_layouts[row_layout].new_row(*values, size=size, bold=bold)
+    def new_row(self, row_layout, *values, size=None, bold=None, pad=0):
+        return self.row_layouts[row_layout].new_row(*values, size=size, bold=bold, pad=pad)
 
     def init(self):
         self.set_sizes()
@@ -138,14 +138,18 @@ class Report:
         self.set_x_starts()
 
     def draw_init(self):
+        r'''Returns report width, height.
+        '''
         self.init()
         width = self.report_width()
         height = self.report_height()
         if width > self.page_width and width > height:
-            print("Report width", width, "height", height, "setting landscape")
             self.set_landscape()
+            print("pagesize", self.pagesize)
+            print("Report width", width, "height", height, "set landscape")
         else:
             print("Report width", width, "height", height)
+        return width, height
 
     def draw(self, x_offset=0, y_offset=0):
         for row in self.rows:
@@ -311,9 +315,11 @@ class Cell:
 class Column_layout:
     report = None
 
-    def __init__(self, name=None, span=1, indent=0, size=None, bold=False, text_format=None, text2_format=None):
+    def __init__(self, name=None, span=1, indent=0, skip=0, size=None, bold=False,
+                 text_format=None, text2_format=None):
         self.name = name
         self.span = span
+        self.skip = skip
         self.indent_level = indent
         self.fontsize = size
         self.bold = bold
@@ -403,8 +409,8 @@ class Row_layout:
         self.name = name
         self.columns = columns
 
-    def new_row(self, *values, size=None, bold=None):
-        new_row = Row(self)
+    def new_row(self, *values, size=None, bold=None, pad=0):
+        new_row = Row(self, pad)
         new_row.next_cells(*values, size=size, bold=bold)
         return new_row
   
@@ -429,17 +435,18 @@ class BM:
 class Row(BM):
     print = True
 
-    def __init__(self, layout):
+    def __init__(self, layout, pad=0):
         super().__init__(layout.report)
         self.layout = layout
+        self.pad = pad
         self.column_index = 0
         self.height = 0
         self.height_chars = 0
         self.cells = []
 
     def set_height(self, points, chars):
-        if points > self.height:
-            self.height = points
+        if points + self.pad > self.height:
+            self.height = points + self.pad
         if chars > self.height_chars:
             self.height_chars = chars
 
@@ -530,7 +537,7 @@ class Row_template(Value):
     text2_format = None
 
     def __init__(self, layout, first_cell, *children, parent=None, invert_parent=False, first_cells=(),
-                 force=False, text2_format=None):
+                 force=False, text2_format=None, pad=0):
         if parent is None:
             super().__init__()
         else:
@@ -548,6 +555,7 @@ class Row_template(Value):
                    f"Row_template.__init__: must specify first_cell or first_cells with {text2_format=}"
             self.text2_format = text2_format
             self.text2_value = Value()
+        self.pad = pad
 
     def inc_text2_value(self, n):
         self.text2_value += n
@@ -576,7 +584,7 @@ class Row_template(Value):
 
     def insert(self, report):
         if not self.skip():
-            row = report.new_row(self.layout)
+            row = report.new_row(self.layout, pad=self.pad)
             if self.first_cell is not None:
                 row.next_cell(self.first_cell)
                 if self.text2_format is not None:

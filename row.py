@@ -36,6 +36,7 @@ class row:
     '''
     primary_key = None
     primary_keys = None
+    foreign_keys = ()
     in_database = True
 
     def __init__(self, **attrs):
@@ -46,6 +47,30 @@ class row:
         assert not missing_attrs, f"{self.table_name}.__init__: missing attrs={tuple(missing_attrs)}, {attrs.keys()=}"
         for name, value in attrs.items():
             setattr(self, name.lower(), value)
+
+    def check_foreign_keys(self, row_num, raise_exc=True):
+        r'''Returns True if all tests pass.
+        '''
+        ans = True
+        for table_name in self.foreign_keys:
+            table = getattr(Database, table_name)
+            if table.row_class.primary_key is not None:
+                key = getattr(self, table.row_class.primary_key)
+                if key is None:
+                    continue
+            else:
+                key = tuple(getattr(self, key) for key in table.row_class.primary_keys)
+                if any(k is None for k in key):
+                    continue
+            if key not in table:
+                error_msg = f"{self.__class__.__name__}.check_foreign_keys({row_num=}): " \
+                            f"{key=} not in {table_name}"
+                if raise_exc:
+                    raise KeyError(error_msg)
+                else:
+                    print(error_msg)
+                ans = False
+        return ans
 
     @classmethod
     @property

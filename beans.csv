@@ -110,7 +110,7 @@ Nov 18, 25|Bacon            |estimate |       0|      144|         14
 Nov 18, 25|Bowls            |estimate |       0|      325|         33
 Nov 18, 25|Butter           |estimate |       0|        6|          1
 Nov 18, 25|Coffee, ground   |estimate |       0|       77|          8
-Nov 18, 25|Coffee cups, 8oz |estimate |       0|        0|          0
+Nov 18, 25|Coffee cups, 8 oz|estimate |       0|        0|          0
 Nov 18, 25|Coffee Stirrer 5"|estimate |       0|      495|         50
 Nov 18, 25|Cutlery Packets  |estimate |       0|        0|          0
 Nov 18, 25|Eggs             |estimate |       0|        0|          0
@@ -173,7 +173,7 @@ breakfast     |door tickets   |income
 breakfast     |50/50          |income 
 breakfast     |donations      |income 
 breakfast     |reimbursement  |expense
-120 Club      |donation       |income 
+120 Club      |income         |income 
 annual        |donation       |expense
 one-time      |income         |income 
 one-time      |expense        |expense

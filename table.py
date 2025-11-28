@@ -27,10 +27,19 @@ class base_table:
     def name(self):
         return self.row_class.__name__
 
+    def check_foreign_keys(self):
+        r'''Returns the number of errors found.
+        '''
+        errors = 0
+        for row_num, row in enumerate(self.values(), 1):
+            if not row.check_foreign_keys(row_num, False):
+                errors += 1
+        return errors
+
     def insert(self, **attrs):
         self.add_row(self.row_class(**attrs))
 
-    def from_csv(self, csv_reader, from_scratch=True, ignore_unknown_cols=False):
+    def from_csv(self, csv_reader, from_scratch=True, ignore_unknown_cols=False, skip_fk_check=False):
         r'''Loads rows from csv_reader.  First row is header row that identifies the attrs.
 
         If from_scratch is False, appends the rows to the current contents; otherwise it replaces
@@ -44,7 +53,8 @@ class base_table:
                 row = next(csv_reader)
                 if len(row) == 0:
                     break
-                self.add_row(self.row_class.from_csv(header, row, ignore_unknown_cols=ignore_unknown_cols))
+                self.add_row(self.row_class.from_csv(header, row, ignore_unknown_cols=ignore_unknown_cols),
+                             skip_fk_check=skip_fk_check)
         except StopIteration:
             pass
 
@@ -98,8 +108,10 @@ class table_unique(base_table, dict):
         base_table.__init__(self, row_class)
         dict.__init__(self)
 
-    def add_row(self, row):
+    def add_row(self, row, skip_fk_check=False):
         key = row.key()
+        if not skip_fk_check:
+            row.check_foreign_keys(key, raise_exc=True)
         assert key not in self, f"{self.name}.insert: Duplicate {key=}"
         self[key] = row
 
@@ -158,12 +170,16 @@ class table_by_date(base_table, list):
         # first == last
         return first
 
-    def add_row(self, row):
-        if hasattr(row, 'data'):
+    def add_row(self, row, skip_fk_check=False):
+        if hasattr(row, 'date'):
             i = self.last_date(row.date)
            #print(f"{self.name}.add_row(date={row.date}), inserted at {i=}")
             list.insert(self, i, row)
+            if not skip_fk_check:
+                row.check_foreign_keys(row.date, raise_exc=True)
         else:
+            if not skip_fk_check:
+                row.check_foreign_keys(len(self) + 1, raise_exc=True)
             self.append(row)
     
     def values(self):
@@ -189,7 +205,7 @@ set_database(Database)
 
 
 __all__ = "Decimal date bills abbr_month Tables Database load_database save_database " \
-          "load_csv load_all clear_all".split()
+          "load_csv load_all clear_all check_foreign_keys".split()
 
 
 def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):
@@ -203,7 +219,8 @@ def load_database(csv_filename=Database_filename, ignore_unknown_cols=False):
                 header = next(reader)
                 assert len(header) == 1, f"from_csv: Expected table name, got {row=}"
                 ans[header[0].strip()] = \
-                  Tables[header[0].strip()].from_csv(reader, ignore_unknown_cols=ignore_unknown_cols)
+                  Tables[header[0].strip()].from_csv(reader, ignore_unknown_cols=ignore_unknown_cols,
+                                                     skip_fk_check=True)
             except StopIteration:
                 break
     return ans
@@ -246,6 +263,14 @@ def clear_all():
     for table in reversed(Tables.values()):
         table.clear()
 
+def check_foreign_keys():
+    errors = 0
+    for table in Tables.values():
+        errors += table.check_foreign_keys()
+    if errors:
+        print("Total errors:", errors)
+    else:
+        print("No errors found")
 
 def run():
     import argparse
@@ -257,6 +282,7 @@ def run():
     parser.add_argument("--save", "-s", default=None, help="save one separate csv table")
     parser.add_argument("--load-all", "-a", action="store_true", default=False, help="load all separate csv tables")
     parser.add_argument("--no-save", "-n", action="store_true", default=False, help="skip final database save")
+    parser.add_argument("--check-foreign-keys", "-c", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -270,6 +296,8 @@ def run():
     elif args.load is not None:
         print("loading:", args.load + '.csv')
         load_csv(args.load, ignore_unknown_cols=args.ignore_unknown_cols)
+    if args.check_foreign_keys:
+        check_foreign_keys()
     if args.save is not None:
         with open(f"{args.save}.csv", "w") as f:
             print("saving:", args.save + '.csv')

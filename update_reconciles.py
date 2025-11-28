@@ -204,11 +204,11 @@ def run():
 
     # print Treasurer's Report
     report = Report("T-Report",
-                    title=(Centered(span=2, size="title", bold=True),),
-                    l0=(Left(bold=True), Right(text_format="{:.2f}")),
-                    l1=(Left(indent=1, bold=True), Right(indent=1, text_format="{:.2f}")),
-                    l2=(Left(indent=2, bold=True), Right(indent=2, text_format="{:.2f}")),
-                    l3=(Left(indent=3), Right(indent=3, text_format="{:.2f}")),
+                    title=(Centered(span=5, size="title", bold=True),),
+                    l0=(Left(bold=True, span=4),           Right(text_format="{:.2f}")),
+                    l1=(Left(indent=1, bold=True, span=3), Right(text_format="{:.2f}", skip=1)),
+                    l2=(Left(indent=2, bold=True, span=2), Right(text_format="{:.2f}", skip=2)),
+                    l3=(Left(indent=3),                    Right(text_format="{:.2f}", skip=3)),
                    )
 
     report.new_row("title", "Treasurer's Report")
@@ -221,13 +221,15 @@ def run():
             bf_50_50 :=             Row_template("l3", "50/50 Income"),
         bf_donations :=             Row_template("l3", "Donations"),
                                 ),
-              bf_exp :=         Row_template("l2", "Expenses", invert_parent=True),
+              bf_exp :=         Row_template("l2", "Expenses", invert_parent=True, pad=5),
                                 text2_format="({}) showed up",
                             ),
                             Row_template("l1", "Other",
            other_rev :=         Row_template("l2", "Revenue"),
-           other_exp :=         Row_template("l2", "Expenses", invert_parent=True),
+           other_exp :=         Row_template("l2", "Expenses", invert_parent=True, pad=5),
+                                pad=5,
                             ),
+                            pad=5,
                         )
 
     prev_yr, prev_mth = cur_month.prev_month
@@ -241,7 +243,9 @@ def run():
                             Row_template("l1", "Current Balance",
                 bank :=         Row_template("l2", "Bank", force=True),
                 cash :=         Row_template("l2", "Cash"),
+                                pad=5,
                             ),
+                            pad=5,
                         )
 
     cash_flow_section.add_parent(eb_cf)
@@ -289,8 +293,16 @@ def run():
     balance_section.insert(report)
 
     if args.pdf:
-        report.draw_init()
-        report.draw()
+        width, height = report.draw_init()
+        page_width, page_height = report.pagesize
+        width_copies = (page_width - 10) // (width + 10)
+        height_copies = page_height // height
+        print(f"{page_width=}, {width=}, {width_copies=}; {page_height=}, {height=}, {height_copies=}")
+       #report.draw(2, 0)
+       #report.draw(2 + width + 12, 0)
+        for y_offset in range(0, round(page_height) - round(height), round(height) + 28):
+            for x_offset in range(2, round(page_width) - 3 - round(width), round(width) + 22):
+                report.draw(x_offset, y_offset)
         report.canvas.showPage()
         report.canvas.save()
     else:
