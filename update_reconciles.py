@@ -91,7 +91,7 @@ def run():
     cur_month.end_date = today
 
     # insert monthly initial balance
-    Reconcile.insert(date=today, event="monthy", category="initial balance", **initial_balance.as_attrs())
+    Reconcile.insert(date=today, event="monthly", category="initial balance", **initial_balance.as_attrs())
 
     # Figure out the cash exchange:
     starts = bills()

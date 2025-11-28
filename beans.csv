@@ -145,20 +145,20 @@ Nov 20, 25|Pancake Mix      |purchased|       2|        0|          0
 Nov 20, 25|Serving Plates   |purchased|       0|      200|          0
 
 Months
-month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date|end_bank_bal|end_cash_bal|steps_completed                                                                                                           
-    1|2024|         |              |                  |              |                  |               |          |        |            |            |                                                                                                                          
-    2|2024|         |              |                  |              |                  |             99|          |        |            |            |                                                                                                                          
-    3|2024|         |              |                  |            21|                12|             70|          |        |            |            |                                                                                                                          
-    4|2024|         |              |                  |            12|                 9|             42|          |        |            |            |                                                                                                                          
-   10|2024|         |              |                  |              |                  |               |          |        |            |            |                                                                                                                          
-   11|2024|         |              |                  |             8|                11|             44|          |        |            |            |                                                                                                                          
-   12|2024|         |              |                  |             9|                11|             48|          |        |            |            |                                                                                                                          
-    1|2025|         |              |                  |            12|                13|             54|          |        |            |            |                                                                                                                          
-    2|2025|         |              |                  |            12|                10|             64|          |        |            |            |                                                                                                                          
-    3|2025|         |              |                  |             9|                10|             59|          |        |            |            |                                                                                                                          
-    4|2025|         |              |                  |             8|                11|             37|          |        |            |            |                                                                                                                          
-   10|2025|         |              |                  |             5|                  |               |          |        |            |            |                                                                                                                          
-   11|2025|       60|            80|               120|            14|                14|             61|Nov 02, 25|        |            |            |read_inv,read_order,set_breakfast_attendance,set_meeting_attendance,set_min_max,write_POs,write_inv_checklist,write_orders
+month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date  |end_bank_bal|end_cash_bal|steps_completed                                                                                                           
+    1|2024|         |              |                  |              |                  |               |          |          |            |            |                                                                                                                          
+    2|2024|         |              |                  |              |                  |             99|          |          |            |            |                                                                                                                          
+    3|2024|         |              |                  |            21|                12|             70|          |          |            |            |                                                                                                                          
+    4|2024|         |              |                  |            12|                 9|             42|          |          |            |            |                                                                                                                          
+   10|2024|         |              |                  |              |                  |               |          |          |            |            |                                                                                                                          
+   11|2024|         |              |                  |             8|                11|             44|          |          |            |            |                                                                                                                          
+   12|2024|         |              |                  |             9|                11|             48|          |          |            |            |                                                                                                                          
+    1|2025|         |              |                  |            12|                13|             54|          |          |            |            |                                                                                                                          
+    2|2025|         |              |                  |            12|                10|             64|          |          |            |            |                                                                                                                          
+    3|2025|         |              |                  |             9|                10|             59|          |          |            |            |                                                                                                                          
+    4|2025|         |              |                  |             8|                11|             37|          |          |            |            |                                                                                                                          
+   10|2025|         |              |                  |             5|                  |               |          |          |            |            |                                                                                                                          
+   11|2025|       60|            80|               120|            14|                14|             61|Nov 02, 25|Nov 28, 25|            |            |read_inv,read_order,set_breakfast_attendance,set_meeting_attendance,set_min_max,write_POs,write_inv_checklist,write_orders
 
 Globals
 name             |int|decimal
@@ -191,21 +191,25 @@ monthly  |final balance|ending minimums|   4|20|10| 10| 10| 10|   0
 monthly  |final balance|petty cash     |   0|10| 4|  2|  0|  0|   0
 
 Reconcile
-date      |event         |category     |detail             |coin|b1|b5|b10|b20|b50|b100|donations
-Nov 01, 25|monthly       |final balance|w/starts&petty cash|4.81|44|13| 16| 12| 10|  18|        0
-Nov 03, 25|breakfast     |reimbursement|Bruce, Sam's Card  |   0| 0| 3|  0|  0|  0|   0|        0
-Nov 04, 25|meeting dinner|reimbursement|Bruce, pizza       | 0.5| 2| 0|  4|  0|  0|   0|        0
-Nov 04, 25|meeting dinner|reimbursement|Bruce, beer        |0.25|22| 0|  0|  0|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets  |Steve & David      |   1| 4| 1|  4|  5|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets  |Henry              |   0|20| 0|  0|  0|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets  |Abe & Harvey       |   0| 0| 1|  3|  4|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets  |Jim                |   0| 0| 4|  1|  0|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets  |Marvin             |   0| 0| 9|  0|  0|  0|   0|        0
-Nov 08, 25|breakfast     |door tickets |End                |   0|13| 2|  4|  2|  0|   0|        0
-Nov 08, 25|breakfast     |50/50        |End                |   0| 9|11|  1|  1|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement|Bruce, cups        |   0| 0| 5|  0|  0|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement|Marvin, Sam's      |0.52| 2| 1|  0|  1|  0|   1|        0
-Nov 08, 25|breakfast     |reimbursement|Walmart & Gordons  |0.15| 0| 1|  0|  1|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement|David, Plates      | 0.2| 4| 1|  1|  0|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement|Steve, Orange Juice|   0| 4| 0|  1|  0|  0|   0|        0
+date      |event         |category       |detail             |coin|b1|b5|b10|b20|b50|b100|donations
+Nov 01, 25|monthly       |final balance  |w/starts&petty cash|4.81|44|13| 16| 12| 10|  18|        0
+Nov 03, 25|breakfast     |reimbursement  |Bruce, Sam's Card  |   0| 0| 3|  0|  0|  0|   0|        0
+Nov 04, 25|meeting dinner|reimbursement  |Bruce, pizza       | 0.5| 2| 0|  4|  0|  0|   0|        0
+Nov 04, 25|meeting dinner|reimbursement  |Bruce, beer        |0.25|22| 0|  0|  0|  0|   0|        0
+Nov 05, 25|breakfast     |adv tickets    |Steve & David      |   1| 4| 1|  4|  5|  0|   0|        0
+Nov 05, 25|breakfast     |adv tickets    |Henry              |   0|20| 0|  0|  0|  0|   0|        0
+Nov 05, 25|breakfast     |adv tickets    |Abe & Harvey       |   0| 0| 1|  3|  4|  0|   0|        0
+Nov 05, 25|breakfast     |adv tickets    |Jim                |   0| 0| 4|  1|  0|  0|   0|        0
+Nov 05, 25|breakfast     |adv tickets    |Marvin             |   0| 0| 9|  0|  0|  0|   0|        0
+Nov 08, 25|breakfast     |door tickets   |End                |   0|13| 2|  4|  2|  0|   0|        0
+Nov 08, 25|breakfast     |50/50          |End                |   0| 9|11|  1|  1|  0|   0|        0
+Nov 08, 25|breakfast     |reimbursement  |Bruce, cups        |   0| 0| 5|  0|  0|  0|   0|        0
+Nov 08, 25|breakfast     |reimbursement  |Marvin, Sam's      |0.52| 2| 1|  0|  1|  0|   1|        0
+Nov 08, 25|breakfast     |reimbursement  |Walmart & Gordons  |0.15| 0| 1|  0|  1|  0|   0|        0
+Nov 08, 25|breakfast     |reimbursement  |David, Plates      | 0.2| 4| 1|  1|  0|  0|   0|        0
+Nov 08, 25|breakfast     |reimbursement  |Steve, Orange Juice|   0| 4| 0|  1|  0|  0|   0|        0
+Nov 28, 25|monthly       |initial balance|                   |4.19|26|26| 19| 22| 10|  17|        0
+Nov 28, 25|monthly       |cash out       |                   |   0| 0|14|  3| 16|  0|   0|        0
+Nov 28, 25|monthly       |cash in        |                   |   0|20| 0|  0|  0|  0|   4|        0
+Nov 28, 25|monthly       |final balance  |                   |4.19|46|12| 16|  6| 10|  21|        0
 
