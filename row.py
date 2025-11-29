@@ -1,7 +1,7 @@
 # row.py
 
 from decimal import Decimal, InvalidOperation
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import math
 
 
@@ -585,6 +585,8 @@ class Reconcile(Starts):
 
     @property
     def total(self):
+        r'''Includes Start amount.
+        '''
         return super().total - self.donations
 
     @property
@@ -598,7 +600,11 @@ class Reconcile(Starts):
         price = self.ticket_price
         if price is None:
             return None
-        return int(math.ceil(self.total / price))
+        total = self.total
+        start_key = self.event, self.category, "start"
+        if start_key in Database.Starts:
+            total -= Database.Starts[start_key].total
+        return int(math.ceil(total / price))
 
 def convert(s):
     s = s.strip()
@@ -637,7 +643,7 @@ Rows = (Items, Products,
        )
 
 
-__all__ = "Decimal date set_database bills Rows abbr_month".split()
+__all__ = "Decimal date timedelta set_database bills Rows abbr_month".split()
 
 
 

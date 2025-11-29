@@ -159,6 +159,7 @@ month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_b
     4|2025|         |              |                  |             8|                11|             37|          |          |            |            |                                                                                                                          
    10|2025|         |              |                  |             5|                  |               |          |          |            |            |                                                                                                                          
    11|2025|       60|            80|               120|            14|                14|             61|Nov 02, 25|Nov 28, 25|            |            |read_inv,read_order,set_breakfast_attendance,set_meeting_attendance,set_min_max,write_POs,write_inv_checklist,write_orders
+   12|2025|       85|           120|               160|              |                  |               |Nov 29, 25|          |            |            |                                                                                                                          
 
 Globals
 name             |int|decimal

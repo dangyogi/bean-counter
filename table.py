@@ -204,7 +204,7 @@ Database = DB(Tables)
 set_database(Database)
 
 
-__all__ = "Decimal date bills abbr_month Tables Database load_database save_database " \
+__all__ = "Decimal date timedelta bills abbr_month Tables Database load_database save_database " \
           "load_csv load_all clear_all check_foreign_keys".split()
 
 
