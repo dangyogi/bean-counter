@@ -27,6 +27,15 @@ def parse_set(s):
         return s
     return set(x.strip() for x in s.split(','))
 
+def parse_bool(s):
+    if isinstance(s, bool):
+        return s
+    if s == 'True':
+        return True
+    elif s == 'False':
+        return False
+    raise ValueError(f"parse_bool({s=}): not a valid bool value")
+
 class row:
     r'''One row in a database table.
 
@@ -134,6 +143,7 @@ class row:
 class Items(row):
     # item=varchar(30, primary_key=True),
     # unit=varchar(30),
+    # perishable=bool,
     # supplier=varchar(50, null=True),
     # supplier_id=integer(null=True),
     # num_per_meal=double(null=True),
@@ -142,6 +152,7 @@ class Items(row):
     types = dict(
         item=str,
         unit=str,
+        perishable=parse_bool,
         supplier=str,
         supplier_id=int,
         num_per_meal=float,
@@ -155,7 +166,7 @@ class Items(row):
     num_per_table = None
     num_per_serving = None
     primary_key = 'item'
-    required = frozenset(("item", "unit"))
+    required = frozenset(("item", "unit", "perishable"))
     foreign_keys = "Products",
     calculated = dict(
         pkg_size=int,
@@ -179,6 +190,97 @@ class Items(row):
         if self.product is None:
             return None
         return self.product.pkg_weight
+
+    @property
+    def in_stock(self):
+        r'''Return units, uncertainty.
+        '''
+        units = 0
+        uncertainty = 0
+        for inv in Database.Inventory.values():
+            if inv.item == self.item:
+                match inv.code:
+                    case "count":
+                        units = inv.total_units
+                        uncertainly = inv.uncertainty
+                    case "purchased":  # exact count
+                        units += inv.total_units
+                    case "used":       # exact count
+                        units -= inv.total_units
+                    case "consumed":   # estimate
+                        units -= inv.total_units
+                        uncertainly += inv.uncertainty
+                    case "estimate":   # includes uncertainty
+                        units = inv.total_units
+                        uncertainly = inv.uncertainty
+                    case _:
+                        raise AssertionError(f"Item({self.item}).in_stock: unknown Inventory.code={inv.code}")
+        return units, uncertainty
+
+    def consumed(self, num_served, table_size):
+        r'''Returns the number of units consumed at breakfast.
+        '''
+        if self.num_per_meal is not None:
+            ans = self.num_per_meal
+        elif self.num_per_table is not None:
+            tables = round(math.ceil(num_served / table_size))
+            ans = self.num_per_table * tables
+        elif self.num_per_serving is not None:
+            ans = self.num_per_serving * num_served
+        else:
+            ans = 0
+        return round(ans)
+
+    def order(self, cur_month, table_size=6, verbose=False):
+        r'''Returns how many pkgs to order.
+        '''
+        def calc_needed(num_servings):
+            def print_next(msg):
+                if verbose:
+                    print(f"{self.item}, {num_servings}: {msg}")
+            needed = 0
+            if self.num_per_meal:
+                needed = self.num_per_meal
+                print_next(f"num_per_meal={self.num_per_meal}")
+            elif self.num_per_table:
+                tables = int(math.ceil(num_servings / table_size))
+                needed = self.num_per_table * tables
+                print_next(f"num_per_table={self.num_per_table=} * {tables=} == "
+                           f"{self.num_per_table * tables}")
+            elif self.num_per_serving:
+                needed = self.num_per_serving * num_servings
+                print_next(f"num_per_serving={self.num_per_serving=} * {num_servings=} == {needed}")
+            ans = round(needed)
+            if verbose:
+                print(f"needed={ans}")
+            return ans
+
+        avg_served1 = Database.Months.avg_meals_served(cur_month.month)
+        if cur_month.month == 4:
+            avg_served2 = 0
+        else:
+            next_month = Database.Months.inc_month(cur_month.year, cur_month.month)[1]
+            avg_served2 = Database.Months.avg_meals_served(next_month)
+        min_needed = calc_needed(cur_month.served_fudge * avg_served1)
+        units, uncertainty = self.in_stock
+        if verbose:
+            print(f"{min_needed=}, {units=}, {uncertainty=}")
+        if units - uncertainty >= min_needed:
+            return 0
+        min = int(math.ceil((min_needed - (units - uncertainty)) / self.pkg_size))
+        if self.perishable:
+            max_order = cur_month.consumed_fudge * (self.consumed(avg_served1, table_size) +
+                                                    self.consumed(avg_served2, table_size))
+            if verbose:
+                print(f"{max_order=}")
+            max_limit = int((max_order - (units + uncertainty)) / self.pkg_size)
+            return round(max(min, max_limit))
+        # else non_perishable
+        min_needed2 = calc_needed(cur_month.served_fudge * avg_served2)
+        min2 = int(math.ceil((min_needed2 - (units - uncertainty)) / self.pkg_size))
+        min_needed3 = cur_month.non_perishable_fudge * self.consumed(avg_served1, table_size) + min_needed2
+        min3 = int(math.ceil((min_needed3 - (units - uncertainty)) / self.pkg_size))
+        return round(max(min, min2, min3))
 
 class Products(row):
     # item=varchar(30, references=foreign_key("Items", on_delete="cascade", on_update="cascade")),
@@ -262,7 +364,15 @@ class Inventory(row):
     primary_keys = "date item code".split()
     required = frozenset(("date", "item", "code"))
     foreign_keys = "Items",
-    calculated = dict()
+    calculated = dict(pkg_size=int, total_units=int)
+
+    @property
+    def pkg_size(self):
+        return Database.Items[self.item].pkg_size
+
+    @property
+    def total_units(self):
+        return round(self.num_pkgs * self.pkg_size + self.num_units)
 
 class Orders(row):
     # item=varchar(30),
@@ -334,9 +444,9 @@ def abbr_month(m):
 class Months(row):
     # month=integer(),
     # year=integer(),
-    # min_order=integer(null=True),
-    # max_perishable=integer(null=True),
-    # max_non_perishable=integer(null=True),
+    # served_fudge=float(null=True),
+    # consumed_fudge=float(null=True),
+    # non_perishable_fudge=float(null=True),
     # num_at_meeting=integer(null=True),
     # staff_at_breakfast=integer(null=True),
     # tickets_claimed=integer(null=True),
@@ -348,9 +458,9 @@ class Months(row):
     types = dict(
         month=int,
         year=int,
-        min_order=int,
-        max_perishable=int,
-        max_non_perishable=int,
+        served_fudge=float,
+        consumed_fudge=float,
+        non_perishable_fudge=float,
         num_at_meeting=int,
         staff_at_breakfast=int,
         tickets_claimed=int,
@@ -361,9 +471,9 @@ class Months(row):
         steps_completed=parse_set,
     )
 
-    min_order = None
-    max_perishable = None
-    max_non_perishable = None
+    served_fudge = None
+    consumed_fudge = None
+    non_perishable_fudge = None
     num_at_meeting = None
     staff_at_breakfast = None
     tickets_claimed = None

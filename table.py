@@ -116,6 +116,37 @@ class table_unique(base_table, dict):
         self[key] = row
 
 class Months(table_unique):
+    def inc_month(self, year, month):
+        r'''Returns next month (regardless of the contents of this Table) as (year, month).
+        '''
+        if month == 12:
+            return year + 1, 1
+        return year, month + 1
+
+    def dec_month(self, year, month):
+        r'''Returns prior month (regardless of the contents of this Table) as (year, month).
+        '''
+        if month == 1:
+            return year - 1, 12
+        return year, month - 1
+
+    def last_month(self):
+        r'''Returns the last month in the table.
+        '''
+        today = date.today()
+        year = today.year
+        month = today.month
+        if (year, month) in self:
+            year2, month2 = self.inc_month(year, month)
+            while (year2, month2) in self:
+                year, month = year2, month2
+                year2, month2 = self.inc_month(year, month)
+            return self[year, month]
+        year, month = self.dec_month(year, month)
+        while (year, month) not in self:
+            year, month = self.dec_month(year, month)
+        return self[year, month]
+
     def by_month(self, month):
         r'''Generates all rows with this month.
         '''

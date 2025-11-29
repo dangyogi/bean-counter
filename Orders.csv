@@ -1,12 +1,9 @@
-Orders
-item             |qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|price
-Bacon            |  1|        |           |              |               |        |     
-Butter           |  1|        |           |              |               |        |     
-Coffee, ground   |  1|        |           |              |               |        |     
-Coffee cups, 8 oz|  1|        |           |              |               |        |     
-Cutlery Packets  |  1|        |           |              |               |        |     
-Eggs             |  9|        |           |              |               |        |     
-Milk             |  1|        |           |              |               |        |     
-Orange Juice     |  2|        |           |              |               |        |     
-Pancake Mix      |  2|        |           |              |               |        |     
-Serving Plates   |   |        |           |              |           200 |        |     
+item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|location|price
+Bacon               |   3|        |           |              |              |        |
+Eggs                |  10|        |           |              |              |        |
+Half & Half         |   1|        |           |              |              |        |
+Milk                |   1|        |           |              |              |        |
+Orange Juice        |   4|        |           |              |              |        |
+Pancake Mix         |   5|        |           |              |              |        |
+Syrup bottle, reg   |  14|        |           |              |              |        |
+Syrup bottle, SF    |  14|        |           |              |              |        |
