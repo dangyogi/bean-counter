@@ -90,13 +90,15 @@ class Report:
 
     text2_gap_percent = 0.278
 
-    def __init__(self, name, path=Path("~/storage/downloads/"), **row_layout_cols):
+    def __init__(self, name, path=Path("~/storage/downloads/"), default_size=None, **row_layout_cols):
         self.name = name
         path = (Path("~/storage/downloads") / (name + ".pdf")).expanduser()
         print(f"Report({name=}): {path=}")
         self.pagesize = portrait(letter)
         self.canvas = canvas.Canvas(str(path), pagesize=self.pagesize)
         self.page_width, self.page_height = self.pagesize
+        if default_size is not None:
+            self.default_size = default_size
 
         # Column_layouts
         self.columns = {}
@@ -602,7 +604,7 @@ class Row_template(Value):
 
 
 
-def dump_table(table_name, pdf=False):
+def dump_table(table_name, pdf=False, default_fontsize=13):
     from itertools import chain
     import database
 
@@ -624,7 +626,7 @@ def dump_table(table_name, pdf=False):
     assert len(header_cols) == len(data_cols) == len(header_names), \
            f"ERROR: {len(header_cols)=}, {len(data_cols)=}, {len(header_names)=}"
 
-    report = Report(table_name,
+    report = Report(table_name, default_size=default_fontsize,
            title=(Centered(span=len(header_names), size='title', bold=True),),
            headers=header_cols,
            data=data_cols,
@@ -657,11 +659,12 @@ def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--pdf", "-p", action="store_true", default=False)
+    parser.add_argument("--size", "-s", type=int, default=13)
     parser.add_argument("table")
 
     args = parser.parse_args()
 
-    dump_table(args.table, args.pdf)
+    dump_table(args.table, args.pdf, args.size)
 
 
 
