@@ -105,44 +105,74 @@ Tea                 |Walmart |          1|Great Value Black Tea Bags, 8 oz, 100 
 To-Go Containers    |Sams    |          1|Hefty Supreme Foam Hinged Lid Container, 3-Compartment (125 ct.)                                                                                                                                     |971233   |G19-7    |16.98|     125|          |                                                                           
 
 Inventory
-date      |item             |code     |num_pkgs|num_units|uncertainty
-Nov 18, 25|Bacon            |estimate |       0|      144|         14
-Nov 18, 25|Bowls            |estimate |       0|      325|         33
-Nov 18, 25|Butter           |estimate |       0|        6|          1
-Nov 18, 25|Coffee, ground   |estimate |       0|       77|          8
-Nov 18, 25|Coffee cups, 8 oz|estimate |       0|        0|          0
-Nov 18, 25|Coffee Stirrer 5"|estimate |       0|      495|         50
-Nov 18, 25|Cutlery Packets  |estimate |       0|        0|          0
-Nov 18, 25|Eggs             |estimate |       0|        0|          0
-Nov 18, 25|Gloves           |estimate |       0|     1463|        146
-Nov 18, 25|Half & Half      |estimate |       0|      170|         17
-Nov 18, 25|Milk             |estimate |       0|        0|          0
-Nov 18, 25|Nonstick Spray   |estimate |       0|       10|          1
-Nov 18, 25|OJ cups          |estimate |       0|      350|         35
-Nov 18, 25|Orange Juice     |estimate |       0|       11|          1
-Nov 18, 25|Pancake Mix      |estimate |       0|       80|          8
-Nov 18, 25|Paper Towels     |estimate |       0|        3|          0
-Nov 18, 25|Place Mats       |estimate |       0|      428|         43
-Nov 18, 25|Raffle Tickets   |estimate |       0|     1966|        197
-Nov 18, 25|Scrubbers        |estimate |       0|        5|          1
-Nov 18, 25|Serving Plates   |estimate |       0|       80|          8
-Nov 18, 25|Splenda          |estimate |       0|     1600|        160
-Nov 18, 25|Sugar            |estimate |       0|      100|         10
-Nov 18, 25|Sweet'N Low      |estimate |       0|     1650|        165
-Nov 18, 25|Syrup, reg       |estimate |       0|      237|         24
-Nov 18, 25|Syrup, sugar free|estimate |       0|      237|         24
-Nov 18, 25|Tea              |estimate |       0|       84|          8
-Nov 18, 25|To-Go Containers |estimate |       0|      160|         16
-Nov 20, 25|Bacon            |purchased|       1|        0|          0
-Nov 20, 25|Butter           |purchased|       1|        0|          0
-Nov 20, 25|Coffee, ground   |purchased|       1|        0|          0
-Nov 20, 25|Coffee cups, 8 oz|purchased|       1|        0|          0
-Nov 20, 25|Cutlery Packets  |purchased|       1|        0|          0
-Nov 20, 25|Eggs             |purchased|       9|        0|          0
-Nov 20, 25|Milk             |purchased|       1|        0|          0
-Nov 20, 25|Orange Juice     |purchased|       2|        0|          0
-Nov 20, 25|Pancake Mix      |purchased|       2|        0|          0
-Nov 20, 25|Serving Plates   |purchased|       0|      200|          0
+date      |item                |code     |num_pkgs|num_units|uncertainty
+Nov 18, 25|Bacon               |estimate |       0|      144|         14
+Nov 18, 25|Bowls               |estimate |       0|      325|         33
+Nov 18, 25|Butter              |estimate |       0|        6|          1
+Nov 18, 25|Coffee, ground      |estimate |       0|       77|          8
+Nov 18, 25|Coffee cups, 8 oz   |estimate |       0|        0|          0
+Nov 18, 25|Coffee Stirrer 5"   |estimate |       0|      495|         50
+Nov 18, 25|Cutlery Packets     |estimate |       0|        0|          0
+Nov 18, 25|Eggs                |estimate |       0|        0|          0
+Nov 18, 25|Gloves              |estimate |       0|     1463|        146
+Nov 18, 25|Half & Half         |estimate |       0|      170|         17
+Nov 18, 25|Milk                |estimate |       0|        0|          0
+Nov 18, 25|Nonstick Spray      |estimate |       0|       10|          1
+Nov 18, 25|OJ cups             |estimate |       0|      350|         35
+Nov 18, 25|Orange Juice        |estimate |       0|       11|          1
+Nov 18, 25|Pancake Mix         |estimate |       0|       80|          8
+Nov 18, 25|Paper Towels        |estimate |       0|        3|          0
+Nov 18, 25|Place Mats          |estimate |       0|      428|         43
+Nov 18, 25|Raffle Tickets      |estimate |       0|     1966|        197
+Nov 18, 25|Scrubbers           |estimate |       0|        5|          1
+Nov 18, 25|Serving Plates      |estimate |       0|       80|          8
+Nov 18, 25|Splenda             |estimate |       0|     1600|        160
+Nov 18, 25|Sugar               |estimate |       0|      100|         10
+Nov 18, 25|Sweet'N Low         |estimate |       0|     1650|        165
+Nov 18, 25|Syrup, reg          |estimate |       0|      237|         24
+Nov 18, 25|Syrup, sugar free   |estimate |       0|      237|         24
+Nov 18, 25|Tea                 |estimate |       0|       84|          8
+Nov 18, 25|To-Go Containers    |estimate |       0|      160|         16
+Nov 20, 25|Bacon               |purchased|       1|        0|          0
+Nov 20, 25|Butter              |purchased|       1|        0|          0
+Nov 20, 25|Coffee, ground      |purchased|       1|        0|          0
+Nov 20, 25|Coffee cups, 8 oz   |purchased|       1|        0|          0
+Nov 20, 25|Cutlery Packets     |purchased|       1|        0|          0
+Nov 20, 25|Eggs                |purchased|       9|        0|          0
+Nov 20, 25|Milk                |purchased|       1|        0|          0
+Nov 20, 25|Orange Juice        |purchased|       2|        0|          0
+Nov 20, 25|Pancake Mix         |purchased|       2|        0|          0
+Nov 20, 25|Serving Plates      |purchased|       0|      200|          0
+Nov 28, 25|Bacon               |count    |       0|       40|          0
+Nov 28, 25|Bowls               |count    |       0|      150|          0
+Nov 28, 25|Butter              |count    |       0|      200|          0
+Nov 28, 25|Coffee Stirrer 5"   |count    |       0|      400|          0
+Nov 28, 25|Coffee Stirrer 7"   |count    |       0|        0|          0
+Nov 28, 25|Coffee cups, 10 oz  |count    |       0|        0|          0
+Nov 28, 25|Coffee cups, 12 oz  |count    |       0|        0|          0
+Nov 28, 25|Coffee cups, 8 oz   |count    |       0|      250|          0
+Nov 28, 25|Coffee, ground      |count    |     1.2|        0|          0
+Nov 28, 25|Cutlery Packets     |count    |       0|      150|          0
+Nov 28, 25|Eggs                |count    |       3|        0|          0
+Nov 28, 25|Gloves              |count    |       2|      450|          0
+Nov 28, 25|Grill Cleaning Brick|count    |       0|        2|          0
+Nov 28, 25|Half & Half         |count    |       0|      110|          0
+Nov 28, 25|Milk                |count    |     0.8|        0|          0
+Nov 28, 25|Nonstick Spray      |count    |       9|        0|          0
+Nov 28, 25|OJ cups             |count    |       0|      310|          0
+Nov 28, 25|Orange Juice        |count    |       0|        0|          0
+Nov 28, 25|Pancake Mix         |count    |    2.25|        0|          0
+Nov 28, 25|Paper Towels        |count    |       0|        6|          0
+Nov 28, 25|Place Mats          |count    |       0|     1300|          0
+Nov 28, 25|Scrubbers           |count    |       0|        6|          0
+Nov 28, 25|Serving Plates      |count    |       0|      145|          0
+Nov 28, 25|Splenda             |count    |       0|     1400|          0
+Nov 28, 25|Sugar               |count    |       0|       90|          0
+Nov 28, 25|Sweet'N Low         |count    |       0|     1600|          0
+Nov 28, 25|Syrup bottle, SF    |count    |    13.5|        0|          0
+Nov 28, 25|Syrup bottle, reg   |count    |    14.5|        0|          0
+Nov 28, 25|Tea                 |count    |       0|       70|          0
+Nov 28, 25|To-Go Containers    |count    |       0|      145|          0
 
 Months
 month|year|min_order|max_perishable|max_non_perishable|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date  |end_bank_bal|end_cash_bal|steps_completed                                                                                                           

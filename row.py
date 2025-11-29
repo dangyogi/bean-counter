@@ -14,6 +14,8 @@ def set_database(database):
     Database = database
 
 def parse_date(s):
+    if isinstance(s, date):
+        return s
     try:
         return date.fromisoformat(s)
     except ValueError:
@@ -21,6 +23,8 @@ def parse_date(s):
     return datetime.strptime(s, "%b %d, %y").date()
 
 def parse_set(s):
+    if isinstance(s, set):
+        return s
     return set(x.strip() for x in s.split(','))
 
 class row:
@@ -40,13 +44,14 @@ class row:
     in_database = True
 
     def __init__(self, **attrs):
-        attrs_in = frozenset(name.lower() for name in attrs.keys())
+        attrs_in = frozenset(name.strip().lower() for name in attrs.keys())
         unknown_attrs = attrs_in.difference(self.types.keys())
-        assert not unknown_attrs, f"{self.table_name}.__init__: unknown attrs={tuple(missing_attrs)}"
+        assert not unknown_attrs, f"{self.table_name}.__init__: unknown attrs={tuple(unknown_attrs)}"
         missing_attrs = self.required.difference(attrs_in)
         assert not missing_attrs, f"{self.table_name}.__init__: missing attrs={tuple(missing_attrs)}, {attrs.keys()=}"
         for name, value in attrs.items():
-            setattr(self, name.lower(), value)
+            name = name.strip().lower()
+            setattr(self, name, self.types[name](value))
 
     def check_foreign_keys(self, row_num, raise_exc=True):
         r'''Returns True if all tests pass.
@@ -643,7 +648,7 @@ Rows = (Items, Products,
        )
 
 
-__all__ = "Decimal date timedelta set_database bills Rows abbr_month".split()
+__all__ = "Decimal date datetime timedelta set_database bills Rows abbr_month".split()
 
 
 
