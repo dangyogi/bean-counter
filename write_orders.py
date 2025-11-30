@@ -23,7 +23,6 @@ def run():
 
     print(f"last_month={last_month.month_str}, served_fudge={last_month.served_fudge}, "
           f"consumed_fudge={last_month.consumed_fudge}, "
-          f"non_perishable_fudge={last_month.non_perishable_fudge}, "
           f"{table_size=}")
 
     with open("Orders.csv", "w") as f:
@@ -33,7 +32,7 @@ def run():
             order = item.order(last_month, table_size, verbose)
            #print(f"{item.item=}, {order=}")
             if order:
-                print(f"{item.item:20}|{order:4}|        |           |              |              |"
+                print(f"{item.item:20}|{order:4}|        |           |              |               |"
                       "        |", file=f)
 
 

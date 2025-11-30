@@ -217,18 +217,26 @@ class Items(row):
                         raise AssertionError(f"Item({self.item}).in_stock: unknown Inventory.code={inv.code}")
         return units, uncertainty
 
-    def consumed(self, num_served, table_size):
+    def consumed(self, num_served, table_size, verbose=False):
         r'''Returns the number of units consumed at breakfast.
         '''
-        if self.num_per_meal is not None:
+        if self.num_per_serving is not None:
+            ans = self.num_per_serving * num_served
+            if verbose:
+                print(f"{self.item}.consumed: num_per_serving={self.num_per_serving}, {num_served=}, {ans=}")
+        elif self.num_per_meal is not None:
             ans = self.num_per_meal
+            if verbose:
+                print(f"{self.item}.consumed: num_per_meal={self.num_per_meal}, {ans=}")
         elif self.num_per_table is not None:
             tables = round(math.ceil(num_served / table_size))
             ans = self.num_per_table * tables
-        elif self.num_per_serving is not None:
-            ans = self.num_per_serving * num_served
+            if verbose:
+                print(f"{self.item}.consumed: num_per_table={self.num_per_table}, {tables=}, {ans=}")
         else:
             ans = 0
+            if verbose:
+                print(f"{self.item}.consumed: no consumption set, {ans=}")
         return round(ans)
 
     def order(self, cur_month, table_size=6, verbose=False):
@@ -237,7 +245,7 @@ class Items(row):
         def calc_needed(num_servings):
             def print_next(msg):
                 if verbose:
-                    print(f"{self.item}, {num_servings}: {msg}")
+                    print(f"{self.item}, {num_servings=}: {msg}")
             needed = 0
             if self.num_per_meal:
                 needed = self.num_per_meal
@@ -245,14 +253,13 @@ class Items(row):
             elif self.num_per_table:
                 tables = int(math.ceil(num_servings / table_size))
                 needed = self.num_per_table * tables
-                print_next(f"num_per_table={self.num_per_table=} * {tables=} == "
-                           f"{self.num_per_table * tables}")
+                print_next(f"num_per_table={self.num_per_table} * {tables=} == {needed}")
             elif self.num_per_serving:
                 needed = self.num_per_serving * num_servings
-                print_next(f"num_per_serving={self.num_per_serving=} * {num_servings=} == {needed}")
+                print_next(f"num_per_serving={self.num_per_serving} * {num_servings=} == {needed}")
             ans = round(needed)
             if verbose:
-                print(f"needed={ans}")
+                print(f"final needed={ans}")
             return ans
 
         avg_served1 = Database.Months.avg_meals_served(cur_month.month)
@@ -261,26 +268,27 @@ class Items(row):
         else:
             next_month = Database.Months.inc_month(cur_month.year, cur_month.month)[1]
             avg_served2 = Database.Months.avg_meals_served(next_month)
-        min_needed = calc_needed(cur_month.served_fudge * avg_served1)
+        min_needed1 = calc_needed(cur_month.served_fudge * avg_served1)
         units, uncertainty = self.in_stock
         if verbose:
-            print(f"{min_needed=}, {units=}, {uncertainty=}")
-        if units - uncertainty >= min_needed:
+            print(f"{min_needed1=}, {units=}, {uncertainty=}")
+        if units - uncertainty >= min_needed1:
             return 0
-        min = int(math.ceil((min_needed - (units - uncertainty)) / self.pkg_size))
+        min1 = int(math.ceil((min_needed1 - (units - uncertainty)) / self.pkg_size))
         if self.perishable:
-            max_order = cur_month.consumed_fudge * (self.consumed(avg_served1, table_size) +
-                                                    self.consumed(avg_served2, table_size))
+            max_order = cur_month.consumed_fudge * (self.consumed(avg_served1, table_size, verbose) +
+                                                    self.consumed(avg_served2, table_size, verbose))
             if verbose:
                 print(f"{max_order=}")
-            max_limit = int((max_order - (units + uncertainty)) / self.pkg_size)
-            return round(max(min, max_limit))
+            max_limit = int((max_order - (units + uncertainty)) / self.pkg_size)   # floor
+            return round(max(min1, max_limit))
         # else non_perishable
         min_needed2 = calc_needed(cur_month.served_fudge * avg_served2)
         min2 = int(math.ceil((min_needed2 - (units - uncertainty)) / self.pkg_size))
-        min_needed3 = cur_month.non_perishable_fudge * self.consumed(avg_served1, table_size) + min_needed2
+        consumed1 = self.consumed(cur_month.served_fudge * avg_served1, table_size, verbose)
+        min_needed3 = consumed1 + min_needed2
         min3 = int(math.ceil((min_needed3 - (units - uncertainty)) / self.pkg_size))
-        return round(max(min, min2, min3))
+        return round(max(min1, min2, min3))
 
 class Products(row):
     # item=varchar(30, references=foreign_key("Items", on_delete="cascade", on_update="cascade")),
@@ -364,7 +372,7 @@ class Inventory(row):
     primary_keys = "date item code".split()
     required = frozenset(("date", "item", "code"))
     foreign_keys = "Items",
-    calculated = dict(pkg_size=int, total_units=int)
+    calculated = dict(pkg_size=int, total_units=float)
 
     @property
     def pkg_size(self):
@@ -372,7 +380,7 @@ class Inventory(row):
 
     @property
     def total_units(self):
-        return round(self.num_pkgs * self.pkg_size + self.num_units)
+        return self.num_pkgs * self.pkg_size + self.num_units
 
 class Orders(row):
     # item=varchar(30),
@@ -446,7 +454,6 @@ class Months(row):
     # year=integer(),
     # served_fudge=float(null=True),
     # consumed_fudge=float(null=True),
-    # non_perishable_fudge=float(null=True),
     # num_at_meeting=integer(null=True),
     # staff_at_breakfast=integer(null=True),
     # tickets_claimed=integer(null=True),
@@ -460,7 +467,6 @@ class Months(row):
         year=int,
         served_fudge=float,
         consumed_fudge=float,
-        non_perishable_fudge=float,
         num_at_meeting=int,
         staff_at_breakfast=int,
         tickets_claimed=int,
@@ -473,7 +479,6 @@ class Months(row):
 
     served_fudge = None
     consumed_fudge = None
-    non_perishable_fudge = None
     num_at_meeting = None
     staff_at_breakfast = None
     tickets_claimed = None
