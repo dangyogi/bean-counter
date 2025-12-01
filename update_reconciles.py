@@ -203,8 +203,8 @@ def run():
         save_database()
 
     # print Treasurer's Report
-    report = Report("T-Report",
-                    title=(Centered(span=5, size="title", bold=True),),
+    set_canvas("T-Report")
+    report = Report(title=(Centered(span=5, size="title", bold=True),),
                     l0=(Left(bold=True, span=4),           Right(text_format="{:.2f}")),
                     l1=(Left(indent=1, bold=True, span=3), Right(text_format="{:.2f}", skip=1)),
                     l2=(Left(indent=2, bold=True, span=2), Right(text_format="{:.2f}", skip=2)),
@@ -303,8 +303,8 @@ def run():
         for y_offset in range(0, round(page_height) - round(height), round(height) + 28):
             for x_offset in range(2, round(page_width) - 3 - round(width), round(width) + 22):
                 report.draw(x_offset, y_offset)
-        report.canvas.showPage()
-        report.canvas.save()
+        canvas_showPage()
+        canvas_save()
     else:
         report.print_init()
         report.print()

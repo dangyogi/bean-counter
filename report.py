@@ -70,11 +70,41 @@ from pathlib import Path
 import sys
 
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import landscape, portrait, letter, inch
+from reportlab.lib.pagesizes import landscape as Landscape, portrait as Portrait, letter, inch
 
 
-__all__ = "Report Left Centered Right Value Row_template dump_table".split()
+__all__ = "set_canvas get_pagesize set_landscape canvas_showPage canvas_save Report " \
+          "Left Centered Right Value Row_template dump_table".split()
 
+
+Canvas = None
+Pagesize = None
+
+def set_canvas(name, path=Path("~/storage/downloads/"), landscape=False):
+    global Canvas, Pagesize
+    if not name.endswith(".pdf"):
+        name += ".pdf"
+    path = (path / name).expanduser()
+    if landscape:
+        Pagesize = Landscape(letter)
+    else:
+        Pagesize = Portrait(letter)
+    Canvas = canvas.Canvas(str(path), pagesize=Pagesize)
+
+def get_pagesize():
+    return Pagesize
+
+def set_landscape():
+    global Pagesize
+    Pagesize = Landscape(letter)
+    print(f"set_landscape({Pagesize})")
+    Canvas.setPageSize(Pagesize)
+
+def canvas_showPage():
+    Canvas.showPage()
+
+def canvas_save():
+    Canvas.save()
 
 class Report:
     default_font = 'Helvetica'
@@ -85,17 +115,13 @@ class Report:
     indent_chars  = 4
     indent_points = indent_chars * default_size * 0.278
 
-    col_gap_chars = 3
+    col_gap_chars = 2
     col_gap_points = col_gap_chars * default_size * 0.278
 
     text2_gap_percent = 0.278
 
-    def __init__(self, name, path=Path("~/storage/downloads/"), default_size=None, **row_layout_cols):
-        self.name = name
-        path = (Path("~/storage/downloads") / (name + ".pdf")).expanduser()
-        print(f"Report({name=}): {path=}")
-        self.pagesize = portrait(letter)
-        self.canvas = canvas.Canvas(str(path), pagesize=self.pagesize)
+    def __init__(self, default_size=None, **row_layout_cols):
+        self.pagesize = Pagesize
         self.page_width, self.page_height = self.pagesize
         if default_size is not None:
             self.default_size = default_size
@@ -121,14 +147,13 @@ class Report:
                 self.col_x_starts = [0] * (col_index + 1)
                 self.col_x_char_starts = [0] * (col_index + 1)
             self.row_layouts[rl_name] = Row_layout(self, rl_name, *cols)
-        print(f"Report({self.name}).__init__: {len(self.col_x_starts)=}")
 
         # Rows
         self.rows = []
 
     def set_landscape(self):
-        self.pagesize = landscape(self.pagesize)
-        self.canvas.setPageSize(self.pagesize)
+        set_landscape()
+        self.pagesize = Pagesize
         self.page_width, self.page_height = self.pagesize
 
     def new_row(self, row_layout, *values, size=None, bold=None, pad=0):
@@ -139,7 +164,7 @@ class Report:
         self.set_y_starts()
         self.set_x_starts()
 
-    def draw_init(self):
+    def draw_init(self, verbose=False):
         r'''Returns report width, height.
         '''
         self.init()
@@ -147,28 +172,25 @@ class Report:
         height = self.report_height()
         if width > self.page_width and width > height:
             self.set_landscape()
-            print("pagesize", self.pagesize)
-            print("Report width", width, "height", height, "set landscape")
-        else:
+            if verbose:
+                print("pagesize", self.pagesize)
+                print("Report width", width, "height", height, "set landscape")
+        elif verbose:
             print("Report width", width, "height", height)
         return width, height
 
     def draw(self, x_offset=0, y_offset=0):
         for row in self.rows:
-            if row.print:
-                for cell in row.cells:
-                    cell.draw(x_offset, y_offset)
+            row.draw(x_offset, y_offset)
 
-    def print_init(self):
+    def print_init(self, verbose=False):
         self.init()
-        print("Report width", self.report_width_chars(), "height", self.report_height_chars())
+        if verbose:
+            print("Report width", self.report_width_chars(), "height", self.report_height_chars())
 
     def print(self, file=sys.stdout):
         for row in self.rows:
-            if row.print:
-                for cell in row.cells:
-                    cell.print(file)
-                print(file=file)
+            row.print(file)
 
     def make_col_name(self, col_name):
         if col_name not in self.name_suffixes:
@@ -187,9 +209,7 @@ class Report:
 
     def set_sizes(self):
         for row in self.rows:
-            if row.print:
-                for cell in row.cells:
-                    cell.set_sizes()
+            row.set_sizes()
 
     def set_y_starts(self):
         BM(self)  # add dummy bottom margin row to capture the height of the report.
@@ -236,9 +256,9 @@ class Cell:
             self.fontName = self.col.report.default_font
         self.text_format = text_format or col.text_format
         self.text2_format = text2_format or col.text2_format
-        self.width1 = self.col.report.canvas.stringWidth(self.format_text(self.text, self.text_format),
-                                                         fontName=self.fontName,
-                                                         fontSize=self.size)
+        self.width1 = Canvas.stringWidth(self.format_text(self.text, self.text_format),
+                                         fontName=self.fontName,
+                                         fontSize=self.size)
         self.text2 = None
         self.bold2 = None
         self.width2 = 0
@@ -262,9 +282,9 @@ class Cell:
         if text2_format is not None:
             self.text2_format = text2_format
         self.width1 += self.col.report.text2_gap_percent * self.size
-        self.width2 = self.col.report.canvas.stringWidth(self.format_text(self.text2, self.text2_format),
-                                                         fontName=self.fontName2,
-                                                         fontSize=self.size)
+        self.width2 = Canvas.stringWidth(self.format_text(self.text2, self.text2_format),
+                                         fontName=self.fontName2,
+                                         fontSize=self.size)
 
     def set_sizes(self):
         self.col.set_width(self.my_width(), self.my_width_chars())
@@ -291,25 +311,26 @@ class Cell:
         return width1 + width2
 
     def draw(self, x_offset, y_offset):
-        self.col.report.canvas.setFont(self.fontName, self.size)
+        Canvas.setFont(self.fontName, self.size)
         x = self.col.get_x_offset(self.my_width())
-        self.col.report.canvas.drawString(x + x_offset,
-                                          self.col.report.page_height - (y_offset + self.row.y_end),
-                                          self.format_text(self.text, self.text_format))
+        Canvas.drawString(x + x_offset,
+                          self.col.report.page_height - (y_offset + self.row.y_end),
+                          self.format_text(self.text, self.text_format))
 
         if self.text2 is not None:
-            self.col.report.canvas.setFont(self.fontName2, self.size)
-            self.col.report.canvas.drawString(x + x_offset + self.width1,
-                                              self.col.report.page_height - (y_offset + self.row.y_end),
-                                              self.format_text(self.text2, self.text2_format))
+            Canvas.setFont(self.fontName2, self.size)
+            Canvas.drawString(x + x_offset + self.width1,
+                              self.col.report.page_height - (y_offset + self.row.y_end),
+                              self.format_text(self.text2, self.text2_format))
 
     def print(self, file):
         text = self.format_text(self.text, self.text_format)
         if self.text2 is not None:
             text += ' '
             text += self.format_text(self.text2, self.text2_format)
+        self.col.print_gap(file)
         left, right = self.col.get_padding(len(text))
-        print(' ' * left, text, ' ' * right, sep='', end='')
+        print(' ' * left, text, ' ' * right, sep='', end='', file=file)
 
 
 # Column layouts:
@@ -359,10 +380,14 @@ class Column_layout:
         return self.report.col_x_char_starts[self.left_index]
 
     def width(self):
-        return self.report.col_x_starts[self.right_index] - self.x_start
+        return self.report.col_x_starts[self.right_index] - self.x_start - self.report.col_gap_points
 
     def width_chars(self):
-        return self.report.col_x_char_starts[self.right_index] - self.x_char_start
+        return self.report.col_x_char_starts[self.right_index] - self.x_char_start - self.report.col_gap_chars
+
+    def print_gap(self, file):
+        if self.left_index:
+            print(' ' * self.report.col_gap_chars, end='', file=file)
 
 class Left(Column_layout):
     def get_x_offset(self, text_width):
@@ -378,7 +403,7 @@ class Centered(Column_layout):
     '''
     def get_x_offset(self, text_width):
         ans = self.x_start + self.width() / 2 - text_width / 2
-        print(f"Centered({self.name}).get_x_offset({text_width=}): {self.x_start=}, {self.width()=} -> {ans}")
+       #print(f"Centered({self.name}).get_x_offset({text_width=}): {self.x_start=}, {self.width()=} -> {ans}")
         return ans
 
     def get_padding(self, text_width):
@@ -421,8 +446,6 @@ class Row_layout:
 class BM:
     r'''Bottom Margin.
     '''
-    print = False
-
     def __init__(self, report):
         self.y_start = 0
         self.y_char_start = 0
@@ -434,9 +457,16 @@ class BM:
         if y_char > self.y_char_start:
             self.y_char_start = y_char
 
-class Row(BM):
-    print = True
+    def set_sizes(self):
+        pass
 
+    def draw(self, x_offset, y_offset):
+        pass
+
+    def print(self, file):
+        pass
+
+class Row(BM):
     def __init__(self, layout, pad=0):
         super().__init__(layout.report)
         self.layout = layout
@@ -475,6 +505,19 @@ class Row(BM):
         r'''Adds text to the end of the last cell.
         '''
         self.cells[-1].set_text2(text, bold, text2_format)
+
+    def set_sizes(self):
+        for cell in self.cells:
+            cell.set_sizes()
+
+    def draw(self, x_offset, y_offset):
+        for cell in self.cells:
+            cell.draw(x_offset, y_offset)
+
+    def print(self, file):
+        for cell in self.cells:
+            cell.print(file)
+        print(file=file)
 
 
 class Value:
@@ -647,8 +690,8 @@ def dump_table(table_name, pdf=False, default_fontsize=13):
     if pdf:
         report.draw_init()
         report.draw()
-        report.canvas.showPage()
-        report.canvas.save()
+        Canvas.showPage()
+        Canvas.save()
     else:
         report.print_init()
         report.print()
