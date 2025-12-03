@@ -56,7 +56,7 @@ def run():
                #print(f"read_rows: item={value=}, {item.supplier=}")
                 yield row_attrs
 
-        set_canvas("Purchase-Orders", landscape=True)
+        set_canvas("Purchase-Orders-" + str(po_num), landscape=True)
         reports = {}  # {supplier: report}
         grand_total = 0
         for supplier, items in groupby(sorted(read_rows(), key=itemgetter("supplier", "item")),

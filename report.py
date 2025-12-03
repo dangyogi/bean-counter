@@ -4,7 +4,11 @@ r'''Reports, both pdf and text, in rows and columns
 
 Steps:
 
-    1. Create Report object:
+    1. Initialize the ReportLab canvas:
+
+        set_canvas(filename, path=Path("~/storage/downloads/"), landscape=False):
+
+    2. Create Report object:
 
         report = Report("T-Report",  # this will be the filename
 
@@ -15,11 +19,11 @@ Steps:
                         l3=(Left(indent=3), Right(indent=3)),
                        )
 
-    2. Create a row.  These will be output in the order created:
+    3. Create a row.  These will be output in the order created:
 
         title_row = report.new_row("title")        # can also provide the values to the first N rows as additional args
     
-    3. Add text to columns.  This may be done after other rows are created.
+    4. Add text to columns.  This may be done after other rows are created.
 
         title_row.next_cell("Treasurer's Report")  # can override size and/or bold here
 
@@ -27,12 +31,12 @@ Steps:
         title_row.set_text2("...")                 # Tack text onto the end of the last cell.
                                                    # Can specify bold (default False).
 
-    4. initialize the report.  These print the size of the report to stdout:
+    5. initialize the report.  These print the size of the report to stdout:
 
         report.draw_init()
      or report.print_init()
 
-    5. generate the report:
+    6. generate the report:
 
         report.draw()   # may send x_offset and/or y_offset (from top) to transpose report on page
                         # file generated in ~/storage/downloads/<report-name>.pdf
@@ -79,24 +83,28 @@ __all__ = "set_canvas get_pagesize set_landscape canvas_showPage canvas_save Rep
 
 Canvas = None
 Pagesize = None
+Page_width = None
+Page_height = None
 
-def set_canvas(name, path=Path("~/storage/downloads/"), landscape=False):
-    global Canvas, Pagesize
-    if not name.endswith(".pdf"):
-        name += ".pdf"
-    path = (path / name).expanduser()
+def set_canvas(filename, path=Path("~/storage/downloads/"), landscape=False):
+    global Canvas, Pagesize, Page_width, Page_height
+    if not filename.endswith(".pdf"):
+        filename += ".pdf"
+    path = (path / filename).expanduser()
     if landscape:
         Pagesize = Landscape(letter)
     else:
         Pagesize = Portrait(letter)
+    Page_width, Page_height = Pagesize
     Canvas = canvas.Canvas(str(path), pagesize=Pagesize)
 
 def get_pagesize():
     return Pagesize
 
 def set_landscape():
-    global Pagesize
+    global Pagesize, Page_width, Page_height
     Pagesize = Landscape(letter)
+    Page_width, Page_height = Pagesize
     print(f"set_landscape({Pagesize})")
     Canvas.setPageSize(Pagesize)
 
@@ -121,8 +129,6 @@ class Report:
     text2_gap_percent = 0.278
 
     def __init__(self, default_size=None, **row_layout_cols):
-        self.pagesize = Pagesize
-        self.page_width, self.page_height = self.pagesize
         if default_size is not None:
             self.default_size = default_size
 
@@ -151,11 +157,6 @@ class Report:
         # Rows
         self.rows = []
 
-    def set_landscape(self):
-        set_landscape()
-        self.pagesize = Pagesize
-        self.page_width, self.page_height = self.pagesize
-
     def new_row(self, row_layout, *values, size=None, bold=None, pad=0):
         return self.row_layouts[row_layout].new_row(*values, size=size, bold=bold, pad=pad)
 
@@ -170,16 +171,16 @@ class Report:
         self.init()
         width = self.report_width()
         height = self.report_height()
-        if width > self.page_width and width > height:
-            self.set_landscape()
+        if width > Page_width and width > height:
+            set_landscape()
             if verbose:
-                print("pagesize", self.pagesize)
+                print("pagesize", Pagesize)
                 print("Report width", width, "height", height, "set landscape")
         elif verbose:
             print("Report width", width, "height", height)
         return width, height
 
-    def draw(self, x_offset=0, y_offset=0):
+    def draw(self, x_offset=2, y_offset=0):
         for row in self.rows:
             row.draw(x_offset, y_offset)
 
@@ -314,13 +315,13 @@ class Cell:
         Canvas.setFont(self.fontName, self.size)
         x = self.col.get_x_offset(self.my_width())
         Canvas.drawString(x + x_offset,
-                          self.col.report.page_height - (y_offset + self.row.y_end),
+                          Page_height - (y_offset + self.row.y_end),
                           self.format_text(self.text, self.text_format))
 
         if self.text2 is not None:
             Canvas.setFont(self.fontName2, self.size)
             Canvas.drawString(x + x_offset + self.width1,
-                              self.col.report.page_height - (y_offset + self.row.y_end),
+                              Page_height - (y_offset + self.row.y_end),
                               self.format_text(self.text2, self.text2_format))
 
     def print(self, file):
@@ -669,7 +670,9 @@ def dump_table(table_name, pdf=False, default_fontsize=13):
     assert len(header_cols) == len(data_cols) == len(header_names), \
            f"ERROR: {len(header_cols)=}, {len(data_cols)=}, {len(header_names)=}"
 
-    report = Report(table_name, default_size=default_fontsize,
+    set_canvas(table_name)
+
+    report = Report(default_size=default_fontsize,
            title=(Centered(span=len(header_names), size='title', bold=True),),
            headers=header_cols,
            data=data_cols,
