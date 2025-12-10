@@ -180,6 +180,8 @@ Nov 28, 25|Syrup bottle, SF    |count    |    13.5|        0|          0
 Nov 28, 25|Syrup bottle, reg   |count    |    14.5|        0|          0
 Nov 28, 25|Tea                 |count    |       0|       70|          0
 Nov 28, 25|To-Go Containers    |count    |       0|      145|          0
+Dec 09, 25|Bacon               |count    |       0|        0|          0
+Dec 09, 25|OJ cups             |used     |       0|       30|         10
 
 Months
 month|year|served_fudge|consumed_fudge|num_at_meeting|staff_at_breakfast|tickets_claimed|start_date|end_date  |end_bank_bal|end_cash_bal|steps_completed                                                                                                           

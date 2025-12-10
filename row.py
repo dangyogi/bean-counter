@@ -207,6 +207,7 @@ class Items(row):
                         units += inv.total_units
                     case "used":       # exact count
                         units -= inv.total_units
+                        uncertainly += inv.uncertainty
                     case "consumed":   # estimate
                         units -= inv.total_units
                         uncertainly += inv.uncertainty
