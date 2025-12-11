@@ -546,19 +546,23 @@ class Globals(row):
     required = frozenset(("name",))
     calculated = dict()
 
-class Categories(row):
-    # event=varchar(50),                # e.g., "meeting dinner", "breakfast"
-    # category=varchar(50),             # e.g., "adv tickets", "door tickets", "50/50", "P.O. Reimbursement"
-    # type=varchar(10, null=True),      # rev/exp
+class Accounts(row):
+    # account=varchar(50),              # e.g., "adv tickets", "door tickets", "50/50", "bf supplies"
+    # category=varchar(50, null=True),  # e.g., "breakfast", "other", "current balance"
+    # section=varchar(50, null=True),   # e.g., "cash flow", "balance"
+    # type=varchar(10, null=True),      # e.g., "revenue", "expense"
     types = dict(
-        event=str,
+        account=str,
         category=str,
+        section=str,
         type=str,
     )
 
+    category = None
+    section = None
     type = None
-    primary_keys = "event", "category"
-    required = frozenset(("event", "category"))
+    primary_key = "account"
+    required = frozenset(("account",))
     calculated = dict()
 
 class bills:
@@ -663,26 +667,24 @@ class bills:
         print(f"|{self.total:8.02f}", file=file)
 
 class Starts(row, bills):  # row first, so it's __init__ is used.
-    # event=varchar(50),
-    # category=varchar(50),
+    # account=varchar(50),
     # detail=varchar(50, null=True),
     # ... bills
     types = dict(
-        event=str,
-        category=str,
+        account=str,
         detail=str,
     )
     types.update(bills.types)
     detail = None
-    required = frozenset(("event", "category", "detail"))
-    primary_keys = "event", "category", "detail"
-    foreign_keys = "Categories",
+    required = frozenset(("account", "detail"))
+    primary_keys = "account", "detail"
+    foreign_keys = "Accounts",
     calculated = bills.calculated.copy()
     calculated["type"] = str
 
     @property
     def type(self):
-        return Database.Categories[self.event, self.category].type
+        return Database.Accounts[self.account].type
 
 class Reconcile(Starts):
     # date=date_col(),
@@ -695,7 +697,7 @@ class Reconcile(Starts):
     types["donations"]=Decimal
 
     donations = 0
-    required = frozenset(("date", "event", "category"))
+    required = frozenset(("date", "account"))
     primary_keys = None
     calculated = Starts.calculated.copy()
     calculated.update(dict(
@@ -712,8 +714,8 @@ class Reconcile(Starts):
 
     @property
     def ticket_price(self):
-        if self.event == "breakfast" and self.category.endswith(" tickets"):
-            return Database.Globals[self.category[:-1] + " price"].int
+        if self.account.endswith(" tickets"):
+            return Database.Globals[self.account[:-1] + " price"].int
         return None
 
     @property
@@ -722,7 +724,7 @@ class Reconcile(Starts):
         if price is None:
             return None
         total = self.total
-        start_key = self.event, self.category, "start"
+        start_key = self.account, "start"
         if start_key in Database.Starts:
             total -= Database.Starts[start_key].total
         return int(math.ceil(total / price))
@@ -760,7 +762,7 @@ def convert(s):
 # These must be in logical order based on what has to be defined first
 Rows = (Items, Products,
         Inventory, Orders, Months,
-        Globals, Categories, Starts, Reconcile,
+        Globals, Accounts, Starts, Reconcile,
        )
 
 

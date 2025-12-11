@@ -68,6 +68,7 @@ Eggs                |Walmart |          1|Eggland's Best Large White Eggs, 24 Co
 Gloves              |Walmart |          1|Great Value Disposable Poly Food Gloves, 120-Count, Latex-Free, One Size Fits Most                                                                                                                   |         |Aisle A22| 1.48|     120|          |                                                                           
 Grill Cleaning Brick|Amazon  |          1|Commercial Grade, Heavy Duty Grill Cleaning Brick Bulk 4 Pack. Pumice Stone Cleaner Tool Cleans and Sanitizes Restaurant Flat Top Grills or Griddles Effectively Without Harsh Chemicals or Abrasives|         |         |24.99|       4|          |https://www.amazon.com/dp/B078TMMQPH?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1
 Half & Half         |Sams    |          1|Land O'Lakes Mini Moo's Half and Half (192 ct.)                                                                                                                                                      |342903   |23-7     |12.88|     192|          |                                                                           
+Half & Half         |Sams    |          2|Nestle Coffee-mate Coffee Creamer Singles, Original 180 ct.                                                                                                                                          |990004691|25-8     |12.58|     180|          |                                                                           
 Milk                |Walmart |          1|Great Value Lactose Free Whole Vitamin D Milk, Half Gallon, 64 fl oz                                                                                                                                 |         |Aisle A38| 3.38|      64|          |                                                                           
 Nonstick Spray      |Sams    |          1|PAM Original Cooking Spray (12 oz., 2 pk.)                                                                                                                                                           |338064   |         | 7.48|       2|          |                                                                           
 OJ cups             |Sams    |          1|Member's Mark Printed Paper Bath Cold Cup (5 oz., 450 ct.)                                                                                                                                           |980259465|G20-4    |13.48|     450|          |                                                                           
@@ -205,51 +206,56 @@ name             |int|decimal
 adv ticket price |  5|       
 door ticket price|  6|       
 
-Categories
-event         |category       |type   
-meeting dinner|reimbursement  |expense
-breakfast     |adv tickets    |income 
-breakfast     |door tickets   |income 
-breakfast     |50/50          |income 
-breakfast     |donations      |income 
-breakfast     |reimbursement  |expense
-120 Club      |income         |income 
-annual        |donation       |expense
-one-time      |income         |income 
-one-time      |expense        |expense
-petty cash    |expense        |expense
-monthly       |initial balance|       
-monthly       |cash out       |       
-monthly       |cash in        |       
-monthly       |final balance  |       
+Accounts
+account       |category       |section  |type   
+adv tickets   |breakfast      |cash flow|income 
+door tickets  |breakfast      |cash flow|income 
+50/50         |breakfast      |cash flow|income 
+Sam's card    |breakfast      |cash flow|expense
+bf donations  |breakfast      |cash flow|income 
+bf supplies   |breakfast      |cash flow|expense
+120 Club      |other          |cash flow|income 
+meeting dinner|other          |cash flow|expense
+xmas donation |other          |cash flow|expense
+petty cash    |other          |cash flow|expense
+income        |other          |cash flow|income 
+expense       |other          |cash flow|expense
+bank          |current balance|balance  |       
+cash          |current balance|balance  |       
+cash out      |               |         |expense
+cash in       |               |         |income 
 
 Starts
-event    |category     |detail         |coin|b1|b5|b10|b20|b50|b100
-breakfast|door tickets |start          |   0|20| 2|  2|  0|  0|   0
-breakfast|50/50        |start          |   0|10| 2|  2|  0|  0|   0
-monthly  |final balance|ending minimums|   4|20|10| 10| 10| 10|   0
-monthly  |final balance|petty cash     |   0|10| 4|  2|  0|  0|   0
+account     |detail  |coin|b1|b5|b10|b20|b50|b100
+door tickets|start   |   0|20| 2|  2|  0|  0|   0
+50/50       |start   |   0|10| 2|  2|  0|  0|   0
+petty cash  |start   |   0|10| 4|  2|  0|  0|   0
+cash        |minimums|   4|15| 6|  6| 12|  6|   0
 
 Reconcile
-date      |event         |category       |detail             |coin|b1|b5|b10|b20|b50|b100|donations
-Nov 01, 25|monthly       |final balance  |w/starts&petty cash|4.81|44|13| 16| 12| 10|  18|        0
-Nov 03, 25|breakfast     |reimbursement  |Bruce, Sam's Card  |   0| 0| 3|  0|  0|  0|   0|        0
-Nov 04, 25|meeting dinner|reimbursement  |Bruce, pizza       | 0.5| 2| 0|  4|  0|  0|   0|        0
-Nov 04, 25|meeting dinner|reimbursement  |Bruce, beer        |0.25|22| 0|  0|  0|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets    |Steve & David      |   1| 4| 1|  4|  5|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets    |Henry              |   0|20| 0|  0|  0|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets    |Abe & Harvey       |   0| 0| 1|  3|  4|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets    |Jim                |   0| 0| 4|  1|  0|  0|   0|        0
-Nov 05, 25|breakfast     |adv tickets    |Marvin             |   0| 0| 9|  0|  0|  0|   0|        0
-Nov 08, 25|breakfast     |door tickets   |End                |   0|13| 2|  4|  2|  0|   0|        0
-Nov 08, 25|breakfast     |50/50          |End                |   0| 9|11|  1|  1|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement  |Bruce, cups        |   0| 0| 5|  0|  0|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement  |Marvin, Sam's      |0.52| 2| 1|  0|  1|  0|   1|        0
-Nov 08, 25|breakfast     |reimbursement  |Walmart & Gordons  |0.15| 0| 1|  0|  1|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement  |David, Plates      | 0.2| 4| 1|  1|  0|  0|   0|        0
-Nov 08, 25|breakfast     |reimbursement  |Steve, Orange Juice|   0| 4| 0|  1|  0|  0|   0|        0
-Nov 28, 25|monthly       |initial balance|                   |4.19|26|26| 19| 22| 10|  17|        0
-Nov 28, 25|monthly       |cash out       |                   |   0| 0|14|  3| 16|  0|   0|        0
-Nov 28, 25|monthly       |cash in        |                   |   0|20| 0|  0|  0|  0|   4|        0
-Nov 28, 25|monthly       |final balance  |                   |4.19|46|12| 16|  6| 10|  21|        0
+date      |account       |detail              |coin|b1|b5|b10|b20|b50|b100|donations
+Nov 01, 25|cash          |w/starts            |4.81|44|13| 16| 12| 10|  18|        0
+Nov 03, 25|Sam's card    |Bruce, Sam's Card   |   0| 0| 3|  0|  0|  0|   0|        0
+Nov 04, 25|meeting dinner|Bruce, pizza        | 0.5| 2| 0|  4|  0|  0|   0|        0
+Nov 04, 25|meeting dinner|Bruce, beer         |0.25|22| 0|  0|  0|  0|   0|        0
+Nov 05, 25|adv tickets   |Steve & David       |   1| 4| 1|  4|  5|  0|   0|        0
+Nov 05, 25|adv tickets   |Henry               |   0|20| 0|  0|  0|  0|   0|        0
+Nov 05, 25|adv tickets   |Abe & Harvey        |   0| 0| 1|  3|  4|  0|   0|        0
+Nov 05, 25|adv tickets   |Jim                 |   0| 0| 4|  1|  0|  0|   0|        0
+Nov 05, 25|adv tickets   |Marvin              |   0| 0| 9|  0|  0|  0|   0|        0
+Nov 08, 25|door tickets  |End                 |   0|13| 2|  4|  2|  0|   0|        0
+Nov 08, 25|50/50         |End                 |   0| 9|11|  1|  1|  0|   0|        0
+Nov 08, 25|bf supplies   |Bruce, cups         |   0| 0| 5|  0|  0|  0|   0|        0
+Nov 08, 25|bf supplies   |Marvin, Sam's       |0.52| 2| 1|  0|  1|  0|   1|        0
+Nov 08, 25|bf supplies   |Walmart & Gordons   |0.15| 0| 1|  0|  1|  0|   0|        0
+Nov 08, 25|bf supplies   |David, Plates       | 0.2| 4| 1|  1|  0|  0|   0|        0
+Nov 08, 25|bf supplies   |Steve, Orange Juice |   0| 4| 0|  1|  0|  0|   0|        0
+Nov 28, 25|cash          |initial             |4.19|26|26| 19| 22| 10|  17|        0
+Nov 28, 25|cash out      |                    |   0| 0|14|  3| 16|  0|   0|        0
+Nov 28, 25|cash in       |                    |   0|20| 0|  0|  0|  0|   4|        0
+Nov 28, 25|cash          |final               |4.19|46|12| 16|  6| 10|  21|        0
+Dec 11, 25|meeting dinner|Bruce, pizza        |   0| 0| 1|  5|  0|  0|   0|        0
+Dec 11, 25|meeting dinner|Bruce, soda&toppings|1.50| 3| 2|  2|  0|  0|   0|        0
+Dec 11, 25|bf supplies   |Ernie, P.O. 25121W  |   0| 3| 1|  0|  2|  0|   0|        0
+Dec 11, 25|bf supplies   |Marvin, P.O. 25121S |0.59| 0| 0|  0|  3|  0|   1|        0
 

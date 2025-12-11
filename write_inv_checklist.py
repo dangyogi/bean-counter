@@ -1,5 +1,7 @@
 # write_inv_checklist.py
 
+# FIX: only include items that need to be counted
+
 from operator import attrgetter
 
 from database import *

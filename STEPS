@@ -1,9 +1,9 @@
 Inventory codes:
     - count
     - purchased (exact count)
-    - used (exact count)
-    - consumed (estimate)
-    - estimate (includes uncertainty)
+    - used (exact count, or estimate)
+    - consumed (calculated estimate)
+    - estimate (current estimate includes uncertainty)
 
 set_min_max
     - create next Month, with start_date == prior month end_date + 1, set min_order, max_perishable, max_non_perishable
@@ -38,7 +38,7 @@ set_meeting_attendance
 set_breakfast_attendance
     - staff_at_breakfast
     - tickets_claimed
-<update purchases>
+<update purchases in Orders.csv>
     - manual step looking at shopping receipts
 record_purchases
     - add "purchased" rows to Inventory table
