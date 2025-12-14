@@ -1,3 +1,81 @@
+Money:
+
+# only updated by hand:
+Globals: name|int|decimal
+Accounts: account|category|section|type
+Starts: account|detail|coin|b1|b5|b10|b20|b50|b100 => total type
+
+Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations => total type ticket_price tickets_sold
+
+1. update_reconcile [reconcile_file]
+ 
+   Appends reconcile_file to Reconcile table
+
+2. cash_balance --trail-run/-t
+
+   Appends to Reconcile table:
+
+   <today>|cash|w/o starts|...
+   <today>|cash|w/starts  |...
+
+3. cash_swap --trail-run/-t
+
+   Last line of Reconcile table must be cash|w/starts| line.
+
+   Appends to Reconcile table:
+
+   <today>|cash out|          |...
+   <today>|cash in |          |...
+   <today>|cash    |w/o starts|...
+   <today>|cash    |w/starts  |...
+
+4. treasurer_report --pdf/-p
+
+   No updates to database
+
+
+Inventory:
+
+# updated by hand
+Items: item|unit|perishable|supplier|supplier_id|num_per_meal|num_per_table|num_per_serving => pkg_size pkg_weight
+Products: item|supplier|supplier_id|name|item_num|location|price|pkg_size|pkg_weight|note
+       => unit price_per_unit oz_per_unit
+
+Inventory: date|item|code|num_pkgs|num_units|uncertainty => pkg_size total_units
+    codes:
+       - count
+       - purchased (exact count)
+       - used (exact count)
+       - consumed (estimate)
+       - estimate (includes uncertainty)
+Months: month|year|start_date|end_date|num_at_meeting|staff_at_breakfast|tickets_claimed|
+        served_fudge|consumed_fudge
+     => month_str meals_served meeting_date breakfast_date
+
+# not stored in database:
+Orders: item|qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|price => unit pkg_size pkg_weight
+
+1. update_inventory --trail-run/-t [inventory-file]
+
+2. check_inventory
+
+   writes Inventory.csv with items to check listed
+
+3. set_bf_min_max
+
+4. create_orders
+
+5. create_POs
+
+6. set_meeting_attendance N
+
+7. record_purchases
+
+   from Orders.csv, also updates locations and prices
+
+8. set_bf_stats staff tickets_claimed
+
+
 Inventory codes:
     - count
     - purchased (exact count)

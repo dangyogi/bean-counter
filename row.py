@@ -453,41 +453,32 @@ def abbr_month(m):
 class Months(row):
     # month=integer(),
     # year=integer(),
-    # served_fudge=float(null=True),
-    # consumed_fudge=float(null=True),
+    # start_date=date(null=True),
+    # end_date=date(null=True),
     # num_at_meeting=integer(null=True),
     # staff_at_breakfast=integer(null=True),
     # tickets_claimed=integer(null=True),
-    # start_date=date(null=True),
-    # end_date=date(null=True),
-    # end_bank_bal=Decimal(null=True),
-    # end_cash_bal=Decimal(null=True),
-    # steps_completed=set(null=True),
+    # served_fudge=float(null=True),
+    # consumed_fudge=float(null=True),
     types = dict(
         month=int,
         year=int,
-        served_fudge=float,
-        consumed_fudge=float,
+        start_date=parse_date,
+        end_date=parse_date,
         num_at_meeting=int,
         staff_at_breakfast=int,
         tickets_claimed=int,
-        start_date=parse_date,
-        end_date=parse_date,
-        end_bank_bal=Decimal,
-        end_cash_bal=Decimal,
-        steps_completed=parse_set,
+        served_fudge=float,
+        consumed_fudge=float,
     )
 
-    served_fudge = None
-    consumed_fudge = None
+    start_date = None
+    end_date = None
     num_at_meeting = None
     staff_at_breakfast = None
     tickets_claimed = None
-    start_date = None
-    end_date = None
-    end_bank_bal = None
-    end_cash_bal = None
-    steps_completed = None
+    served_fudge = None
+    consumed_fudge = None
     primary_keys = "year", "month"
     required = frozenset(("month", "year"))
     calculated = dict(
