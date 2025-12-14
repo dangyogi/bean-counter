@@ -671,7 +671,17 @@ class Starts(row, bills):  # row first, so it's __init__ is used.
     primary_keys = "account", "detail"
     foreign_keys = "Accounts",
     calculated = bills.calculated.copy()
+    calculated["category"] = str
+    calculated["section"] = str
     calculated["type"] = str
+
+    @property
+    def category(self):
+        return Database.Accounts[self.account].category
+
+    @property
+    def section(self):
+        return Database.Accounts[self.account].section
 
     @property
     def type(self):

@@ -3,9 +3,13 @@ Money:
 # only updated by hand:
 Globals: name|int|decimal
 Accounts: account|category|section|type
-Starts: account|detail|coin|b1|b5|b10|b20|b50|b100 => total type
+    category: "breakfast", "other", "current balance"
+    section: "cash flow", "balance"
+    type: "income", "expense"
+Starts: account|detail|coin|b1|b5|b10|b20|b50|b100 => total category section type
 
-Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations => total type ticket_price tickets_sold
+Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations
+        => total category section type ticket_price tickets_sold
 
 1. update_reconcile [reconcile_file]
  
@@ -29,7 +33,7 @@ Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations => total ty
    <today>|cash    |w/o starts|...
    <today>|cash    |w/starts  |...
 
-4. treasurer_report --pdf/-p
+4. treasurer_report --pdf/-p -m month -y year
 
    No updates to database
 

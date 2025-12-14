@@ -1,4 +1,4 @@
-# write_treasurer_report.py
+# treasurer_report.py
 
 from datetime import date, timedelta
 from collections import defaultdict
@@ -12,6 +12,7 @@ def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--month", "-m", type=int, default=date.today().month)
+    parser.add_argument("--year", "-y", type=int, default=date.today().year)
     parser.add_argument("--pdf", "-p", action="store_true", default=False)
 
     args = parser.parse_args()
@@ -20,7 +21,9 @@ def run():
 
     today = date.today()
 
-    year = today.year
+    year = args.year
+    if year < 2000:
+        year += 2000
     month = args.month
     if today.month < month:
         year -= 1
@@ -39,7 +42,7 @@ def run():
         for i in range(start_index, len(Reconcile)):  # loop from start_index to the end of Reconcile
             recon = Reconcile[i]
             assert recon.date == end_date, error_msg
-            if recon.event == 'monthly' and recon.category == 'final balance':
+            if recon.account == 'cash' and recon.detail == 'w/starts':
                 print("found final balance")
                 return i, recon
         raise AssertionError(error_msg)
@@ -99,33 +102,33 @@ def run():
     cash += final_balance.total
     bf.inc_text2_value(cur_month.tickets_claimed)
 
-    other_revenue = defaultdict(int)   # {event: total}
-    other_expenses = defaultdict(int)  # {event: total}
+    other_revenue = defaultdict(int)   # {account: total}
+    other_expenses = defaultdict(int)  # {account: total}
     for i in range(prev_index, final_index):  # loop from prev_index up to (but not including) final_index
         recon = Reconcile[i]
-        if recon.event == "breakfast":
+        if recon.category == "breakfast":
             if recon.type == "income":
-                match recon.category:
+                match recon.account:
                     case "adv tickets" | "door tickets":
                         ticket_sales += recon.total
-                        if (recon.event, recon.category, "start",) in Starts:
-                            ticket_sales -= Starts[(recon.event, recon.category, "start")].total
+                        if (recon.account, "start",) in Starts:
+                            ticket_sales -= Starts[(recon.account, "start")].total
                         ticket_sales.inc_text2_value(recon.tickets_sold)
                         bf_donations += recon.donations
                     case "50/50":
                         bf_50_50 += recon.total
-                        if (recon.event, recon.category, "start",) in Starts:
-                            bf_50_50 -= Starts[(recon.event, recon.category, "start")].total
-                    case "donations":
+                        if (recon.account, "start",) in Starts:
+                            bf_50_50 -= Starts[(recon.account, "start")].total
+                    case "bf donations":
                         bf_donations += recon.total
             elif recon.type == "expense":
                 bf_exp += recon.total
-        else:
-            if recon.category in ("income",):
-                other_revenue[recon.event] += recon.total
+        elif recon.category == "other":
+            if recon.type == "income":
+                other_revenue[recon.account] += recon.total
                 other_revenue["donations"] += recon.donations
-            elif recon.category in ("donation", "reimbursement", "expense"):
-                other_expenses[recon.event] += recon.total
+            elif recon.type == "expense":
+                other_expenses[recon.account] += recon.total
 
     for key, value in other_revenue.items():
         other_rev.add_child(rt := Row_template("l3", key))
