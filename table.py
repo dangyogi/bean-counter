@@ -116,15 +116,21 @@ class table_unique(base_table, dict):
         self[key] = row
 
 class Months(table_unique):
-    def inc_month(self, year, month):
+    @staticmethod
+    def inc_month(year, month):
         r'''Returns next month (regardless of the contents of this Table) as (year, month).
+
+        Does not skip over May-Oct.
         '''
         if month == 12:
             return year + 1, 1
         return year, month + 1
 
-    def dec_month(self, year, month):
+    @staticmethod
+    def dec_month(year, month):
         r'''Returns prior month (regardless of the contents of this Table) as (year, month).
+
+        Does not skip over May-Oct.
         '''
         if month == 1:
             return year - 1, 12
