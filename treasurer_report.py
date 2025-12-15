@@ -2,6 +2,8 @@
 
 from datetime import date, timedelta
 from collections import defaultdict
+from itertools import groupby
+from operator import attrgetter
 
 from database import *
 from report import *
@@ -64,85 +66,112 @@ def run():
     report.new_row("title", "Treasurer's Report")
     report.new_row("title", f"as of {end_date.strftime('%b %d, %y')}", size=report.default_size)
 
-    cash_flow_section = Row_template("l0", "Cash Flow",
-                  bf :=     Row_template("l1", "Breakfast",
-              bf_rev :=         Row_template("l2", "Revenue",
-        ticket_sales :=             Row_template("l3", "Breakfast Ticket Sales", text2_format="({})"),
-            bf_50_50 :=             Row_template("l3", "50/50 Income"),
-        bf_donations :=             Row_template("l3", "Donations"),
-                                ),
-              bf_exp :=         Row_template("l2", "Expenses", invert_parent=True, pad=5),
-                                text2_format="({}) showed up",
-                            ),
-                            Row_template("l1", "Other",
-           other_rev :=         Row_template("l2", "Revenue"),
-           other_exp :=         Row_template("l2", "Expenses", invert_parent=True, pad=5),
-                                pad=5,
-                            ),
-                            pad=5,
-                        )
-
     prev_end_date  = cur_month.start_date - timedelta(days=1)
     prev_index, prev_balance = find_final(prev_end_date)
 
     prev_month_str = f"{abbr_month(prev_end_date.month)} '{str(prev_end_date.year)[2:]}"
 
-    balance_section = Row_template("l0", "Balance",
-                            Row_template("l1", "Expected Balance",
-            prev_bal :=         Row_template("l2", "Previous Balance", text2_format=prev_month_str),
-               eb_cf :=         Row_template("l2", "Cash Flow"),
-                            ),
-                            Row_template("l1", "Current Balance",
-                bank :=         Row_template("l2", "Bank", force=True),
-                cash :=         Row_template("l2", "Cash"),
-                                pad=5,
-                            ),
-                            pad=5,
-                        )
+    # Create Row_templates from Accounts:
+    accounts = {}
+    sections = []
+    picks = {}  # expense, revenue, bf, cash flow, balance, bank, cash
+    for section, categories in groupby(Accounts.values(), key=attrgetter("section")):
+        # "Cash Flow" and "Balance"
+        if section is None:
+            continue
+        cats = []
+        if section == "Balance":
+            cat_kws = dict(force=True)
+            cats.append(Row_template("l1", "Expected Balance", 
+        prev_bal :=         Row_template("l2", "Previous Balance", text2_format=prev_month_str),
+           eb_cf :=         Row_template("l2", "Cash Flow"),
+                        ))
+        else:
+            cat_kws = dict()
+        for category, types in groupby(categories, key=attrgetter("category")):
+            # "Breakfast", "Other", "Current Balance"
+            if section == "Balance":
+                type_kws = dict(force=True)
+            else:
+                type_kws = dict()
+            types_ = []
+            for type, account_rows in groupby(types, key=attrgetter("type")):
+                accounts_ = []
+                if section != "Balance":
+                    for account_row in account_rows:
+                        account = account_row.account
+                        if account not in ("revenue", "expense"):
+                            if account.endswith(" tickets"):
+                                templ = Row_template("l3", account, text2_format="({})")
+                            else:
+                                templ = Row_template("l3", account)
+                            accounts[account] = templ
+                            accounts_.append(templ)
+                if type == "Expenses":
+                    templ = Row_template("l2", type, *accounts_, invert_parent=True, **type_kws)
+                    if category == "Other":
+                        picks["expense"] = templ
+                else:
+                    templ = Row_template("l2", type, *accounts_, **type_kws)
+                    if category == "Other":
+                        picks["revenue"] = templ
+                if section == "Balance":
+                    picks[type.lower()] = templ
+                types_.append(templ)
+                type_kws['pad'] = 5
+            if category == "Breakfast":
+                templ = Row_template("l1", category, *types_, text2_format="({}) showed up", **cat_kws)
+                picks["bf"] = templ
+            else:
+                templ = Row_template("l1", category, *types_, **cat_kws)
+            cats.append(templ)
+            cat_kws['pad'] = 5
+        if section == "Balance":
+            templ = Row_template("l0", section, *cats, hide_value=True, pad=5)
+        else:
+            templ = Row_template("l0", section, *cats, pad=5)
+        sections.append(templ)
+        picks[section.lower()] = templ
 
-    cash_flow_section.add_parent(eb_cf)
+    picks["cash flow"].add_parent(eb_cf)
     prev_bal += prev_balance.total
-    cash += final_balance.total
-    bf.inc_text2_value(cur_month.tickets_claimed)
+    picks["cash"] += final_balance.total
+    picks["bf"].inc_text2_value(cur_month.tickets_claimed)
 
     other_revenue = defaultdict(int)   # {account: total}
     other_expenses = defaultdict(int)  # {account: total}
+
+    rev_details = {}
+    exp_details = {}
     for i in range(prev_index, final_index):  # loop from prev_index up to (but not including) final_index
         recon = Reconcile[i]
-        if recon.category == "Breakfast":
-            if recon.type == "Revenue":
-                match recon.account:
-                    case "adv tickets" | "door tickets":
-                        ticket_sales += recon.total
-                        if (recon.account, "start",) in Starts:
-                            ticket_sales -= Starts[(recon.account, "start")].total
-                        ticket_sales.inc_text2_value(recon.tickets_sold)
-                        bf_donations += recon.donations
-                    case "50/50":
-                        bf_50_50 += recon.total
-                        if (recon.account, "start",) in Starts:
-                            bf_50_50 -= Starts[(recon.account, "start")].total
-                    case "bf donations":
-                        bf_donations += recon.total
-            elif recon.type == "Expenses":
-                bf_exp += recon.total
-        elif recon.category == "Other":
-            if recon.type == "Revenue":
-                other_revenue[recon.account] += recon.total
-                other_revenue["donations"] += recon.donations
-            elif recon.type == "Expenses":
-                other_expenses[recon.account] += recon.total
+        if recon.account == "revenue":
+            if recon.detail not in rev_details:
+                templ = Row_template("l3", recon.detail)
+                rev_details[recon.detail] = templ
+                picks["revenue"].add_child(templ)
+            rev_details[recon.detail] += recon.total
+            accounts["donations"] += recon.donations
+        elif recon.account == "expense":
+            if recon.detail not in exp_details:
+                templ = Row_template("l3", recon.detail)
+                exp_details[recon.detail] = templ
+                picks["expense"].add_child(templ)
+            exp_details[recon.detail] += recon.total
+            accounts["donations"] += recon.donations
+        elif recon.section == "Cash Flow":
+            if recon.account.endswith(" tickets"):
+                accounts[recon.account].inc_text2_value(recon.tickets_sold)
+            accounts[recon.account] += recon.total
+            if (recon.account, "start") in Starts:
+                accounts[recon.account] -= Starts[recon.account, "start"].total
+            if recon.category == "Breakfast":
+                accounts["bf donations"] += recon.donations
+            else:
+                accounts["donations"] += recon.donations
 
-    for key, value in other_revenue.items():
-        other_rev.add_child(rt := Row_template("l3", key))
-        rt += value
-
-    for key, value in other_expenses.items():
-        other_exp.add_child(rt := Row_template("l3", key))
-        rt += value
-
-    cash_flow_section.insert(report)
-    balance_section.insert(report)
+    picks["cash flow"].insert(report)
+    picks["balance"].insert(report)
 
     if args.pdf:
         width, height = report.draw_init()

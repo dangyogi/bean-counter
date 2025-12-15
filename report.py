@@ -582,8 +582,8 @@ class Row_template(Value):
     '''
     text2_format = None
 
-    def __init__(self, layout, first_cell, *children, parent=None, invert_parent=False, first_cells=(),
-                 force=False, text2_format=None, pad=0):
+    def __init__(self, layout, first_cell, *children, parent=None, hide_value=False, invert_parent=False,
+                 first_cells=(), force=False, text2_format=None, pad=0):
         if parent is None:
             super().__init__()
         else:
@@ -592,6 +592,7 @@ class Row_template(Value):
         self.children = []
         for child in children:
             self.add_child(child)
+        self.hide_value = hide_value
         self.invert_parent = invert_parent
         self.first_cell = first_cell
         self.first_cells = first_cells
@@ -641,7 +642,8 @@ class Row_template(Value):
                 if self.text2_format is not None:
                     row.set_text2(self.text2_value.value, text2_format=self.text2_format)
                 row.next_cells(*self.first_cells[1:])
-            row.next_cell(self.value)
+            if not self.hide_value:
+                row.next_cell(self.value)
             for child in self.children:
                 child.insert(report)
 

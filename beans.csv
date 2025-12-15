@@ -216,6 +216,7 @@ Sam's card    |Cash Flow|Breakfast      |Expenses
 bf supplies   |Cash Flow|Breakfast      |Expenses
 120 Club      |Cash Flow|Other          |Revenue 
 revenue       |Cash Flow|Other          |Revenue 
+donations     |Cash Flow|Other          |Revenue
 meeting dinner|Cash Flow|Other          |Expenses
 xmas donation |Cash Flow|Other          |Expenses
 expense       |Cash Flow|Other          |Expenses
