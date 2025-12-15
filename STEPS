@@ -2,10 +2,12 @@ Money:
 
 # only updated by hand:
 Globals: name|int|decimal
-Accounts: account|category|section|type
-    category: "breakfast", "other", "current balance"
-    section: "cash flow", "balance"
-    type: "income", "expense"
+Accounts: account|section|category|type
+    section: "Cash Flow", "Balance"
+    category: "Breakfast", "Other", "Current Balance"
+    type: "Revenue", "Expenses"
+
+    Note: reconciles with account "revenue" or "expense" show up in Other with their detail as the account.
 Starts: account|detail|coin|b1|b5|b10|b20|b50|b100 => total category section type
 
 Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations
