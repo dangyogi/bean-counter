@@ -11,9 +11,10 @@ Starts: account|detail|coin|b1|b5|b10|b20|b50|b100 => total category section typ
 Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations
         => total category section type ticket_price tickets_sold
 
-1. update_reconcile [reconcile_file]
+1. update_reconcile --trail-run/-t --no-clear/-n [reconcile_file]
  
    Appends reconcile_file to Reconcile table
+   Clears Reconcile.csv
 
 2. cash_balance --trail-run/-t
 

@@ -9,13 +9,11 @@ r'''
   - print out final bill counts and total
 '''
 
-from datetime import date, timedelta
-from collections import defaultdict
+from datetime import date
 import math
 import sys
 
 from database import *
-from report import *
 
 
 def run():
