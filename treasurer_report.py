@@ -28,6 +28,9 @@ def run():
     if today.month < month:
         year -= 1
 
+    print()
+    print("Current month", abbr_month(month), year)
+    print()
     cur_month = Months[year, month]
     end_date = cur_month.end_date
 
@@ -37,13 +40,13 @@ def run():
         Returns index, recon row.
         '''
         start_index = Reconcile.first_date(end_date)   # start_index into Reconcile for end_date
-        print(f"{end_date=}, {start_index=}")
+       #print(f"{end_date=}, {start_index=}")
         error_msg = f"{end_date.strftime('%b %d, %y')}, monthly, final balance not found in Reconcile"
         for i in range(start_index, len(Reconcile)):  # loop from start_index to the end of Reconcile
             recon = Reconcile[i]
             assert recon.date == end_date, error_msg
             if recon.account == 'cash' and recon.detail == 'w/starts':
-                print("found final balance")
+               #print("found final balance")
                 return i, recon
         raise AssertionError(error_msg)
 
@@ -106,8 +109,8 @@ def run():
     other_expenses = defaultdict(int)  # {account: total}
     for i in range(prev_index, final_index):  # loop from prev_index up to (but not including) final_index
         recon = Reconcile[i]
-        if recon.category == "breakfast":
-            if recon.type == "income":
+        if recon.category == "Breakfast":
+            if recon.type == "Revenue":
                 match recon.account:
                     case "adv tickets" | "door tickets":
                         ticket_sales += recon.total
@@ -121,13 +124,13 @@ def run():
                             bf_50_50 -= Starts[(recon.account, "start")].total
                     case "bf donations":
                         bf_donations += recon.total
-            elif recon.type == "expense":
+            elif recon.type == "Expenses":
                 bf_exp += recon.total
-        elif recon.category == "other":
-            if recon.type == "income":
+        elif recon.category == "Other":
+            if recon.type == "Revenue":
                 other_revenue[recon.account] += recon.total
                 other_revenue["donations"] += recon.donations
-            elif recon.type == "expense":
+            elif recon.type == "Expenses":
                 other_expenses[recon.account] += recon.total
 
     for key, value in other_revenue.items():

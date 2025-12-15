@@ -539,18 +539,18 @@ class Globals(row):
 
 class Accounts(row):
     # account=varchar(50),              # e.g., "adv tickets", "door tickets", "50/50", "bf supplies"
-    # category=varchar(50, null=True),  # e.g., "breakfast", "other", "current balance"
-    # section=varchar(50, null=True),   # e.g., "cash flow", "balance"
-    # type=varchar(10, null=True),      # e.g., "revenue", "expense"
+    # section=varchar(50, null=True),   # e.g., "Cash Flow", "Balance"
+    # category=varchar(50, null=True),  # e.g., "Breakfast", "Other", "Current Balance"
+    # type=varchar(10, null=True),      # e.g., "Revenue", "Expenses"
     types = dict(
         account=str,
-        category=str,
         section=str,
+        category=str,
         type=str,
     )
 
-    category = None
     section = None
+    category = None
     type = None
     primary_key = "account"
     required = frozenset(("account",))
@@ -671,17 +671,17 @@ class Starts(row, bills):  # row first, so it's __init__ is used.
     primary_keys = "account", "detail"
     foreign_keys = "Accounts",
     calculated = bills.calculated.copy()
-    calculated["category"] = str
     calculated["section"] = str
+    calculated["category"] = str
     calculated["type"] = str
-
-    @property
-    def category(self):
-        return Database.Accounts[self.account].category
 
     @property
     def section(self):
         return Database.Accounts[self.account].section
+
+    @property
+    def category(self):
+        return Database.Accounts[self.account].category
 
     @property
     def type(self):
