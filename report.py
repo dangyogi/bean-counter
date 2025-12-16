@@ -656,19 +656,24 @@ def dump_table(table_name, pdf=False, default_fontsize=13):
 
     database.load_database()
 
+    if table_name.endswith('.csv'):
+        database.load_csv(table_name)  # replaces table in database with .csv file, but we don't save the database!
+        table_name = table_name[:-4]
+
     table = getattr(database, table_name)
 
     header_cols = []
     data_cols = []
     header_names = []
     for name, type in chain(table.row_class.types.items(), table.row_class.calculated.items()):
-        header_names.append(name)
-        if type in (int, float, database.Decimal):
-            header_cols.append(Right(bold=True))
-            data_cols.append(Right())
-        else:
-            header_cols.append(Left(bold=True))
-            data_cols.append(Left())
+        if name not in table.row_class.hidden:
+            header_names.append(name)
+            if type in (int, float, database.Decimal):
+                header_cols.append(Right(bold=True))
+                data_cols.append(Right())
+            else:
+                header_cols.append(Left(bold=True))
+                data_cols.append(Left())
     assert len(header_cols) == len(data_cols) == len(header_names), \
            f"ERROR: {len(header_cols)=}, {len(data_cols)=}, {len(header_names)=}"
 
@@ -680,17 +685,18 @@ def dump_table(table_name, pdf=False, default_fontsize=13):
            data=data_cols,
           )
     report.new_row('title', table_name)
-    report.new_row('headers', *header_names)
+    report.new_row('headers', *(table.row_class.abbr.get(name, name) for name in header_names))
     for row in table.values():
         data = report.new_row('data')
         for name in header_names:
-            value = getattr(row, name)
-            if value is None:
-                data.next_cell()
-            elif isinstance(value, database.date):
-                data.next_cell(value.strftime("%b %d, %y"))
-            else:
-                data.next_cell(value)
+            if name not in table.row_class.hidden:
+                value = getattr(row, name)
+                if value is None:
+                    data.next_cell()
+                elif isinstance(value, database.date):
+                    data.next_cell(value.strftime("%b %d, %y"))
+                else:
+                    data.next_cell(value)
 
     if pdf:
         report.draw_init()

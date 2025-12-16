@@ -6,7 +6,6 @@ r'''Appends to Reconcile table:
    <today>|cash|w/starts  |...
 '''
 
-from datetime import date
 import sys
 
 from database import *
@@ -21,8 +20,6 @@ def run():
     args = parser.parse_args()
 
     load_database()
-
-    today = date.today()
 
     for i, recon in enumerate(reversed(Reconcile)):
         if recon.account == 'cash' and recon.detail == 'w/starts':
@@ -50,6 +47,8 @@ def run():
             assert recon.type in ("Bank", "Cash"), \
                    f"Reconcile row {recon.date:%b %d, %y}, {recon.account} has unknown type {recon.type}"
 
+    eff_date = recon.date
+
     # Now balance should reflect our current cash, w/starts
     balance_no_starts = balance.copy()
 
@@ -60,14 +59,14 @@ def run():
             balance_no_starts -= start
 
     # insert monthly initial balance
-    Reconcile.insert(date=today, account="cash", detail="w/o starts", **balance_no_starts.as_attrs())
-    Reconcile.insert(date=today, account="cash", detail="w/starts", **balance.as_attrs())
+    Reconcile.insert(date=eff_date, account="cash", detail="w/o starts", **balance_no_starts.as_attrs())
+    Reconcile.insert(date=eff_date, account="cash", detail="w/starts", **balance.as_attrs())
 
     # Give the user the results:
     print("date      |account|detail    | coin| b1| b5|b10|b20|b50|b100|   total")
-    print(f"{today:%b %d, %y}|cash   |w/o starts", end='')
+    print(f"{eff_date:%b %d, %y}|cash   |w/o starts", end='')
     balance_no_starts.print(file=sys.stdout)
-    print(f"{today:%b %d, %y}|cash   |w/starts  ", end='')
+    print(f"{eff_date:%b %d, %y}|cash   |w/starts  ", end='')
     balance.print(file=sys.stdout)
 
     if not args.trial_run:
