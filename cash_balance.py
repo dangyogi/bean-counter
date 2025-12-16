@@ -32,18 +32,22 @@ def run():
     else:
         raise AssertionError('"cash", "w/start" not found in Reconcile')
 
+    if next == len(Reconcile) - 1:
+        print("Reconcile already ends in cash_balance -- aborting")
+        return
+
     for recon in Reconcile[next:]:
-        if recon.type == "income":
+        if recon.type == "Revenue":
             balance += recon
             if (recon.account, "start",) in Starts:
                 balance -= Starts[(recon.account, "start")]
-        elif recon.type == "expense":
+        elif recon.type == "Expenses":
             assert recon.donations == 0, \
                    f"unexpected donations={recon.donations} on {recon.date:%b %d, %y}, {recon.account}, " \
                    f"{recon.detail} expense"
             balance -= recon
         else:
-            assert recon.type is None, \
+            assert recon.type in ("Bank", "Cash"), \
                    f"Reconcile row {recon.date:%b %d, %y}, {recon.account} has unknown type {recon.type}"
 
     # Now balance should reflect our current cash, w/starts
