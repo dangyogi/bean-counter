@@ -1,4 +1,4 @@
-# write_POs.py
+# create_POs.py
 
 from datetime import date, timedelta
 from collections import defaultdict

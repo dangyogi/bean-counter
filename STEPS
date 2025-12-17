@@ -64,13 +64,15 @@ Orders: item|qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|pr
 
 1. new_month --trial-run/-t -m MM
 
-2. check_inventory
+2. create_inv_checklist
 
    writes inv-checklist.csv listing items to check
 
    <take this list to the clubhouse, count these items, and record in the .csv file>
 
 3. read_inv --trail-run/-t
+
+   reads inv-checklist.csv into Inventory table as code="count".
 
 4. set_min_max
 

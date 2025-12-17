@@ -1,4 +1,4 @@
-# write_orders.py
+# create_orders.py
 
 from database import *
 
