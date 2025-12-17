@@ -199,8 +199,7 @@ class Items(row):
             return None
         return self.product.pkg_weight
 
-    @property
-    def in_stock(self):
+    def in_stock(self, verbose=False):
         r'''Return units, uncertainty.
         '''
         units = 0
@@ -210,18 +209,18 @@ class Items(row):
                 match inv.code:
                     case "count":
                         units = inv.total_units
-                        uncertainly = inv.uncertainty
+                        uncertainty = inv.uncertainty
                     case "purchased":  # exact count
                         units += inv.total_units
-                    case "used":       # exact count
+                    case "used":       # may be exact count
                         units -= inv.total_units
-                        uncertainly += inv.uncertainty
+                        uncertainty += inv.uncertainty
                     case "consumed":   # estimate
                         units -= inv.total_units
-                        uncertainly += inv.uncertainty
+                        uncertainty += inv.uncertainty
                     case "estimate":   # includes uncertainty
                         units = inv.total_units
-                        uncertainly = inv.uncertainty
+                        uncertainty = inv.uncertainty
                     case _:
                         raise AssertionError(f"Item({self.item}).in_stock: unknown Inventory.code={inv.code}")
         return units, uncertainty

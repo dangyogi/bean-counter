@@ -92,7 +92,7 @@ Orders: item|qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|pr
 
 10. calc_consumed --trial-run/-t
 
-11. calc_estimated --trial-run/-t
+11. calc_estimates --trial-run/-t
 
 
 Inventory codes:

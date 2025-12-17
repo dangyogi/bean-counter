@@ -1,6 +1,6 @@
 # calc_consumed.py
 
-r'''Inserted code="consumed" rows into Inventory table.
+r'''Inserts code="consumed" rows into Inventory table.
 '''
 
 import math
