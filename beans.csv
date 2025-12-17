@@ -219,6 +219,41 @@ Dec 13, 25|Syrup, reg          |consumed |       0|      104|         11
 Dec 13, 25|Syrup, sugar free   |consumed |       0|      104|         11
 Dec 13, 25|Tea                 |consumed |       0|        6|          1
 Dec 13, 25|To-Go Containers    |consumed |       0|        5|          1
+Dec 17, 25|Bacon               |estimate |       0|       53|         17
+Dec 17, 25|Bowls               |estimate |       0|      150|          0
+Dec 17, 25|Butter              |estimate |       0|      107|         10
+Dec 17, 25|Coffee, ground      |estimate |       0|      312|         12
+Dec 17, 25|Coffee cups, 12 oz  |estimate |       0|        0|          0
+Dec 17, 25|Coffee cups, 10 oz  |estimate |       0|        0|          0
+Dec 17, 25|Coffee cups, 8 oz   |estimate |       0|      188|          7
+Dec 17, 25|Coffee Stirrer 5"   |estimate |       0|      338|          7
+Dec 17, 25|Coffee Stirrer 7"   |estimate |       0|        0|          0
+Dec 17, 25|Cutlery Packets     |estimate |       0|       88|          7
+Dec 17, 25|Eggs                |estimate |       0|      132|         18
+Dec 17, 25|Gloves              |estimate |       0|      680|          1
+Dec 17, 25|Grill Cleaning Brick|estimate |       0|        2|          0
+Dec 17, 25|Half & Half         |estimate |       0|      240|          7
+Dec 17, 25|Milk                |estimate |       0|       76|          4
+Dec 17, 25|Nonstick Spray      |estimate |       0|       17|          1
+Dec 17, 25|OJ cups             |estimate |       0|      218|         17
+Dec 17, 25|Orange Juice        |estimate |       0|      137|         28
+Dec 17, 25|Pancake Mix         |estimate |       0|      186|         11
+Dec 17, 25|Paper Towels        |estimate |       0|        5|          1
+Dec 17, 25|Place Mats          |estimate |       0|     1238|          7
+Dec 17, 25|Raffle Tickets      |estimate |       0|     1825|        212
+Dec 17, 25|Rubber Bands        |estimate |       0|        0|          0
+Dec 17, 25|Scrubbers           |estimate |       0|        5|          1
+Dec 17, 25|Serving Plates      |estimate |       0|       83|          7
+Dec 17, 25|Small Plates        |estimate |       0|        0|          0
+Dec 17, 25|Splenda             |estimate |       0|     1380|          2
+Dec 17, 25|Sugar               |estimate |       0|       70|          2
+Dec 17, 25|Sweet'N Low         |estimate |       0|     1580|          2
+Dec 17, 25|Syrup bottle, reg   |estimate |       0|       19|          1
+Dec 17, 25|Syrup bottle, SF    |estimate |       0|       19|          1
+Dec 17, 25|Syrup, reg          |estimate |       0|      133|         35
+Dec 17, 25|Syrup, sugar free   |estimate |       0|      133|         35
+Dec 17, 25|Tea                 |estimate |       0|       64|          1
+Dec 17, 25|To-Go Containers    |estimate |       0|      140|          1
 
 Months
 month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claimed|served_fudge|consumed_fudge
