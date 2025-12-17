@@ -26,6 +26,7 @@ def run():
           f"{table_size=}")
 
     with open("Orders.csv", "w") as f:
+        print("Orders", file=f)
         print("item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|"
               "location|price", file=f)
         for item in Items.values():

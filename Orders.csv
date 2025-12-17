@@ -1,3 +1,4 @@
+Orders
 item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|location|price
 Bacon               |   3|        |           |              |               | M2-16  |
 Eggs                |  10|        |           |              |               | M-9    |
