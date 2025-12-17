@@ -199,7 +199,7 @@ month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claim
     4|2025|          |          |             8|                11|             37|            |              
    10|2025|          |          |             5|                  |               |            |              
    11|2025|Nov 02, 25|Nov 28, 25|            14|                14|             61|          60|            80
-   12|2025|Nov 29, 25|          |              |                  |               |        1.44|           0.9
+   12|2025|Nov 29, 25|          |            13|                 8|             54|        1.44|           0.9
 
 Globals
 name             |int|decimal
