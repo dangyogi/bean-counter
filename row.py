@@ -226,7 +226,7 @@ class Items(row):
                         raise AssertionError(f"Item({self.item}).in_stock: unknown Inventory.code={inv.code}")
         return units, uncertainty
 
-    def consumed(self, num_served, table_size, verbose=False):
+    def consumed(self, num_served, table_size=6, verbose=False):
         r'''Returns the number of units consumed at breakfast.
         '''
         if self.num_per_serving is not None:
