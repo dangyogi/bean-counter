@@ -191,6 +191,34 @@ Dec 11, 25|Orange Juice        |purchased|       4|        0|          0
 Dec 11, 25|Pancake Mix         |purchased|       5|        0|          0
 Dec 11, 25|Syrup bottle, reg   |purchased|       9|        0|          0
 Dec 11, 25|Syrup bottle, SF    |purchased|      10|        0|          0
+Dec 13, 25|Bacon               |consumed |       0|      163|         17
+Dec 13, 25|Butter              |consumed |       0|       93|         10
+Dec 13, 25|Coffee, ground      |consumed |       0|      120|         12
+Dec 13, 25|Coffee cups, 8 oz   |consumed |       0|       62|          7
+Dec 13, 25|Coffee Stirrer 5"   |consumed |       0|       62|          7
+Dec 13, 25|Cutlery Packets     |consumed |       0|       62|          7
+Dec 13, 25|Eggs                |consumed |       0|      180|         18
+Dec 13, 25|Gloves              |consumed |       0|       10|          1
+Dec 13, 25|Half & Half         |consumed |       0|       62|          7
+Dec 13, 25|Milk                |consumed |       0|       39|          4
+Dec 13, 25|Nonstick Spray      |consumed |       0|        1|          1
+Dec 13, 25|OJ cups             |consumed |       0|       62|          7
+Dec 13, 25|Orange Juice        |consumed |       0|      279|         28
+Dec 13, 25|Pancake Mix         |consumed |       0|      104|         11
+Dec 13, 25|Paper Towels        |consumed |       0|        1|          1
+Dec 13, 25|Place Mats          |consumed |       0|       62|          7
+Dec 13, 25|Raffle Tickets      |consumed |       0|      141|         15
+Dec 13, 25|Scrubbers           |consumed |       0|        1|          1
+Dec 13, 25|Serving Plates      |consumed |       0|       62|          7
+Dec 13, 25|Splenda             |consumed |       0|       20|          2
+Dec 13, 25|Sugar               |consumed |       0|       20|          2
+Dec 13, 25|Sweet'N Low         |consumed |       0|       20|          2
+Dec 13, 25|Syrup bottle, reg   |consumed |       0|        4|          1
+Dec 13, 25|Syrup bottle, SF    |consumed |       0|        4|          1
+Dec 13, 25|Syrup, reg          |consumed |       0|      104|         11
+Dec 13, 25|Syrup, sugar free   |consumed |       0|      104|         11
+Dec 13, 25|Tea                 |consumed |       0|        6|          1
+Dec 13, 25|To-Go Containers    |consumed |       0|        5|          1
 
 Months
 month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claimed|served_fudge|consumed_fudge
