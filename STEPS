@@ -27,7 +27,7 @@ Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations
 
 3. cash_swap --trail-run/-t
 
-   Last line of Reconcile table must be cash|w/starts| line.
+   Last line of Reconcile table must be cash|w/starts| line from cash_balance.
 
    Appends to Reconcile table:
 
@@ -62,25 +62,35 @@ Months: month|year|start_date|end_date|num_at_meeting|staff_at_breakfast|tickets
 # not stored in database:
 Orders: item|qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|price => unit pkg_size pkg_weight
 
-1. update_inventory --trail-run/-t [inventory-file]
+1. new_month --trial-run/-t -m MM
 
 2. check_inventory
 
-   writes Inventory.csv with items to check listed
+   writes inv-checklist.csv listing items to check
 
-3. set_bf_min_max
+   <take this list to the clubhouse, count these items, and record in the .csv file>
 
-4. create_orders
+3. read_inv --trail-run/-t
 
-5. create_POs
+4. set_min_max
 
-6. set_meeting_attendance N
+5. create_orders
 
-7. record_purchases
+6. create_POs
+
+7. set_meeting_attendance N
+
+8. record_purchases --trial-run/-t
+
+   <update Orders.csv with actual purchases and any changes in location or price>
 
    from Orders.csv, also updates locations and prices
 
-8. set_bf_stats staff tickets_claimed
+9. set_bf_stats staff tickets_claimed
+
+10. calc_consumed --trial-run/-t
+
+11. calc_estimated --trial-run/-t
 
 
 Inventory codes:
