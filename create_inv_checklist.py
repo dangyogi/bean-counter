@@ -16,7 +16,7 @@ def run():
         if l > width:
             width = l
 
-    with open("inv_checklist.csv", "w") as f:
+    with open("Inv_checklist.csv", "w") as f:
         print(f"{'item':{width}}|num_pkgs|num_units", file=f)
         for i in sorted(Items.values(), key=attrgetter('item')):
             print(f"{i.item:{width}}|        | ", file=f)

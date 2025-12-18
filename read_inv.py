@@ -1,6 +1,6 @@
 # read_inv.py
 
-r'''Loads inv-checklist.csv into Transactions table.
+r'''Loads Inv-checklist.csv into Transactions table.
 '''
 
 import csv
@@ -18,11 +18,11 @@ def run():
 
     args = parser.parse_args()
 
-    print(f"Loading inv-checklist.csv with {args.date=} and {args.code=}")
+    print(f"Loading Inv-checklist.csv with {args.date=} and {args.code=}")
 
     load_database()
 
-    with open("inv-checklist.csv", "r") as f:
+    with open("Inv-checklist.csv", "r") as f:
         csv_reader = iter(csv.reader(f, CSV_dialect, **CSV_format))
         headers = next(csv_reader)
         for row in csv_reader:

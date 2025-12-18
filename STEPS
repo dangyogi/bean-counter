@@ -15,7 +15,7 @@ Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations
 
 1. update_reconcile --trail-run/-t --no-clear/-n [reconcile_file]
  
-   Appends reconcile_file to Reconcile table
+   Appends Reconcile.csv to Reconcile table
    Clears Reconcile.csv
 
 2. cash_balance --trail-run/-t
@@ -37,6 +37,8 @@ Reconcile: date|account|detail|coin|b1|b5|b10|b20|b50|b100|donations
    <today>|cash    |w/starts  |...
 
 4. treasurer_report --pdf/-p -m month -y year
+    - (wait until Oct for Apr)
+    - as T-Report.pdf file.
 
    No updates to database
 
@@ -66,84 +68,52 @@ Orders: item|qty|supplier|supplier_id|purchased_pkgs|purchased_units|location|pr
 
 2. create_inv_checklist
 
-   writes inv-checklist.csv listing items to check
+   writes Inv-checklist.csv listing items to check
+
+    - update Inventory table by writing new  "estimate" rows.
+    - calc orders
+    - exp_count = cur_count + order
+    - uncertainty = 0.10 * sum of consumed since last count
+    - write all items that have exp_count - uncertainty < min
+      or if perishable, exp_count + uncertainty > max_perishable
 
    <take this list to the clubhouse, count these items, and record in the .csv file>
 
 3. read_inv --trail-run/-t
 
-   reads inv-checklist.csv into Inventory table as code="count".
+   reads Inv-checklist.csv into Inventory table as code="count".
 
 4. set_min_max
-
-5. create_orders
-
-6. create_POs
-
-7. set_meeting_attendance N
-
-8. record_purchases --trial-run/-t
-
-   <update Orders.csv with actual purchases and any changes in location or price>
-
-   from Orders.csv, also updates locations and prices
-
-9. set_bf_stats staff tickets_claimed
-
-10. calc_consumed --trial-run/-t
-
-11. calc_estimates --trial-run/-t
-
-
-Inventory codes:
-    - count
-    - purchased (exact count)
-    - used (exact count, or estimate)
-    - consumed (calculated estimate)
-    - estimate (current estimate includes uncertainty)
-
-set_min_max
     - create next Month, with start_date == prior month end_date + 1, set min_order, max_perishable, max_non_perishable
     - min_order = 1.35 (to 1.40) * new month's.avg_meals_served
     - max_perishable = 0.90 * (new month's.avg_meals_served + next month's.avg_meals_served)
     - max_non_perishable = 0.80 * (sum of new month and next 2 months.avg_meals.served)
     - verify numbers
     - write to Months
-write_inv_checklist
-    - update Inventory table by writing new  "estimate" rows.
+
+5. create_orders
     - calc orders
-    - exp_count = cur_count + order
-    - uncertainty = 0.10 * sum of consumed since last count
-    - write all items that have exp_count - uncertainty < min or if perishable, exp_count + uncertainty > max_perishable
-<do inventory>
-    - manual step
-    - write counts into checklist file
-read_inv
-    - write "count"s from checklist file to Inventory table.
-write_orders
-    - calc orders
-    - write to csv file
-<update orders>
-    - manual step
-read_orders
-    - read csv file into Orders table
-write_POs
-    - write POs pdf
+    - write to Orders.csv file
+    <manually review and update Orders.csv as needed>
+
+6. create_POs
+    - write POs T-Report.pdf
     - pencil in changes at meeting
-set_meeting_attendance
+
+7. set_meeting_attendance N
     - num_at_meeting
-set_breakfast_attendance
+
+8. record_purchases --trial-run/-t
+
+   <update Orders.csv with actual purchases and any changes in location or price>
+
+   from Orders.csv into Inventory table as code="purchased", also updates locations and prices
+
+9. set_bf_stats staff tickets_claimed
     - staff_at_breakfast
     - tickets_claimed
-<update purchases in Orders.csv>
-    - manual step looking at shopping receipts
-record_purchases
-    - add "purchased" rows to Inventory table
-    - write receipt slips (computer figures out bills?)
-update_reconciles
-    - read rows into Reconcile table
-    - print out final bill counts and total
-write_treasurer_report (wait until Oct for Apr)
-    - as pdf file.
-    - set end_date of current Month
-    - do set_min_max for next month
+
+10. calc_consumed --trial-run/-t
+
+11. calc_estimates --trial-run/-t
+
