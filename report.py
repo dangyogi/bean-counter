@@ -189,9 +189,20 @@ class Report:
         if verbose:
             print("Report width", self.report_width_chars(), "height", self.report_height_chars())
 
-    def print(self, file=sys.stdout):
+    def print(self, header_row=None, file=sys.stdout):
+        if header_row is not None:
+            from subprocess import run
+            result = run(('stty', 'size'), capture_output=True, check=True)
+            height, width = (int(x) for x in result.stdout.split())
+            print(f"{height=}, {width=}")
+        lines_on_page = 0
         for row in self.rows:
+            if header_row is not None and lines_on_page == height:
+                print(file=file)
+                self.rows[header_row].print(file)
+                lines_on_page = 2
             row.print(file)
+            lines_on_page += 1
 
     def make_col_name(self, col_name):
         if col_name not in self.name_suffixes:
@@ -705,7 +716,7 @@ def dump_table(table_name, pdf=False, default_fontsize=13):
         Canvas.save()
     else:
         report.print_init()
-        report.print()
+        report.print(header_row=1)
 
 
 def run():

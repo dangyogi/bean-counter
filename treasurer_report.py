@@ -52,7 +52,16 @@ def run():
                 return i, recon
         raise AssertionError(error_msg)
 
-    final_index, final_balance = find_final(end_date)
+    if end_date is not None:
+        final_index, final_balance = find_final(end_date)
+    else:
+        final_index = len(Reconcile)
+        last_recon = Reconcile[-1]
+        if last_recon.account == 'cash' and last_recon.detail == 'w/starts':
+            final_balance = last_recon
+        else:
+            final_balance = None
+        end_date = Reconcile[-1].date
 
     # print Treasurer's Report
     set_canvas("T-Report")
@@ -135,7 +144,8 @@ def run():
 
     picks["cash flow"].add_parent(eb_cf)
     prev_bal += prev_balance.total
-    picks["cash"] += final_balance.total
+    if final_balance is not None:
+        picks["cash"] += final_balance.total
     picks["bf"].inc_text2_value(cur_month.tickets_claimed)
 
     other_revenue = defaultdict(int)   # {account: total}
