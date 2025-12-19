@@ -194,7 +194,8 @@ class Report:
             from subprocess import run
             result = run(('stty', 'size'), capture_output=True, check=True)
             height, width = (int(x) for x in result.stdout.split())
-            print(f"{height=}, {width=}")
+            height -= 1  # less takes one line at the bottom
+           #print(f"{height=}, {width=}")
         lines_on_page = 0
         for row in self.rows:
             if header_row is not None and lines_on_page == height:

@@ -667,6 +667,20 @@ class bills:
     def total(self):
         return sum(self.value(key) * getattr(self, key) for key in bills.types.keys())
 
+    def print_header(self, file):
+        r'''Appends bill column names to end of current print line.
+
+        Terminates the line.
+        '''
+        print("| coin", end='', file=file)
+        print("| b1", end='', file=file)
+        print("| b5", end='', file=file)
+        print("|b10", end='', file=file)
+        print("|b20", end='', file=file)
+        print("|b50", end='', file=file)
+        print("|b100", end='', file=file)
+        print("|total", file=file)
+
     def print(self, file):
         r'''Appends bill columns to end of current print line.
 

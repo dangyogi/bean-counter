@@ -21,8 +21,11 @@ def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--trial-run", "-t", action="store_true", default=False)
+    parser.add_argument("--verbose", "-v", action="store_true", default=False)
 
     args = parser.parse_args()
+
+    verbose = args.verbose
 
     load_database()
 
@@ -43,6 +46,11 @@ def run():
     target = initial_balance.copy()
 
     ending_minimums = Starts["cash", "minimums"]
+    if verbose:
+        print("ending_minimums", end='')
+        ending_minimums.print_header(sys.stdout)
+        print("               ", end='')
+        ending_minimums.print(sys.stdout)
 
     # Figure out cash_out and cash_in:
     cash_out = bills()
@@ -51,10 +59,15 @@ def run():
     attrs = tuple(target.types.keys())
 
     # rob from high bills to fill short bills
+    if verbose:
+        print()
+        print("rob from high bills to fill short bills:")
     for i in range(len(attrs) - 1):
         key = attrs[i]
         target_value = getattr(target, key) - getattr(cash_out, key)
         minimum_value = getattr(ending_minimums, key)
+        if verbose:
+            print(f"{key=}, {target_value=}, {minimum_value=}")
         if target_value < minimum_value:
             i2 = i + 1
             next_key = attrs[i2]
@@ -65,14 +78,21 @@ def run():
             assert ratio.is_integer(), f"expected integer ratio, got {ratio=}"
             ratio = int(ratio)
             transfer = math.ceil((minimum_value - target_value) / ratio)
+            if verbose:
+                print(f"{transfer}x{next_key} -> {ratio * transfer}x{key}")
             cash_out.add_to_attr(next_key, transfer)
             cash_in.add_to_attr(key, ratio * transfer)
 
     # convert lower bills to higher bills
+    if verbose:
+        print()
+        print("convert lower bills to higher bills:")
     for i in range(len(attrs) - 1):
         key = attrs[i]
         target_value = getattr(target, key) - getattr(cash_out, key) + getattr(cash_in, key)
         minimum_value = getattr(ending_minimums, key)
+        if verbose:
+            print(f"{key=}, {target_value=}, {minimum_value=}")
         if target_value > minimum_value:
             i2 = i + 1
             next_key = attrs[i2]
@@ -83,6 +103,8 @@ def run():
             assert ratio.is_integer(), f"expected integer ratio, got {ratio=}"
             ratio = int(ratio)
             transfer = math.floor((target_value - minimum_value) / ratio)
+            if verbose:
+                print(f"{ratio * transfer}x{key} -> {transfer}x{next_key}")
             cash_out.add_to_attr(key, ratio * transfer)
             cash_in.add_to_attr(next_key, transfer)
             if key == 'b20':
@@ -92,18 +114,29 @@ def run():
                 extra_b10s = (target.b10 - cash_out.b10 + cash_in.b10) - ending_minimums.b10
                 if extra_b10s > 0:
                     t = min(transfer, extra_b10s)
+                    if verbose:
+                        print(f"{2*t}xb20 + {t}xb10 -> {t}xb50")
                     cash_out.b20 += 2*t
                     cash_out.b10 += t
                     cash_in.b50 += t
 
     # normalize cash_out against cash_in for each bill
+    if verbose:
+        print()
+        print("normalize cash_out against cash_in for each bill:")
     for bill in "coin b1 b5 b10 b20 b50 b100".split():
-        if getattr(cash_out, bill) > getattr(cash_in, bill):
+        if getattr(cash_out, bill) >= getattr(cash_in, bill):
+            if verbose:
+                print(f"{getattr(cash_in, bill)}x{bill} subtracted from cash_out.  Cash_in.{bill} set to 0")
             cash_out.sub_from_attr(bill, cash_in)
             setattr(cash_in, bill, 0)
-        elif getattr(cash_in, bill) > getattr(cash_out, bill):
+        elif getattr(cash_in, bill) >= getattr(cash_out, bill):
+            if verbose:
+                print(f"{getattr(cash_out, bill)}x{bill} subtracted from cash_in.  Cash_out.{bill} set to 0")
             cash_in.sub_from_attr(bill, cash_out)
             setattr(cash_out, bill, 0)
+    if verbose:
+        print()
 
     assert cash_in.total == cash_out.total, f"{cash_in.total=} != {cash_out.total=}"
 
@@ -132,10 +165,10 @@ def run():
     cash_in.print(file=sys.stdout)
     print("final w/o starts", end='')
     final_no_starts.print(file=sys.stdout)
-    print("final w/starts  ", end='')
-    final_with_starts.print(file=sys.stdout)
     print("minimums        ", end='')
     ending_minimums.print(file=sys.stdout)
+    print("final w/starts  ", end='')
+    final_with_starts.print(file=sys.stdout)
 
     print()
     print("starts + petty cash:", starts.total)
