@@ -9,6 +9,9 @@ TUESDAY  = 1
 SATURDAY = 5
 
 
+class CheckInventory(Exception):
+    pass
+
 def set_database(database):
     global Database
     Database = database
@@ -247,10 +250,14 @@ class Items(row):
                 print(f"{self.item}.consumed: no consumption set, {ans=}")
         return round(ans)
 
-    def order(self, cur_month, table_size=6, verbose=False):
+    def order(self, cur_month, table_size=6, override=False, verbose=False):
         r'''Returns how many pkgs to order.
         '''
         def calc_needed(num_servings):
+            r'''Calculates total needed to cover num_servings.
+
+            Does not subtract inventory.
+            '''
             def print_next(msg):
                 if verbose:
                     print(f"{self.item}, {num_servings=}: {msg}")
@@ -271,31 +278,40 @@ class Items(row):
             return ans
 
         avg_served1 = Database.Months.avg_meals_served(cur_month.month)
-        if cur_month.month == 4:
+        if cur_month.month == 4:  # Apr
             avg_served2 = 0
         else:
             next_month = Database.Months.inc_month(cur_month.year, cur_month.month)[1]
             avg_served2 = Database.Months.avg_meals_served(next_month)
         min_needed1 = calc_needed(cur_month.served_fudge * avg_served1)
-        units, uncertainty = self.in_stock
-        if verbose:
-            print(f"{min_needed1=}, {units=}, {uncertainty=}")
+        units, uncertainty = self.in_stock(verbose=verbose)
         if units - uncertainty >= min_needed1:
             return 0
         min1 = int(math.ceil((min_needed1 - (units - uncertainty)) / self.pkg_size))
+        if verbose:
+            print(f"{min_needed1=}; in_stock: {units=}, {uncertainty=}; "
+                  f"min1 order: {min1}, pkg_size={self.pkg_size}")
         if self.perishable:
             max_order = cur_month.consumed_fudge * (self.consumed(avg_served1, table_size, verbose) +
                                                     self.consumed(avg_served2, table_size, verbose))
-            if verbose:
-                print(f"{max_order=}")
             max_limit = int((max_order - (units + uncertainty)) / self.pkg_size)   # floor
+            if verbose:
+                print(f"{max_order=}, {max_limit=}")
+            if max_limit < min1 and not override:
+                raise CheckInventory(self.item)
             return round(max(min1, max_limit))
         # else non_perishable
         min_needed2 = calc_needed(cur_month.served_fudge * avg_served2)
         min2 = int(math.ceil((min_needed2 - (units - uncertainty)) / self.pkg_size))
         consumed1 = self.consumed(cur_month.served_fudge * avg_served1, table_size, verbose)
+        if verbose:
+            print(f"{min_needed2=}, {min2=}, {consumed1=}")
+        if uncertainty > 0.3 * consumed1:
+            raise CheckInventory(self.item)
         min_needed3 = consumed1 + min_needed2
         min3 = int(math.ceil((min_needed3 - (units - uncertainty)) / self.pkg_size))
+        if verbose:
+            print(f"{min_needed3=}, {min3=}")
         return round(max(min1, min2, min3))
 
 class Products(row):
@@ -810,7 +826,7 @@ Rows = (Items, Products,
        )
 
 
-__all__ = "Decimal date datetime timedelta set_database bills Rows abbr_month".split()
+__all__ = "CheckInventory Decimal date datetime timedelta set_database bills Rows abbr_month".split()
 
 
 

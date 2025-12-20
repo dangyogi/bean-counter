@@ -5,8 +5,7 @@ r'''
     - calc orders
     - expected_count = cur_count + order
     - uncertainty = 0.10 * sum of consumed since last count
-    - write all items that have expected_count - uncertainty < min
-      or if perishable, expected_count + uncertainty > max_perishable
+    - write all items that have expected_count + uncertainty > max_perishable
 '''
 
 # FIX: only include items that need to be counted
@@ -17,7 +16,20 @@ from database import *
 
 
 def run():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--table-size", "-t", type=int, default=6)
+    parser.add_argument("--verbose", "-v", default="", help="comma seperated item names")
+
+    args = parser.parse_args()
+
+    table_size = args.table_size
+    verbose = args.verbose.split(',')
+
     load_database()
+
+    cur_month = list(Months.values())[-1]
+    print(f"cur_month={cur_month.month_str}")
 
     width = 0
     for i in Items.values():
@@ -28,7 +40,10 @@ def run():
     with open("Inv-checklist.csv", "w") as f:
         print(f"{'item':{width}}|num_pkgs|num_units", file=f)
         for i in sorted(Items.values(), key=attrgetter('item')):
-            print(f"{i.item:{width}}|        | ", file=f)
+            try:
+                i.order(cur_month, table_size, verbose=i.item in verbose)
+            except CheckInventory:
+                print(f"{i.item:{width}}|        | ", file=f)
 
 
 
