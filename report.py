@@ -725,7 +725,7 @@ def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--pdf", "-p", action="store_true", default=False)
-    parser.add_argument("--size", "-s", type=int, default=13)
+    parser.add_argument("--size", "-s", type=int, default=13, help="fontsize (default 13)")
     parser.add_argument("table")
 
     args = parser.parse_args()

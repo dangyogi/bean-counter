@@ -18,6 +18,7 @@ def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--trial-run", "-t", action="store_true", default=False)
+    parser.add_argument("--no-clear", "-n", action="store_true", default=False)
     parser.add_argument("--month", "-m", type=int, default=today.month)
     parser.add_argument("--day", "-d", type=int, default=today.day)
     parser.add_argument("--year", "-y", type=int, default=today.year)
@@ -62,6 +63,19 @@ def run():
     if not args.trial_run:
         print("Saving Database")
         save_database()
+        if not args.no_clear:
+            while (ans := input(f"Clear {args.orders_csv_file}? (y) ").lower()) not in ("", "y", "yes", "n", "no"):
+                print('Looking for "", "y", "yes", "n" or "no"')
+            if ans in ("", "y", "yes"):
+                print("Clearing", args.orders_csv_file)
+                with open(args.orders_csv_file, "r") as file_in:
+                    table_name = file_in.readline()
+                    headers = file_in.readline()
+                with open(args.orders_csv_file, "w") as file_out:
+                    print(table_name, end='', file=file_out)
+                    print(headers, end='', file=file_out)
+                return
+        print("Preserving", args.orders_csv_file)
     else:
         print("Trial_run: Database not saved")
 

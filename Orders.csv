@@ -1,10 +1,2 @@
 Orders
 item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|location|price
-Bacon               |   3|        |           |              |               | M2-16  |
-Eggs                |  10|        |           |              |               | M-9    |
-Half & Half         |   1| Sams   |         2 |              |               |        |
-Milk                |   1|        |           |              |               |        |3.16
-Orange Juice        |   4|        |           |              |               | M-2-2  |
-Pancake Mix         |   5|        |           |              |               |        |
-Syrup bottle, reg   |   9|        |           |              |               |        |
-Syrup bottle, SF    |  10|        |           |              |               |        |

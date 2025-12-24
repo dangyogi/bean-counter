@@ -14,7 +14,7 @@ def run():
     parser = argparse.ArgumentParser()
     parser.add_argument("--trial-run", "-t", action="store_true", default=False)
     parser.add_argument("--table-size", "-s", type=int, default=6)
-    parser.add_argument("--uncertainty", "-u", type=float, default=0.10)
+    parser.add_argument("--uncertainty", "-u", type=float, default=0.10, help="as percent, default 0.10")
 
     args = parser.parse_args()
 
