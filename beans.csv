@@ -254,6 +254,22 @@ Dec 17, 25|Syrup, reg          |estimate |       0|      133|         35
 Dec 17, 25|Syrup, sugar free   |estimate |       0|      133|         35
 Dec 17, 25|Tea                 |estimate |       0|       64|          1
 Dec 17, 25|To-Go Containers    |estimate |       0|      140|          1
+Dec 30, 25|Pancake Mix         |count    |    5.83|        0|          0
+Dec 30, 25|Butter              |count    |    0.66|        0|          0
+Dec 30, 25|Bacon               |count    |       1|        0|          0
+Dec 30, 25|Eggs                |count    |       7|        0|          0
+Dec 30, 25|Milk                |count    |    0.75|        0|          0
+Dec 30, 25|Half & Half         |count    |     0.5|        0|          0
+Dec 30, 25|Orange Juice        |count    |       2|        0|          0
+Dec 30, 25|Coffee Stirrer 5"   |count    |       0|      300|          0
+Dec 30, 25|Coffee, ground      |count    |       1|        0|          0
+Dec 30, 25|Paper Towels        |count    |       0|        2|          0
+Dec 30, 25|Syrup bottle, reg   |count    |      19|        0|          0
+Dec 30, 25|Syrup bottle, SF    |count    |      23|        0|          0
+Dec 30, 25|Raffle Tickets      |count    |       0|     1247|          0
+Dec 30, 25|Serving Plates      |count    |       0|        0|          0
+Dec 30, 25|OJ cups             |count    |       0|      210|          0
+Dec 30, 25|Coffee cups, 8 oz   |count    |       0|      220|          0
 
 Months
 month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claimed|served_fudge|consumed_fudge

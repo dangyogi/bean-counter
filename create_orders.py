@@ -14,23 +14,26 @@ def run():
 
     load_database()
 
-    last_month = Months.last_month()
-    if not last_month.served_fudge:
-        print(f"served_fudge not set in last_month({last_month.month_str}), aborting")
+    cur_month = Months.last_month()
+    if not cur_month.served_fudge:
+        print(f"served_fudge not set in cur_month({cur_month.month_str}), aborting")
         return
     table_size = args.table_size
     verbose = args.verbose
 
-    print(f"last_month={last_month.month_str}, served_fudge={last_month.served_fudge}, "
-          f"consumed_fudge={last_month.consumed_fudge}, "
-          f"{table_size=}")
+    avg_served1 = Months.avg_meals_served(cur_month.month)
+    max_expected = cur_month.served_fudge * avg_served1
+
+    print(f"cur_month={cur_month.month_str}, avg_served={avg_served1}, served_fudge={cur_month.served_fudge}, "
+          f"{max_expected=}, consumed_fudge={cur_month.consumed_fudge}, "
+          f"{table_size=}, num_tables={max_expected / table_size}")
 
     with open("Orders.csv", "w") as f:
         print("Orders", file=f)
         print("item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|"
               "location|price", file=f)
         for item in Items.values():
-            order = item.order(last_month, table_size, verbose)
+            order = item.order(cur_month, table_size, override=True, verbose=verbose)
            #print(f"{item.item=}, {order=}")
             if order:
                 print(f"{item.item:20}|{order:4}|        |           |              |               |"

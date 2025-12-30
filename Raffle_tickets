@@ -1,0 +1,18 @@
+New red roll at Walmart:
+    
+    guessing 2000/roll (didn't say)
+    outer diameter 6.375
+    inner diameter 3.25
+
+    outer^2 - inner^2 = 30.08 = 0.015/ticket
+
+Current white roll:
+
+    2000/roll
+    outer diameter now 4.875
+    inner diameter     2.25
+
+    outer^2 - inner^2 = 18.7 / 0.015 = 1247 tickets left
+    first ticket number now 4380445
+    makes last ticket number 4379200
+    makes original first ticket number 4381200

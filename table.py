@@ -39,6 +39,10 @@ class base_table:
     def insert(self, **attrs):
         self.add_row(self.row_class(**attrs))
 
+    def insert_from_csv(self, header, row, ignore_unknown_cols=False, skip_fk_check=False):
+        self.add_row(self.row_class.from_csv(header, row, ignore_unknown_cols=ignore_unknown_cols),
+                     skip_fk_check=skip_fk_check)
+
     def from_csv(self, csv_reader, from_scratch=True, ignore_unknown_cols=False, skip_fk_check=False):
         r'''Loads rows from csv_reader.  First row is header row that identifies the attrs.
 
@@ -53,8 +57,8 @@ class base_table:
                 row = next(csv_reader)
                 if len(row) == 0:
                     break
-                self.add_row(self.row_class.from_csv(header, row, ignore_unknown_cols=ignore_unknown_cols),
-                             skip_fk_check=skip_fk_check)
+                self.insert_from_csv(header, row, ignore_unknown_cols=ignore_unknown_cols,
+                                     skip_fk_check=skip_fk_check)
         except StopIteration:
             pass
 

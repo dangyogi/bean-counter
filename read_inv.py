@@ -27,7 +27,7 @@ def run():
         headers = next(csv_reader)
         for row in csv_reader:
             assert len(headers) == len(row), f"{len(headers)=} != {len(row)=}"
-            Inventory.insert(**dict(["date", "code"] + headers, [args.date, args.code] + row))
+            Inventory.insert_from_csv(["date", "code"] + headers, [args.date, args.code] + row)
 
     if not args.trial_run:
         save_database()
