@@ -12,16 +12,16 @@ from report import *
 def run():
     import argparse
 
+    today = date.today()
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--month", "-m", type=int, default=date.today().month)
-    parser.add_argument("--year", "-y", type=int, default=date.today().year)
+    parser.add_argument("--month", "-m", type=int, default=today.month)
+    parser.add_argument("--year", "-y", type=int, default=today.year)
     parser.add_argument("--pdf", "-p", action="store_true", default=False)
 
     args = parser.parse_args()
 
     load_database()
-
-    today = date.today()
 
     year = args.year
     if year < 2000:
@@ -41,15 +41,13 @@ def run():
 
         Returns index, recon row.
         '''
-        start_index = Reconcile.first_date(end_date)   # start_index into Reconcile for end_date
+        index = Reconcile.last_date(end_date)   # index just past end_date
        #print(f"{end_date=}, {start_index=}")
-        error_msg = f"{end_date.strftime('%b %d, %y')}, monthly, final balance not found in Reconcile"
-        for i in range(start_index, len(Reconcile)):  # loop from start_index to the end of Reconcile
-            recon = Reconcile[i]
-            assert recon.date == end_date, error_msg
-            if recon.account == 'cash' and recon.detail == 'w/starts':
-               #print("found final balance")
-                return i, recon
+        error_msg = f"{end_date.strftime('%b %d, %y')}, month end final balance not found in Reconcile"
+        recon = Reconcile[index - 1]
+        if recon.account == 'cash' and recon.detail == 'w/starts':
+           #print("found final balance")
+            return index - 1, recon
         raise AssertionError(error_msg)
 
     if end_date is not None:
@@ -124,10 +122,11 @@ def run():
                     templ = Row_template("l2", type, *accounts_, **type_kws)
                     if category == "Other":
                         picks["revenue"] = templ
+                types_.append(templ)
                 if section == "Balance":
                     picks[type.lower()] = templ
-                types_.append(templ)
-                type_kws['pad'] = 5
+                else:
+                    type_kws['pad'] = 5
             if category == "Breakfast":
                 templ = Row_template("l1", category, *types_, text2_format="({}) showed up", **cat_kws)
                 picks["bf"] = templ
@@ -185,7 +184,7 @@ def run():
 
     if args.pdf:
         width, height = report.draw_init()
-        page_width, page_height = report.pagesize
+        page_width, page_height = get_pagesize()
         width_copies = (page_width - 10) // (width + 10)
         height_copies = page_height // height
         print(f"{page_width=}, {width=}, {width_copies=}; {page_height=}, {height=}, {height_copies=}")

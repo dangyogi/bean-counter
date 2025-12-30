@@ -18,52 +18,48 @@ def run():
 
     load_database()
 
-    last_month = Months.last_month()
-    new_year, new_month = Months.inc_month(last_month.year, last_month.month)
-    next_year, next_month = Months.inc_month(new_year, new_month)
+    cur_month = Months.last_month()
 
-    print(f"New month {new_month=}, {new_year=}; {next_month=}")
+    served_fudge = 1.35
 
-    assert (new_year, new_month) not in Months, f"New Month({new_month=}, {new_year=}) already created"
+    cur_avg_served = Months.avg_meals_served(cur_month.month)
 
-    attrs = dict(year=new_year, month=new_month,
-                 start_date=last_month.end_date + timedelta(days=1))
+    while True:
+        print(f"avg_served={cur_avg_served}, {served_fudge=} -> min_order={round(served_fudge * cur_avg_served)}")
+        # maybe up to 1.40 *?
+        ans = input(f"{served_fudge=}? ")
+        if not ans:
+            break
+        n = float(ans)
+        if abs(served_fudge - n) / served_fudge > 0.25:
+            print(f"{n} seems like a big difference, try again...")
+        else:
+            served_fudge = n
 
-    new_avg_served = Months.avg_meals_served(new_month)
-    next_avg_served = Months.avg_meals_served(next_month)
-    attrs["min_order"] = round(1.35 * new_avg_served)   # maybe up to 1.40 *?
-    if new_month == 4:
-        attrs["max_perishable"] = attrs["min_order"]
-        attrs["min_non_perishable2"] = attrs["min_order"]
-    else:
-        attrs["max_perishable"] = round(0.90 * (new_avg_served + next_avg_served))
-        attrs["min_non_perishable2"] = round(1.2 * (new_avg_served + next_avg_served))
+    cur_month.served_fudge = served_fudge
 
-    print(f"{new_avg_served=}, {next_avg_served=}")
+    consumed_fudge = 0.9
 
-    all_attrs = "min_order max_perishable min_non_perishable2".split()
-    for attr in all_attrs:
-        while True:
-            ans = input(f"{attr}={attrs[attr]}? ")
-            if not ans:
-                break
-            n = int(ans)
-            if abs(attrs[attr] - n) / attrs[attr] > 0.25:
-                print(f"{n} seems like a big difference, try again...")
-            else:
-                attrs[attr] = n
+    while True:
+        print(f"{consumed_fudge=}")
+        ans = input(f"{consumed_fudge=}? ")
+        if not ans:
+            break
+        n = float(ans)
+        if abs(consumed_fudge - n) / consumed_fudge > 0.25:
+            print(f"{n} seems like a big difference, try again...")
+        else:
+            consumed_fudge = n
 
-    for attr in all_attrs:
-        print(f"{attr}={attrs[attr]}, ", end='')
-    print(f"num_tables={round(attrs["min_order"] / 6)}")
+    cur_month.consumed_fudge = consumed_fudge
 
-    Months.insert(**attrs)
+   #print(f"num_tables={round(attrs["min_order"] / 6)}")
 
     if input("Save? (y/n) ").lower() == 'y':
+        print("Saving database")
         save_database()
-        print("saved")
     else:
-        print("aborted")
+        print("Database not saved")
 
 
 

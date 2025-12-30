@@ -184,6 +184,8 @@ class table_by_date(base_table, list):
         list.__init__(self)
 
     def first_date(self, date):
+        r'''Returns index to the first date == `date`.
+        '''
         return self.find_date(date, find_first=True)
 
     def last_date(self, date):
@@ -192,6 +194,18 @@ class table_by_date(base_table, list):
         return self.find_date(date, find_first=False)
 
     def find_date(self, date, find_first):
+        r'''This returns the index at which to insert `date`.
+
+        The find_first parameter disambiguates the case where one or more matching dates already
+        appear in the file.
+
+        If find_first is True, `date` will be inserted _before_ all other matching dates.  This means that
+        the index returned is to the first matching date.
+
+        If find_first is False, `date` will be inserted _after_ all other matching dates.  This means that
+        the index returned is just after the last matching date.  It also means that the index returned
+        may equal length of the file, meaning that it does not point to any row in the file.
+        '''
         first = 0              # ignore < first
         last = len(self)       # ignore >= last
         while first < last:
