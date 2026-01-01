@@ -1,0 +1,3 @@
+Month_stats
+month|max_served1|max_served2|served_fudge|avg_served1|avg_served2|num_tables|table_size|consumed_fudge
+Jan  |      90.45|       99.9|        1.35|         67|         74|        12|         8|           0.9

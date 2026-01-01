@@ -1,0 +1,37 @@
+Order_stats
+item                |unit         |pkg_sz|perish|   inv|uncer|cons1|cons2|min1|max_order|min2|min3|order
+Bacon               |slice        |    72|     1|  72.0|    0|  159|  175| 238|      334|    |    |    3
+Bowls               |ea           |   300|     0| 150.0|    0|    0|    0|  36|         |    |    |    0
+Butter              |chip         |   200|     1| 132.0|    0|   90|  100| 144|      190|    |    |    1
+Coffee, ground      |cup of coffee|   360|     0| 360.0|    0|  120|  120| 120|         |    |    |    0
+Coffee cups, 12 oz  |ea           |  1000|     0|   0.0|    0|    0|    0|   0|         |    |    |    0
+Coffee cups, 10 oz  |ea           |   500|     0|   0.0|    0|    0|    0|   0|         |    |    |    0
+Coffee cups, 8 oz   |ea           |   500|     0| 220.0|    0|   60|   67| 120|         |    |    |    0
+Coffee Stirrer 5"   |ea           |  1000|     0| 300.0|    0|   60|   67| 120|         |    |    |    0
+Coffee Stirrer 7"   |ea           |  1000|     0|   0.0|    0|    0|    0|   0|         |    |    |    0
+Cutlery Packets     |ea           |   200|     0|  88.0|    7|   60|   67| 120|         | 130| 190|    1
+Eggs                |ea           |    24|     1| 168.0|    0|  175|  193| 262|      368|    |    |    8
+Gloves              |pair         |   120|     0| 680.0|    1|   10|   10|  10|         |    |    |    0
+Grill Cleaning Brick|ea           |     4|     0|   2.0|    0|    0|    0|   0|         |    |    |    0
+Half & Half         |ea           |   192|     0|  96.0|    0|   60|   67| 120|         | 130| 190|    1
+Milk                |oz           |    64|     1|  48.0|    0|   38|   42|  57|       80|    |    |    1
+Nonstick Spray      |can          |     2|     0|  17.0|    1|    1|    1|   1|         |    |    |    0
+OJ cups             |ea           |   450|     0| 210.0|    0|   60|   67| 120|         |    |    |    0
+Orange Juice        |oz           |   104|     1| 208.0|    0|  271|  300| 407|      571|    |    |    3
+Pancake Mix         |6" (4 oz ea) |    40|     0| 233.2|    0|  101|  111| 151|         |    |    |    0
+Paper Towels        |roll         |     6|     0|   2.0|    0|    1|    1|   1|         |    |    |    0
+Place Mats          |ea           |  1000|     0|1238.0|    7|   60|   67| 120|         |    |    |    0
+Raffle Tickets      |ea           |  2000|     0|1247.0|    0|  137|  151| 205|         |    |    |    0
+Rubber Bands        |ea           |   350|     0|   0.0|    0|    0|    0|   0|         |    |    |    0
+Scrubbers           |ea           |    16|     0|   5.0|    1|    1|    1|   1|         |    |    |    0
+Serving Plates      |ea           |   200|     0|   0.0|    0|   60|   67|  90|         | 100| 160|    1
+Small Plates        |ea           |   330|     0|   0.0|    0|    0|    0|   0|         |    |    |    0
+Splenda             |ea           |  1000|     0|1380.0|    2|   20|   22|  60|         |    |    |    0
+Sugar               |ea           |  2000|     0|  70.0|    2|   20|   22|  60|         |    |    |    0
+Sweet'N Low         |ea           |  1500|     0|1580.0|    2|   20|   22|  60|         |    |    |    0
+Syrup bottle, reg   |bottle       |     1|     0|  19.0|    0|    4|    5|  12|         |    |    |    0
+Syrup bottle, SF    |bottle       |     1|     0|  23.0|    0|    4|    5|  12|         |    |    |    0
+Syrup, reg          |oz           |    24|     0| 133.0|   35|  101|  111| 151|         | 167| 268|    8
+Syrup, sugar free   |oz           |    24|     0| 133.0|   35|  101|  111| 151|         | 167| 268|    8
+Tea                 |bag          |   312|     0|  64.0|    1|    6|    7|   9|         |    |    |    0
+To-Go Containers    |ea           |   125|     0| 140.0|    1|    5|    5|   7|         |    |    |    0
