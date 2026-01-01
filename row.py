@@ -3,6 +3,7 @@
 from decimal import Decimal, InvalidOperation
 from datetime import date, datetime, timedelta
 import math
+from collections import namedtuple
 
 
 TUESDAY  = 1
@@ -184,6 +185,10 @@ class Items(row):
         pkg_weight=float,
     )
 
+    order_stats_headers = "item unit pkg_size perishable inv uncertainty consumed1 consumed2 " \
+                          "min_needed1 max_order min_needed2 min_needed3 order".split()
+    order_stats_row_type = namedtuple("order_stats", order_stats_headers)
+
     @property
     def product(self):
         if self.supplier is None or self.supplier_id is None:
@@ -250,8 +255,8 @@ class Items(row):
                 print(f"{self.item}.consumed: no consumption set, {ans=}")
         return round(ans)
 
-    def order(self, cur_month, table_size=6, override=False, verbose=False):
-        r'''Returns how many pkgs to order.
+    def order_stats(self, cur_month, table_size=6, override=False, verbose=False):
+        r'''Returns order_stats_row_type (stored on this class).
         '''
         def calc_needed(num_servings):
             r'''Calculates total needed to cover num_servings.
@@ -277,42 +282,62 @@ class Items(row):
                 print(f"final needed={ans}")
             return ans
 
+        stats = [self.item, self.unit, self.pkg_size, self.perishable]
+        units, uncertainty = self.in_stock(verbose=verbose)
+        stats.extend((units, uncertainty))
+
+
         avg_served1 = Database.Months.avg_meals_served(cur_month.month)
         if cur_month.month == 4:  # Apr
             avg_served2 = 0
         else:
             next_month = Database.Months.inc_month(cur_month.year, cur_month.month)[1]
             avg_served2 = Database.Months.avg_meals_served(next_month)
+
+        consumed1 = self.consumed(cur_month.consumed_fudge * avg_served1, table_size, verbose)
+        consumed2 = self.consumed(cur_month.consumed_fudge * avg_served2, table_size, verbose)
+        stats.extend((consumed1, consumed2))
+
         min_needed1 = calc_needed(cur_month.served_fudge * avg_served1)
-        units, uncertainty = self.in_stock(verbose=verbose)
+        stats.append(min_needed1)
         if units - uncertainty >= min_needed1:
-            return 0
+            stats.extend((None, None, None, 0))
+            return self.order_stats_row_type(*stats)
         min1 = int(math.ceil((min_needed1 - (units - uncertainty)) / self.pkg_size))
         if verbose:
             print(f"{min_needed1=}; in_stock: {units=}, {uncertainty=}; "
                   f"min1 order: {min1}, pkg_size={self.pkg_size}")
         if self.perishable:
-            max_order = cur_month.consumed_fudge * (self.consumed(avg_served1, table_size, verbose) +
-                                                    self.consumed(avg_served2, table_size, verbose))
+            max_order = consumed1 + consumed2
+            stats.append(max_order)
             max_limit = int((max_order - (units + uncertainty)) / self.pkg_size)   # floor
             if verbose:
                 print(f"{max_order=}, {max_limit=}")
             if max_limit < min1 and not override:
                 raise CheckInventory(self.item)
-            return round(max(min1, max_limit))
+            stats.extend((None, None, round(max(min1, max_limit))))
+            return self.order_stats_row_type(*stats)
         # else non_perishable
+        stats.append(None)  # max_order
         min_needed2 = calc_needed(cur_month.served_fudge * avg_served2)
+        stats.append(min_needed2)
         min2 = int(math.ceil((min_needed2 - (units - uncertainty)) / self.pkg_size))
-        consumed1 = self.consumed(cur_month.served_fudge * avg_served1, table_size, verbose)
         if verbose:
             print(f"{min_needed2=}, {min2=}, {consumed1=}")
-        if uncertainty > 0.3 * consumed1:
+        if uncertainty > 0.3 * consumed1 and not override:
             raise CheckInventory(self.item)
         min_needed3 = consumed1 + min_needed2
+        stats.append(min_needed3)
         min3 = int(math.ceil((min_needed3 - (units - uncertainty)) / self.pkg_size))
         if verbose:
             print(f"{min_needed3=}, {min3=}")
-        return round(max(min1, min2, min3))
+        stats.append(round(max(min1, min2, min3)))
+        return self.order_stats_row_type(*stats)
+
+    def order(self, cur_month, table_size=6, override=False, verbose=False):
+        r'''Returns how many pkgs to order.
+        '''
+        return self.order_stats(cur_month, table_size, override, verbose).order
 
 class Products(row):
     # item=varchar(30, references=foreign_key("Items", on_delete="cascade", on_update="cascade")),

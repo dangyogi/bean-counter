@@ -660,8 +660,6 @@ class Row_template(Value):
                 child.insert(report)
 
 
-
-
 def dump_table(table_name, pdf=False, default_fontsize=13):
     from itertools import chain
     import database
@@ -701,14 +699,66 @@ def dump_table(table_name, pdf=False, default_fontsize=13):
     for row in table.values():
         data = report.new_row('data')
         for name in header_names:
-            if name not in table.row_class.hidden:
-                value = getattr(row, name)
-                if value is None:
-                    data.next_cell()
-                elif isinstance(value, database.date):
-                    data.next_cell(value.strftime("%b %d, %y"))
+            value = getattr(row, name)
+            if value is None:
+                data.next_cell()
+            elif isinstance(value, database.date):
+                data.next_cell(value.strftime("%b %d, %y"))
+            else:
+                data.next_cell(value)
+
+    if pdf:
+        report.draw_init()
+        report.draw()
+        Canvas.showPage()
+        Canvas.save()
+    else:
+        report.print_init()
+        report.print(header_row=1)
+
+
+def dump_data(report_name, headers, data, pdf=False, default_fontsize=13):
+    from itertools import chain
+    import database
+
+    data = tuple(data)
+
+    header_cols = [None] * len(headers)
+    data_cols = [None] * len(headers)
+    for row in data:
+        assert len(row) == len(headers), f"ERROR: {len(row)=} != {len(headers)=}"
+        for i, value in enumerate(row):
+            if value is not None:
+                if isinstance(value, (int, float, database.Decimal)):
+                    header_cols[i] = Right(bold=True)
+                    data_cols[i] = Right()
                 else:
-                    data.next_cell(value)
+                    header_cols[i] = Left(bold=True)
+                    data_cols[i] = Left()
+
+    for i in range(len(headers)):
+        if header_cols[i] is None:
+            header_cols[i] = Left(bold=True)
+            data_cols[i] = Left()
+
+    set_canvas(report_name)
+
+    report = Report(default_size=default_fontsize,
+           title=(Centered(span=len(headers), size='title', bold=True),),
+           headers=header_cols,
+           data=data_cols,
+          )
+    report.new_row('title', report_name)
+    report.new_row('headers', *headers)
+    for row in data:
+        data_row = report.new_row('data')
+        for value in row:
+            if value is None:
+                data_row.next_cell()
+            elif isinstance(value, database.date):
+                data_row.next_cell(value.strftime("%b %d, %y"))
+            else:
+                data_row.next_cell(value)
 
     if pdf:
         report.draw_init()

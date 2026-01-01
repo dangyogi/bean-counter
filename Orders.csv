@@ -2,11 +2,8 @@ Orders
 item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|location|price
 Bacon               |   3|        |           |              |               |        |
 Butter              |   1|        |           |              |               |        |
-Cutlery Packets     |   1|        |           |              |               |        |
-Eggs                |   8|        |           |              |               |        |
+Eggs                |   6|        |           |              |               |        |
 Half & Half         |   1|        |           |              |               |        |
 Milk                |   1|        |           |              |               |        |
 Orange Juice        |   3|        |           |              |               |        |
 Serving Plates      |   1|        |           |              |               |        |
-Syrup, reg          |  10|        |           |              |               |        |
-Syrup, sugar free   |  10|        |           |              |               |        |
