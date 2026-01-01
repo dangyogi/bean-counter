@@ -35,6 +35,8 @@ def run():
 
     with open("Orders.csv", "r") as f:
         csv_reader = iter(csv.reader(f, CSV_dialect, **CSV_format))
+        table_name = next(csv_reader)
+        assert table_name == ["Orders"], f'Expected table_name="Orders", got {table_name}'
         headers = [hdr.strip() for hdr in next(csv_reader)]
         
         def read_rows():

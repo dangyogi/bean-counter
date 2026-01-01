@@ -38,12 +38,12 @@ def run():
             width = l
 
     with open("Inv-checklist.csv", "w") as f:
-        print(f"{'item':{width}}|num_pkgs|num_units", file=f)
+        print(f"{'item':{width}}|unit         |pkg_size|num_pkgs|num_units", file=f)
         for i in sorted(Items.values(), key=attrgetter('item')):
             try:
                 i.order(cur_month, table_size, verbose=i.item in verbose)
             except CheckInventory:
-                print(f"{i.item:{width}}|        | ", file=f)
+                print(f"{i.item:{width}}|{i.unit:13}|{i.pkg_size:8}|        | ", file=f)
 
 
 
