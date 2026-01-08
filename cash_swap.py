@@ -171,7 +171,7 @@ def run():
     final_with_starts.print(file=sys.stdout)
 
     print()
-    print("starts + petty cash:", starts.total)
+    print("starts:", starts.total)
 
     if not args.trial_run:
         save_database()
