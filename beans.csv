@@ -14,7 +14,7 @@ Cutlery Packets     |ea           |False     |Sams    |          1|            |
 Eggs                |ea           |True      |Sams    |          1|            |             |            2.9
 Gloves              |pair         |False     |Walmart |          1|          10|             |               
 Grill Cleaning Brick|ea           |False     |Amazon  |          1|         0.1|             |               
-Half & Half         |ea           |False     |Sams    |          1|            |           10|              1
+Half & Half         |ea           |False     |Sams    |          2|            |           10|              1
 Milk                |oz           |True      |Walmart |          1|            |             |           0.63
 Nonstick Spray      |can          |False     |Sams    |          1|           1|             |           0.01
 OJ cups             |ea           |False     |Sams    |          1|            |           10|              1
@@ -24,7 +24,7 @@ Paper Towels        |roll         |False     |Walmart |          1|            |
 Place Mats          |ea           |False     |Gordon  |          1|            |           10|              1
 Raffle Tickets      |ea           |False     |Walmart |          1|            |             |           2.27
 Rubber Bands        |ea           |False     |Walmart |          1|            |             |               
-Sausage             |ea           |True      |Sams    |          1|            |             |            2.1
+Sausage             |ea           |True      |Walmart |          1|            |             |            2.1
 Scrubbers           |ea           |False     |Sams    |          1|            |             |           0.01
 Serving Plates      |ea           |False     |Sams    |          1|            |             |              1
 Small Plates        |ea           |False     |Sams    |          1|            |             |               
@@ -72,7 +72,7 @@ Gloves              |Walmart |          1|Great Value Disposable Poly Food Glove
 Gloves              |Walmart |          2|MED PRIDE Nitrile Vinyl Gloves – Non Latex Gloves, Powder-Free, Rubber-Free Disposable Medical Gloves for Cleaning, Cooking & Exams, Large, 100-Pack                                                 |         |Online   | 9.99|      50|          |                                                                           
 Gloves              |Walmart |          3|MED PRIDE Nitrile Vinyl Gloves – Non Latex Gloves, Powder-Free, Rubber-Free Disposable Medical Gloves for Cleaning, Cooking & Exams, X-Large, 100-Pack                                               |         |Online   | 9.99|      50|          |                                                                           
 Grill Cleaning Brick|Amazon  |          1|Commercial Grade, Heavy Duty Grill Cleaning Brick Bulk 4 Pack. Pumice Stone Cleaner Tool Cleans and Sanitizes Restaurant Flat Top Grills or Griddles Effectively Without Harsh Chemicals or Abrasives|         |         |24.99|       4|          |https://www.amazon.com/dp/B078TMMQPH?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1
-Half & Half         |Sams    |          1|Land O'Lakes Mini Moo's Half and Half (192 ct.)                                                                                                                                                      |342903   |23-7     |12.88|     192|          |                                                                           
+Half & Half         |Sams    |          1|Land O'Lakes Mini Moo's Half and Half (192 ct.)                                                                                                                                                      |342903   |23-7     |12.88|     192|          |discontinued                                                               
 Half & Half         |Sams    |          2|Nestle Coffee-mate Coffee Creamer Singles, Original 180 ct.                                                                                                                                          |990004691|25-8     |12.58|     180|          |                                                                           
 Milk                |Walmart |          1|Great Value Lactose Free Whole Vitamin D Milk, Half Gallon, 64 fl oz                                                                                                                                 |         |Aisle A38| 3.16|      64|          |                                                                           
 Nonstick Spray      |Sams    |          1|PAM Original Cooking Spray (12 oz., 2 pk.)                                                                                                                                                           |338064   |         | 7.48|       2|          |                                                                           

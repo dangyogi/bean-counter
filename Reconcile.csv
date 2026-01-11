@@ -2,3 +2,13 @@ Reconcile
 date      |account       |detail              |coin|b1|b5|b10|b20|b50|b100|donations
 Jan 6, 26 |petty cash    |duplicate keys      |0.10| 2|  |  1|  1|   |    |
 Jan 8, 26 |meeting dinner|purchased by Tom    |    | 2|  |  1|  1|   |    |
+Jan 10, 26|door tickets  |end                 |    | 4| 4|  4|  5|   |    |
+Jan 10, 26|adv tickets   |Marvin              |    |  | 1|   |  1|  1|    |
+Jan 10, 26|adv tickets   |Paul                |    |  |  |   |   |  1|    |
+Jan 10, 26|adv tickets   |Mark                |    |  | 2|   |  3|   |    |
+Jan 10, 26|adv tickets   |Tom                 |    |30|  |   |   |   |    |
+Jan 10, 26|adv tickets   |Steven              |    |  |  |   |  1|   |    |
+Jan 10, 26|adv tickets   |Bruce               |    | 5| 1|  2|   |   |    |
+Jan 10, 26|50/50         |end                 |    |47| 5|  3|   |   |    |
+Jan 10, 26|bf supplies   |Bruce, Walmart order|0.17| 1|  |  2|   |  1|   1|
+Jan 12, 26|bf supplies   |Marvin, P.O. 26011S |0.55| 2|  |   |  2|   |   1|
