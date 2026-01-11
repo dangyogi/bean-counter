@@ -73,7 +73,7 @@ Gloves              |Walmart |          2|MED PRIDE Nitrile Vinyl Gloves – Non
 Gloves              |Walmart |          3|MED PRIDE Nitrile Vinyl Gloves – Non Latex Gloves, Powder-Free, Rubber-Free Disposable Medical Gloves for Cleaning, Cooking & Exams, X-Large, 100-Pack                                               |         |Online   | 9.99|      50|          |                                                                           
 Grill Cleaning Brick|Amazon  |          1|Commercial Grade, Heavy Duty Grill Cleaning Brick Bulk 4 Pack. Pumice Stone Cleaner Tool Cleans and Sanitizes Restaurant Flat Top Grills or Griddles Effectively Without Harsh Chemicals or Abrasives|         |         |24.99|       4|          |https://www.amazon.com/dp/B078TMMQPH?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1
 Half & Half         |Sams    |          1|Land O'Lakes Mini Moo's Half and Half (192 ct.)                                                                                                                                                      |342903   |23-7     |12.88|     192|          |discontinued                                                               
-Half & Half         |Sams    |          2|Nestle Coffee-mate Coffee Creamer Singles, Original 180 ct.                                                                                                                                          |990004691|25-8     |12.58|     180|          |                                                                           
+Half & Half         |Sams    |          2|Nestle Coffee-mate Coffee Creamer Singles, Original 180 ct.                                                                                                                                          |990004691|F-9      |12.58|     180|          |                                                                           
 Milk                |Walmart |          1|Great Value Lactose Free Whole Vitamin D Milk, Half Gallon, 64 fl oz                                                                                                                                 |         |Aisle A38| 3.16|      64|          |                                                                           
 Nonstick Spray      |Sams    |          1|PAM Original Cooking Spray (12 oz., 2 pk.)                                                                                                                                                           |338064   |         | 7.48|       2|          |                                                                           
 OJ cups             |Sams    |          1|Member's Mark Printed Paper Bath Cold Cup (5 oz., 450 ct.)                                                                                                                                           |980259465|G20-4    |13.48|     450|          |                                                                           
@@ -92,7 +92,7 @@ Place Mats          |Gordon  |          1|Placemats, 9.75 x 14 Inch, Paper, Embo
 Raffle Tickets      |Walmart |          1|Pen+Gear Double Ticket Roll, Red, Consecutively Numbered, 2000 Count                                                                                                                                 |         |J23      |11.44|    2000|          |                                                                           
 Raffle Tickets      |Gordon  |          1|Tickets, Raffle, Deluxe, Orange, 2000 Ct Roll                                                                                                                                                        |221007   |Aisle 3  |14.99|    2000|          |                                                                           
 Rubber Bands        |Walmart |          1|Alliance Advantage Rubber Bands, Size #32 (3" x 1/8"), Approx. 350 Bands per 8 oz Bag, Natural                                                                                                       |         |J23      | 3.68|     350|          |                                                                           
-Sausage             |Sams    |          1|Jimmy Dean Fully Cooked Original Pork Sausage Links, 48 ct.                                                                                                                                          |990420247|         |10.84|      48|          |                                                                           
+Sausage             |Sams    |          1|Jimmy Dean Fully Cooked Original Pork Sausage Links, 48 ct.                                                                                                                                          |990420247|M-3      | 9.98|      48|          |                                                                           
 Sausage             |Walmart |          1|Banquet Brown'N Serve Original Fully Cooked Sausage Links, Frozen Breakfast, 32 oz., 50-Count                                                                                                        |         |A3       | 6.98|      50|          |                                                                           
 Sausage             |Walmart |          2|Banquet Brown 'N Serve Vermont Maple Sausage Links, Frozen Breakfast, 32 oz.                                                                                                                         |         |A3       | 6.98|      50|          |                                                                           
 Sausage             |Walmart |          3|Jimmy Dean Heat 'N Serve Original Pork Breakfast Sausage Links, 36 Count (Frozen)                                                                                                                    |         |A3       | 6.72|      36|          |                                                                           
@@ -279,6 +279,40 @@ Dec 30, 25|Raffle Tickets      |count    |       0|     1247|          0
 Dec 30, 25|Serving Plates      |count    |       0|        0|          0
 Dec 30, 25|OJ cups             |count    |       0|      210|          0
 Dec 30, 25|Coffee cups, 8 oz   |count    |       0|      220|          0
+Jan 11, 26|Bacon               |purchased|       3|        0|          0
+Jan 11, 26|Eggs                |purchased|       6|        0|          0
+Jan 11, 26|Half & Half         |purchased|       1|        0|          0
+Jan 11, 26|Orange Juice        |purchased|       3|        0|          0
+Jan 11, 26|Sausage             |purchased|       3|        0|          0
+Jan 10, 26|Bacon               |consumed |       0|      200|         40
+Jan 10, 26|Butter              |consumed |       0|      114|         23
+Jan 10, 26|Coffee, ground      |consumed |       0|      120|         24
+Jan 10, 26|Coffee cups, 8 oz   |consumed |       0|       76|         16
+Jan 10, 26|Coffee Stirrer 5"   |consumed |       0|       76|         16
+Jan 10, 26|Cutlery Packets     |consumed |       0|       76|         16
+Jan 10, 26|Eggs                |consumed |       0|      220|         44
+Jan 10, 26|Gloves              |consumed |       0|       10|          2
+Jan 10, 26|Half & Half         |consumed |       0|       76|         16
+Jan 10, 26|Milk                |consumed |       0|       48|         10
+Jan 10, 26|Nonstick Spray      |consumed |       0|        1|          1
+Jan 10, 26|OJ cups             |consumed |       0|       76|         16
+Jan 10, 26|Orange Juice        |consumed |       0|      342|         69
+Jan 10, 26|Pancake Mix         |consumed |       0|      127|         26
+Jan 10, 26|Paper Towels        |consumed |       0|        1|          1
+Jan 10, 26|Place Mats          |consumed |       0|       76|         16
+Jan 10, 26|Raffle Tickets      |consumed |       0|      173|         35
+Jan 10, 26|Sausage             |consumed |       0|      160|         32
+Jan 10, 26|Scrubbers           |consumed |       0|        1|          1
+Jan 10, 26|Serving Plates      |consumed |       0|       76|         16
+Jan 10, 26|Splenda             |consumed |       0|       25|          5
+Jan 10, 26|Sugar               |consumed |       0|       25|          5
+Jan 10, 26|Sweet'N Low         |consumed |       0|       25|          5
+Jan 10, 26|Syrup bottle, reg   |consumed |       0|        5|          1
+Jan 10, 26|Syrup bottle, SF    |consumed |       0|        5|          1
+Jan 10, 26|Syrup, reg          |consumed |       0|      127|         26
+Jan 10, 26|Syrup, sugar free   |consumed |       0|      127|         26
+Jan 10, 26|Tea                 |consumed |       0|        8|          2
+Jan 10, 26|To-Go Containers    |consumed |       0|        6|          2
 
 Months
 month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claimed|served_fudge|consumed_fudge
@@ -296,7 +330,7 @@ month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claim
    10|2025|          |          |             5|                  |               |            |              
    11|2025|Nov 02, 25|Nov 28, 25|            14|                14|             61|          60|            80
    12|2025|Nov 29, 25|Dec 31, 25|            13|                 8|             54|        1.44|           0.9
-    1|2026|Jan 01, 26|          |            14|                  |               |        1.35|           0.9
+    1|2026|Jan 01, 26|          |            14|                12|             64|        1.35|           0.9
 
 Globals
 name             |int|decimal
@@ -376,4 +410,16 @@ Dec 19, 25|cash          |cash out            |   0|12| 4|  0| 16|  3|   0|     
 Dec 19, 25|cash          |cash in             |   2| 0| 0|  0|  0|  0|   5|        0
 Dec 19, 25|cash          |w/o starts          |4.28|19| 6|  6| 12|  7|  22|        0
 Dec 19, 25|cash          |w/starts            |4.28|59|14| 12| 12|  7|  22|        0
+Jan 06, 26|petty cash    |duplicate keys      |0.10| 2| 0|  1|  1|  0|   0|        0
+Jan 08, 26|meeting dinner|purchased by Tom    |   0| 2| 0|  1|  1|  0|   0|        0
+Jan 10, 26|door tickets  |end                 |   0| 4| 4|  4|  5|  0|   0|        0
+Jan 10, 26|adv tickets   |Marvin              |   0| 0| 1|  0|  1|  1|   0|        0
+Jan 10, 26|adv tickets   |Paul                |   0| 0| 0|  0|  0|  1|   0|        0
+Jan 10, 26|adv tickets   |Mark                |   0| 0| 2|  0|  3|  0|   0|        0
+Jan 10, 26|adv tickets   |Tom                 |   0|30| 0|  0|  0|  0|   0|        0
+Jan 10, 26|adv tickets   |Steven              |   0| 0| 0|  0|  1|  0|   0|        0
+Jan 10, 26|adv tickets   |Bruce               |   0| 5| 1|  2|  0|  0|   0|        0
+Jan 10, 26|50/50         |end                 |   0|47| 5|  3|  0|  0|   0|        0
+Jan 10, 26|bf supplies   |Bruce, Walmart order|0.17| 1| 0|  2|  0|  1|   1|        0
+Jan 12, 26|bf supplies   |Marvin, P.O. 26011S |0.55| 2| 0|  0|  2|  0|   1|        0
 

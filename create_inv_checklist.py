@@ -18,7 +18,7 @@ from database import *
 def run():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--table-size", "-t", type=int, default=6)
+    parser.add_argument("--table-size", "-t", type=int, default=8)
     parser.add_argument("--verbose", "-v", default="", help="comma seperated item names")
 
     args = parser.parse_args()

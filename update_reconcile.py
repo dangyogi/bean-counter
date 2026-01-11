@@ -29,7 +29,9 @@ def run():
     print("Copying", recon_file, "into database")
     load_csv(recon_file, from_scratch=False)
 
-    if not args.trial_run:
+    if args.trial_run:
+        print("Trial_run: Database not saved")
+    else:
         print("Saving database")
         save_database()
         if not args.no_clear:

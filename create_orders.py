@@ -9,7 +9,7 @@ def run():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--table-size", "-t", type=int, default=6)
+    parser.add_argument("--table-size", "-t", type=int, default=8)
     parser.add_argument("--verbose", "-v", action="store_true", default=False)
 
     args = parser.parse_args()
