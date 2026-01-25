@@ -6,7 +6,7 @@ Steps:
 
     1. Initialize the ReportLab canvas:
 
-        set_canvas(filename, path=Path("~/storage/downloads/"), landscape=False):
+        set_canvas(filename, path=Path("~/Documents/"), landscape=False):
 
     2. Create Report object:
 
@@ -39,7 +39,7 @@ Steps:
     6. generate the report:
 
         report.draw()   # may send x_offset and/or y_offset (from top) to transpose report on page
-                        # file generated in ~/storage/downloads/<report-name>.pdf
+                        # file generated in ~/Documents/<report-name>.pdf
      or report.print()  # may send file argument, otherwise report is sent to stdout.
 
 '''
@@ -86,7 +86,7 @@ Pagesize = None
 Page_width = None
 Page_height = None
 
-def set_canvas(filename, path=Path("~/storage/downloads/"), landscape=False):
+def set_canvas(filename, path=Path("~/Documents/"), landscape=False):
     global Canvas, Pagesize, Page_width, Page_height
     if not filename.endswith(".pdf"):
         filename += ".pdf"

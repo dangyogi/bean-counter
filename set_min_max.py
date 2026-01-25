@@ -1,13 +1,13 @@
 # set_min_max.py
 
 r'''
-    - create next Month, with start_date == prior month end_date + 1,
-      set min_order, max_perishable, min_non_perishable2.
-    - min_order = 1.35 (to 1.40) * new month's.avg_meals_served
-    - max_perishable = 0.90 * (new month's.avg_meals_served + next month's.avg_meals_served)
-    - min_non_perishable2 = 1.2 * (new month's.avg_meals_served + next month's.avg_meals_served)
-    - verify numbers
-    - write to Months
+    - cur_month is last_month
+    - ask for served_fudge (starting at 1.35): min_order = served_fudge * cur_month's.avg_meals_served
+    - set served_fudge
+    - ask for consumed_fudge (starting at 0.9)
+    - set consumed_fudge
+    - ask whether to save database
+    - if yes, save database
 '''
 
 from database import *
@@ -25,7 +25,7 @@ def run():
     cur_avg_served = Months.avg_meals_served(cur_month.month)
 
     while True:
-        print(f"avg_served={cur_avg_served}, {served_fudge=} -> min_order={round(served_fudge * cur_avg_served)}")
+        print(f"cur_month={cur_month.month_str}: avg_served={cur_avg_served}, {served_fudge=}, -> min_order={round(served_fudge * cur_avg_served)}")
         # maybe up to 1.40 *?
         ans = input(f"{served_fudge=}? ")
         if not ans:
