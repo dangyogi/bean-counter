@@ -29,8 +29,8 @@ def run():
     else:
         next_month = Database.Months.inc_month(cur_month.year, cur_month.month)[1]
         avg_served2 = Database.Months.avg_meals_served(next_month)
-    max_served1 = cur_month.served_fudge * avg_served1
-    max_served2 = cur_month.served_fudge * avg_served2
+    max_served1 = round(cur_month.served_fudge * avg_served1)
+    max_served2 = round(cur_month.served_fudge * avg_served2)
     num_tables = int(math.ceil(max_served1 / table_size))
 
     print(f"cur_month={cur_month.month_str}, {avg_served1=}, served_fudge={cur_month.served_fudge}, "
@@ -41,9 +41,9 @@ def run():
         print("Month_stats", file=f)
         print("month|max_served1|max_served2|served_fudge|avg_served1|avg_served2|num_tables|table_size|"
               "consumed_fudge", file=f) 
-        print(f"{abbr_month(cur_month.month):5}|{max_served1:11}|{max_served2:11}|{cur_month.served_fudge:12}|"
+        print(f"{abbr_month(cur_month.month):5}|{max_served1:11}|{max_served2:11}|{cur_month.served_fudge:12.2}|"
               f"{avg_served1:11}|{avg_served2:11}|{num_tables:10}|{table_size:10}|"
-              f"{cur_month.consumed_fudge:14}", file=f) 
+              f"{cur_month.consumed_fudge:14.2}", file=f) 
 
     with (open("Order_stats.csv", "w") as stats_file,
           open("Orders.csv", "w") as orders_file

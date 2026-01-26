@@ -47,7 +47,7 @@ def run():
                     value = value.strip()
                     if value == '':
                         value = None
-                    if name == 'qty':
+                    elif name in ('qty', 'supplier_id'):
                         value = int(value)
                     row_attrs[name] = value
                 if row_attrs["supplier"] is None and row_attrs["supplier_id"] is None:

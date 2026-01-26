@@ -15,6 +15,7 @@ Eggs                |ea           |True      |Sams    |          1|            |
 Gloves              |pair         |False     |Walmart |          1|          10|             |               
 Grill Cleaning Brick|ea           |False     |Amazon  |          1|         0.1|             |               
 Half & Half         |ea           |False     |Sams    |          2|            |           10|              1
+Ketchup             |oz           |False     |Walmart |          1|           4|             |
 Milk                |oz           |True      |Walmart |          1|            |             |           0.63
 Nonstick Spray      |can          |False     |Sams    |          1|           1|             |           0.01
 OJ cups             |ea           |False     |Sams    |          1|            |           10|              1
@@ -74,6 +75,7 @@ Gloves              |Walmart |          3|MED PRIDE Nitrile Vinyl Gloves – Non
 Grill Cleaning Brick|Amazon  |          1|Commercial Grade, Heavy Duty Grill Cleaning Brick Bulk 4 Pack. Pumice Stone Cleaner Tool Cleans and Sanitizes Restaurant Flat Top Grills or Griddles Effectively Without Harsh Chemicals or Abrasives|         |         |24.99|       4|          |https://www.amazon.com/dp/B078TMMQPH?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1
 Half & Half         |Sams    |          1|Land O'Lakes Mini Moo's Half and Half (192 ct.)                                                                                                                                                      |342903   |23-7     |12.88|     192|          |discontinued                                                               
 Half & Half         |Sams    |          2|Nestle Coffee-mate Coffee Creamer Singles, Original 180 ct.                                                                                                                                          |990004691|F-9      |12.58|     180|          |                                                                           
+Ketchup             |Walmart |          1|Great Value Tomato Ketchup, 14 oz                                                                                                                                                                    |         |A-11     | 0.98|      14|          |                                                                           
 Milk                |Walmart |          1|Great Value Lactose Free Whole Vitamin D Milk, Half Gallon, 64 fl oz                                                                                                                                 |         |Aisle A38| 3.16|      64|          |                                                                           
 Nonstick Spray      |Sams    |          1|PAM Original Cooking Spray (12 oz., 2 pk.)                                                                                                                                                           |338064   |         | 7.48|       2|          |                                                                           
 OJ cups             |Sams    |          1|Member's Mark Printed Paper Bath Cold Cup (5 oz., 450 ct.)                                                                                                                                           |980259465|G20-4    |13.48|     450|          |                                                                           
@@ -93,7 +95,7 @@ Raffle Tickets      |Walmart |          1|Pen+Gear Double Ticket Roll, Red, Cons
 Raffle Tickets      |Gordon  |          1|Tickets, Raffle, Deluxe, Orange, 2000 Ct Roll                                                                                                                                                        |221007   |Aisle 3  |14.99|    2000|          |                                                                           
 Rubber Bands        |Walmart |          1|Alliance Advantage Rubber Bands, Size #32 (3" x 1/8"), Approx. 350 Bands per 8 oz Bag, Natural                                                                                                       |         |J23      | 3.68|     350|          |                                                                           
 Sausage             |Sams    |          1|Jimmy Dean Fully Cooked Original Pork Sausage Links, 48 ct.                                                                                                                                          |990420247|M-3      | 9.98|      48|          |                                                                           
-Sausage             |Walmart |          1|Banquet Brown'N Serve Original Fully Cooked Sausage Links, Frozen Breakfast, 32 oz., 50-Count                                                                                                        |         |A3       | 6.98|      50|          |                                                                           
+Sausage             |Walmart |          1|Banq Brown'N Serve Orig Fully Cooked Saus Links, Froz Brkfast, 32 oz., 50-Ct                                                                                                        |         |A3       | 6.98|      50|          |                                                                           
 Sausage             |Walmart |          2|Banquet Brown 'N Serve Vermont Maple Sausage Links, Frozen Breakfast, 32 oz.                                                                                                                         |         |A3       | 6.98|      50|          |                                                                           
 Sausage             |Walmart |          3|Jimmy Dean Heat 'N Serve Original Pork Breakfast Sausage Links, 36 Count (Frozen)                                                                                                                    |         |A3       | 6.72|      36|          |                                                                           
 Scrubbers           |Sams    |          1|Scotch-Brite 2X Larger Stainless Steel Scrubbers Club Pack (16 pk.)                                                                                                                                  |743038   |         |10.98|      16|          |                                                                           
@@ -313,6 +315,59 @@ Jan 10, 26|Syrup, reg          |consumed |       0|      127|         26
 Jan 10, 26|Syrup, sugar free   |consumed |       0|      127|         26
 Jan 10, 26|Tea                 |consumed |       0|        8|          2
 Jan 10, 26|To-Go Containers    |consumed |       0|        6|          2
+Jan 25, 26|Aprons              |estimate |       0|        0|          0
+Jan 25, 26|Bacon               |estimate |       0|       88|         40
+Jan 25, 26|Bowls               |estimate |       0|      150|          0
+Jan 25, 26|Butter              |estimate |       0|       18|         23
+Jan 25, 26|Coffee, ground      |estimate |       0|      240|         24
+Jan 25, 26|Coffee cups, 12 oz  |estimate |       0|        0|          0
+Jan 25, 26|Coffee cups, 10 oz  |estimate |       0|        0|          0
+Jan 25, 26|Coffee cups, 8 oz   |estimate |       0|      144|         16
+Jan 25, 26|Coffee Stirrer 5"   |estimate |       0|      224|         16
+Jan 25, 26|Coffee Stirrer 7"   |estimate |       0|        0|          0
+Jan 25, 26|Cutlery Packets     |estimate |       0|       12|         23
+Jan 25, 26|Eggs                |estimate |       0|       92|         44
+Jan 25, 26|Gloves              |estimate |       0|      670|          3
+Jan 25, 26|Grill Cleaning Brick|estimate |       0|        2|          0
+Jan 25, 26|Half & Half         |estimate |       0|      194|         16
+Jan 25, 26|Milk                |estimate |       0|        0|         10
+Jan 25, 26|Nonstick Spray      |estimate |       0|       16|          2
+Jan 25, 26|OJ cups             |estimate |       0|      134|         16
+Jan 25, 26|Orange Juice        |estimate |       0|      178|         69
+Jan 25, 26|Pancake Mix         |estimate |       0|      106|         26
+Jan 25, 26|Paper Towels        |estimate |       0|        1|          1
+Jan 25, 26|Place Mats          |estimate |       0|     1162|         23
+Jan 25, 26|Raffle Tickets      |estimate |       0|     1074|         35
+Jan 25, 26|Rubber Bands        |estimate |       0|        0|          0
+Jan 25, 26|Sausage             |estimate |       0|      -10|         32
+Jan 25, 26|Scrubbers           |estimate |       0|        4|          2
+Jan 25, 26|Serving Plates      |estimate |       0|      -76|         16
+Jan 25, 26|Small Plates        |estimate |       0|        0|          0
+Jan 25, 26|Splenda             |estimate |       0|     1355|          7
+Jan 25, 26|Sugar               |estimate |       0|       45|          7
+Jan 25, 26|Sweet'N Low         |estimate |       0|     1555|          7
+Jan 25, 26|Syrup bottle, reg   |estimate |       0|       14|          1
+Jan 25, 26|Syrup bottle, SF    |estimate |       0|       18|          1
+Jan 25, 26|Syrup, reg          |estimate |       0|        6|         61
+Jan 25, 26|Syrup, sugar free   |estimate |       0|        6|         61
+Jan 25, 26|Tea                 |estimate |       0|       56|          3
+Jan 25, 26|To-Go Containers    |estimate |       0|      134|          3
+Jan 26, 26|Cutlery Packets     |count    |    0.67|        0|          0
+Jan 26, 26|Eggs                |count    |       6|        0|          0
+Jan 26, 26|Milk                |count    |    0.67|        0|          0
+Jan 26, 26|Orange Juice        |count    |       1|        0|          0
+Jan 26, 26|Paper Towels        |count    |       0|        2|          0
+Jan 26, 26|Sausage             |count    |       1|        0|          0
+Jan 26, 26|Sugar               |count    |       0|       67|          0
+Jan 26, 26|Syrup, reg          |count    |      18|        0|          0
+Jan 26, 26|Syrup, sugar free   |count    |      22|        0|          0
+Jan 26, 26|Pancake Mix         |count    |    4.25|        0|          0
+Jan 26, 26|Bacon               |count    |     1.5|        0|          0
+Jan 26, 26|Butter              |count    |       0|       60|          0
+Jan 26, 26|Half & Half         |count    |       0|      151|          0
+Jan 26, 26|OJ cups             |count    |       0|      200|          0
+Jan 26, 26|Coffee, ground      |count    |  0.8333|        0|          0
+Jan 26, 26|Serving Plates      |count    |       0|       45|          0
 
 Months
 month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claimed|served_fudge|consumed_fudge
@@ -331,7 +386,7 @@ month|year|start_date|end_date  |num_at_meeting|staff_at_breakfast|tickets_claim
    11|2025|Nov 02, 25|Nov 28, 25|            14|                14|             61|          60|            80
    12|2025|Nov 29, 25|Dec 31, 25|            13|                 8|             54|        1.44|           0.9
     1|2026|Jan 01, 26|Jan 26, 26|            14|                12|             64|        1.35|           0.9
-    2|2026|Jan 27, 26|          |              |                  |               |            |              
+    2|2026|Jan 27, 26|          |              |                  |               |        1.35|           0.9
 
 Globals
 name             |int|decimal

@@ -1,2 +1,9 @@
 Orders
 item                |qty |supplier|supplier_id|purchased_pkgs|purchased_units|location|price
+Bacon               |   3|        |           |              |               |        |
+Butter              |   1|        |           |              |               |        |
+Eggs                |   4|        |           |              |               |        |
+Orange Juice        |   4|        |           |              |               |        |
+Sausage             |   4|Walmart |  1        |              |               |        |
+Serving Plates      |   1|        |           |              |               |        |
+Ketchup             |   1|        |           |              |               |        |

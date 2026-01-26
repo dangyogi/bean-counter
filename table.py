@@ -165,21 +165,31 @@ class Months(table_unique):
                 yield row
 
     def avg(self, month, attr):
+        r'''Rounds answer to nearest integer.
+        '''
         rows = [row for row in self.by_month(month) if getattr(row, attr) is not None]
         if not rows:
             return None
         return round(mean(getattr(row, attr) for row in rows))
 
     def avg_num_at_meeting(self, month):
+        r'''Rounds answer to nearest integer.
+        '''
         return self.avg(month, 'num_at_meeting')
 
     def avg_staff_at_breakfast(self, month):
+        r'''Rounds answer to nearest integer.
+        '''
         return self.avg(month, 'staff_at_breakfast')
 
     def avg_tickets_claimed(self, month):
+        r'''Rounds answer to nearest integer.
+        '''
         return self.avg(month, 'tickets_claimed')
 
     def avg_meals_served(self, month):
+        r'''Rounds answer to nearest integer.
+        '''
         return self.avg(month, 'meals_served')
 
 class table_by_date(base_table, list):

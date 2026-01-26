@@ -209,6 +209,8 @@ class Items(row):
 
     def in_stock(self, verbose=False):
         r'''Return units, uncertainty.
+
+        Does not constrain units to be >= 0.
         '''
         units = 0
         uncertainty = 0
@@ -283,7 +285,12 @@ class Items(row):
             return ans
 
         stats = [self.item, self.unit, self.pkg_size, self.perishable]
-        units, uncertainty = self.in_stock(verbose=verbose)
+        units, uncertainty = self.in_stock(verbose=verbose)  # may be < 0
+        if units < 0:
+            uncertainty += units  # reduce uncertainty
+            if uncertainty < 0:
+                uncertainty = 0
+            units = 0
         stats.extend((units, uncertainty))
 
 
